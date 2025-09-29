@@ -1,7 +1,11 @@
 /*
 Node description: what is the node doing , what are the node objects used 
 Cijfer Calculator
-Service Server
+Service Server + Service Client
+
+"The cijfer calcualor node can receives requests to calculate a final result that is returned.
+This is done by calculating the average of several exam results. The student Wessel gets
+always a bonus of 10 points. The final result has to be a number between 10 and 100."
 */ 
 
 

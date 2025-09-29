@@ -1,5 +1,11 @@
-string gname
+# Goal
+rmb25_assign1_interfaces_pkg/Student student
+
 ---
-int64 rnumber
+# Result
+bool success
+string message
+
 ---
-int64 fnumber 
+# Feedback
+string status

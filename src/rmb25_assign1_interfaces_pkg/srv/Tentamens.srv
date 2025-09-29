@@ -1,7 +1,11 @@
-# some comment 
-string sname #some comment
+# Request
+rmb25_assign1_interfaces_pkg/Student student
+float32[] tentamen_cijfers
+
 ---
-int64 snumber  #some comment 
+# Response
+rmb25_assign1_interfaces_pkg/Student student
+float32 final_result
 
 
 ## format  <type> <name> <optional_default_value>

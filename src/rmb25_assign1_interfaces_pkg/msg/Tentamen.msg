@@ -1,5 +1,3 @@
-int64 version
-float64 temperature
-bool are_motors_ready
-string debug_message
- 
+builtin_interfaces/Time stamp
+rmb25_assign1_interfaces_pkg/Student student
+float32 tentamen_cijfer

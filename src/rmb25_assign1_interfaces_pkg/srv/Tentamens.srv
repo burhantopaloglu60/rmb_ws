@@ -1,0 +1,18 @@
+# some comment 
+string sname #some comment
+---
+int64 snumber  #some comment 
+
+
+## format  <type> <name> <optional_default_value>
+##primitive message types
+#    bool
+#    byte
+#    char
+#    float32, float64
+#    int8, uint8
+#    int16, uint16
+#    int32, uint32
+#    int64, uint64
+#    string
+

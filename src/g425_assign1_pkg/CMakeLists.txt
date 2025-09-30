@@ -13,12 +13,27 @@ find_package(g425_assign1_interfaces_pkg REQUIRED)
 
 # executables
 add_executable(GradeCalculator src/GradeCalculator.cpp)
+#add_executable(Database src/Database.cpp)
+#add_executable(ResultGenerator src/ResultGenerator.cpp)
+#add_executable(FinalGradeDeterminator src/FinalGradeDeterminator.cpp)
+#add_executable(RetakeScheduler src/RetakeScheduler.cpp)
+#add_executable(RetakeGradeDeterminator src/RetakeGradeDeterminator.cpp)
 
 # dependencies
 ament_target_dependencies(GradeCalculator rclcpp g425_assign1_interfaces_pkg )
+#ament_target_dependencies(Database rclcpp g425_assign1_interfaces_pkg )
+#ament_target_dependencies(ResultGenerator rclcpp g425_assign1_interfaces_pkg )
+#ament_target_dependencies(FinalGradeDeterminator rclcpp g425_assign1_interfaces_pkg )
+#ament_target_dependencies(RetakeScheduler rclcpp g425_assign1_interfaces_pkg )
+#ament_target_dependencies(RetakeGradeDeterminator rclcpp g425_assign1_interfaces_pkg )
 
 install (TARGETS
 	  GradeCalculator
+    #Database
+    #ResultGenerator
+    #FinalGradeDeterminator
+    #RetakeScheduler
+    #RetakeGradeDeterminator
           DESTINATION lib/${PROJECT_NAME}
           )
 

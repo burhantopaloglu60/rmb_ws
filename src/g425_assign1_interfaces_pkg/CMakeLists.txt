@@ -14,10 +14,10 @@ find_package(ament_cmake REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
 rosidl_generate_interfaces(${PROJECT_NAME}
   # we will add the name of our custom interfaces here
-  "msg/Tentamen.msg"
+  "msg/Exam.msg"
   "msg/Student.msg"
-  "action/Herkanser.action"
-  "srv/Tentamens.srv"
+  "action/Retaker.action"
+  "srv/Exams.srv"
   
 )
 ament_export_dependencies(rosidl_default_runtime)

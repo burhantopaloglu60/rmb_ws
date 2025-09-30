@@ -18,10 +18,10 @@ Software changes (one line by change):
 //--general includes 
 #include "rclcpp/rclcpp.hpp"
 //--custom includes  
-#include "g425_assign1_interfaces_pkg/srv/tentamens.hpp" 
+#include "g425_assign1_interfaces_pkg/srv/exams.hpp" 
 
 //--using 
-using Tentamens = g425_assign1_interfaces_pkg::srv::Tentamens ;
+using Exams = g425_assign1_interfaces_pkg::srv::Exams ;
 
 using namespace std::placeholders;
 
@@ -33,14 +33,14 @@ class GradeCalculator : public rclcpp::Node
   GradeCalculator() : Node("g425_gradecalculator_node")
   {
      //--communication and timer objects: 
-    template_serviceserver_ = this -> create_service<Tentamens>("GradeCalculator",
-                                      std::bind(&GradeCalculator::callBackTentamens,this,_1,_2));
+    template_serviceserver_ = this -> create_service<Exams>("GradeCalculator",
+                                      std::bind(&GradeCalculator::callBackExams,this,_1,_2));
     RCLCPP_INFO(this->get_logger(), "Service Server started");
      //--custom functions:
   }
 
   //-- communication and timer functions 
-  void callBackTentamens(const Tentamens::Request::SharedPtr request, const Tentamens::Response::SharedPtr response){
+  void callBackExams(const Exams::Request::SharedPtr request, const Exams::Response::SharedPtr response){
 
     if(request->student.student_fullname == "Jeff")
     {
@@ -52,7 +52,7 @@ class GradeCalculator : public rclcpp::Node
 
 private :
 //--rclcpp variables:
-rclcpp::Service<Tentamens>::SharedPtr template_serviceserver_; 
+rclcpp::Service<Exams>::SharedPtr template_serviceserver_; 
 //--custom variables:
 //...
 };

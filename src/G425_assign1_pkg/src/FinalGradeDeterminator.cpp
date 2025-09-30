@@ -8,5 +8,6 @@ results (enough: = the collection number that was retrieved from the database) i
 request to the “cijfer” calculator node. After it got the final cijfer back it inserts the final
 “cijfer” in the database and sends a message to the cijfer generator to stop the generation
 for this student/course combination."
+Rik
 */ 
 

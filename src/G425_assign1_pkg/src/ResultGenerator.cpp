@@ -11,5 +11,7 @@ collection the node creates and broadcastes randomly an exam mark (between 10 an
 published for a random student/course combination. The node can receives a messages
 that will ask to add or to remove a student/course combination to the random generation
 process"
+
+Rik
 */ 
 

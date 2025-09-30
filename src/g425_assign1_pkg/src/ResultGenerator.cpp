@@ -27,7 +27,7 @@ one line per change
 
 #include "rclcpp/rclcpp.hpp"
 //--custom includes  
-#include "rmb25_assign1_interfaces_pkg" 
+#include "g425_assign1_interfaces_pkg/srv/tentamens.hpp" 
 
 
 class ResultGenerator : public rclcpp::Node

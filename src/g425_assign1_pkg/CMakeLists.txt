@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
-project(rmb25_assign1_pkg)
+project(g425_assign1_pkg)
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
@@ -9,13 +9,13 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 
-find_package(rmb25_assign1_interfaces_pkg REQUIRED)
+find_package(g425_assign1_interfaces_pkg REQUIRED)
 
 # executables
 add_executable(GradeCalculator src/GradeCalculator.cpp)
 
 # dependencies
-ament_target_dependencies(GradeCalculator rclcpp rmb25_assign1_interfaces_pkg )
+ament_target_dependencies(GradeCalculator rclcpp g425_assign1_interfaces_pkg )
 
 install (TARGETS
 	  GradeCalculator

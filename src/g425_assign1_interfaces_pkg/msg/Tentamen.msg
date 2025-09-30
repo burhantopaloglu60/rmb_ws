@@ -1,3 +1,3 @@
 builtin_interfaces/Time stamp
-rmb25_assign1_interfaces_pkg/Student student
+g425_assign1_interfaces_pkg/Student student
 float32 tentamen_cijfer

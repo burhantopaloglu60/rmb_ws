@@ -18,10 +18,10 @@ Software changes (one line by change):
 //--general includes 
 #include "rclcpp/rclcpp.hpp"
 //--custom includes  
-#include "rmb25_assign1_interfaces_pkg/srv/tentamens.hpp" 
+#include "g425_assign1_interfaces_pkg/srv/tentamens.hpp" 
 
 //--using 
-using Tentamens = rmb25_assign1_interfaces_pkg::srv::Tentamens ;
+using Tentamens = g425_assign1_interfaces_pkg::srv::Tentamens ;
 
 using namespace std::placeholders;
 
@@ -30,7 +30,7 @@ class GradeCalculator : public rclcpp::Node
 {
   public :
   //-- constuctor: 
-  GradeCalculator() : Node("rmb25_gradecalculator_node")
+  GradeCalculator() : Node("g425_gradecalculator_node")
   {
      //--communication and timer objects: 
     template_serviceserver_ = this -> create_service<Tentamens>("GradeCalculator",

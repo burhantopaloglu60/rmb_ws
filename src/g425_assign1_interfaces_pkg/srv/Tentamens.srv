@@ -1,10 +1,10 @@
 # Request
-rmb25_assign1_interfaces_pkg/Student student
+g425_assign1_interfaces_pkg/Student student
 float32[] tentamen_cijfers
 
 ---
 # Response
-rmb25_assign1_interfaces_pkg/Student student
+g425_assign1_interfaces_pkg/Student student
 float32 final_result
 
 

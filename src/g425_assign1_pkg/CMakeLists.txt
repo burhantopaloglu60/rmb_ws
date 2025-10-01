@@ -8,6 +8,7 @@ endif()
 # find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(rclcpp_action REQUIRED)
 
 find_package(g425_assign1_interfaces_pkg REQUIRED)
 
@@ -24,8 +25,8 @@ ament_target_dependencies(GradeCalculator rclcpp g425_assign1_interfaces_pkg )
 #ament_target_dependencies(Database rclcpp g425_assign1_interfaces_pkg )
 #ament_target_dependencies(ResultGenerator rclcpp g425_assign1_interfaces_pkg )
 #ament_target_dependencies(FinalGradeDeterminator rclcpp g425_assign1_interfaces_pkg )
-#ament_target_dependencies(RetakeScheduler rclcpp g425_assign1_interfaces_pkg )
-#ament_target_dependencies(RetakeGradeDeterminator rclcpp g425_assign1_interfaces_pkg )
+#ament_target_dependencies(RetakeScheduler rclcpp rclcpp_action g425_assign1_interfaces_pkg )
+#ament_target_dependencies(RetakeGradeDeterminator rclcpp rclcpp_action g425_assign1_interfaces_pkg )
 
 install (TARGETS
 	  GradeCalculator

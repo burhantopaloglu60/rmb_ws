@@ -94,7 +94,7 @@ class ResultGenerator : public rclcpp::Node
         g425_assign1_interfaces_pkg::msg::Exam exam_msg;
         exam_msg.stamp = this->now();
         exam_msg.student = chosen_student;
-        exam_msg.tentamen_cijfer = mark;
+        exam_msg.exam_grade = mark;
 
         // Publish
         exam_pub_->publish(exam_msg);

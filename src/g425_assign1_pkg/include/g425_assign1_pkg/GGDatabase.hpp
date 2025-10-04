@@ -1,5 +1,5 @@
 /*
-Header file for GGDatabase.cpp -Burhan Topaloglu 
+Header file for GGDatabase.cpp -Burhan Topaloglu
 */
 
 /*
@@ -9,8 +9,8 @@ Software changes (one line by change):
 ...
 */
 
-#ifndef __GGDATABASE_HPP__ 
-#define __GGDATABASE_HPP__ 
+#ifndef __GGDATABASE_HPP__
+#define __GGDATABASE_HPP__
 
 #pragma once  // we want the database to only have one instance
 #include <mariadb/mysql.h>
@@ -21,7 +21,7 @@ Software changes (one line by change):
 
 /**
  * @brief
- * DataBase Entry finalgrade: 
+ * DataBase Entry finalgrade:
  * Use this struct to manipulate database entries, the database itself is only to be called using this struct
  */
 struct DBE_finalgrade
@@ -49,6 +49,14 @@ struct DBE_grade
   std::string timestamp;
 };
 
+/**
+ * @brief
+ * Grade Generator Database
+ * @param const_std::string& server
+ * @param const_std::string& user
+ * @param const_std::string& password
+ * @param const_std::string& database
+ */
 class GGDatabase
 {
 public:
@@ -58,16 +66,15 @@ public:
              const std::string& database   // schema
   );
 
-  std::tuple<bool , MYSQL *> SetupConnection();
+  std::tuple<bool, MYSQL*> SetupConnection();
+  std::tuple<bool, MYSQL_RES*> ExecSQLQuery(MYSQL* connection, std::string query);
 
 private:
   MYSQL* conn_;
   std::string server_;
-  std::string user_;     
-  std::string password_; 
+  std::string user_;
+  std::string password_;
   std::string database_;
-
-  auto execSQLQuery(MYSQL *connection, std::string query);
 };
 
-#endif 
+#endif

@@ -5,6 +5,11 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
+execute_process(COMMAND mysql_config --cflags
+    OUTPUT_VARIABLE MYSQL_CFLAGS OUTPUT_STRIP_TRAILING_WHITESPACE)
+execute_process(COMMAND mysql_config --libs
+    OUTPUT_VARIABLE MYSQL_LIBS OUTPUT_STRIP_TRAILING_WHITESPACE)
+
 # find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
@@ -13,6 +18,8 @@ find_package(g425_assign1_interfaces_pkg REQUIRED)
 include_directories(include)
 add_library(GGDatabase src/GGDatabase.cpp)
 ament_target_dependencies(GGDatabase rclcpp g425_assign1_interfaces_pkg)
+target_compile_options(GGDatabase PRIVATE ${MYSQL_CFLAGS})
+target_link_libraries(GGDatabase ${MYSQL_LIBS})
 
 # executables
 add_executable(GradeCalculator src/GradeCalculator.cpp)

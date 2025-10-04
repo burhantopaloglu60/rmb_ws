@@ -42,15 +42,16 @@ class GradeCalculator : public rclcpp::Node
   //-- communication and timer functions 
   void callBackExams(const Exams::Request::SharedPtr request, const Exams::Response::SharedPtr response){
 
-    if(request->student.student_fullname == "Jeff")
+    if(request->student.student_fullname == "Wessel")
     {
-      response-> final_result = 0.0f;
+      response-> final_grade = (calculatedFinalGrade + 10.0f);
     }
   }
 //--custom functions:
 //... 
 
 private :
+float calculatedFinalGrade = 50; //placeholder of course
 //--rclcpp variables:
 rclcpp::Service<Exams>::SharedPtr template_serviceserver_; 
 //--custom variables:

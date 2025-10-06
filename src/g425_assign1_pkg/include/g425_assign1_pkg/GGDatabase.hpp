@@ -67,9 +67,11 @@ public:
   );
 
   std::tuple<bool, MYSQL*> SetupConnection();
-  std::tuple<bool, MYSQL_RES*> ExecSQLQuery(MYSQL* connection, std::string query);
+  
 
 private:
+
+  std::tuple<bool, MYSQL_RES*> ExecSQLQuery(MYSQL* connection, std::string query);
   MYSQL* conn_;
   std::string server_;
   std::string user_;

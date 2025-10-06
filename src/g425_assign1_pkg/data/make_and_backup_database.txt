@@ -1,0 +1,47 @@
+//To Backup into file:
+mariadb-dump --user=john_gradegenerator --password --lock-tables --extended-insert --databases grade_generator > ./backup/grade_generator.sql
+
+//Create Database (in Mariadb):
+CREATE DATABASE grade_generator;
+USE grade_generator;
+
+CREATE TABLE `students` (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    `student_name` VARCHAR(100) NOT NULL,
+    timestamp DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE `courses` (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    `course_name` VARCHAR(100) NOT NULL,
+    timestamp DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE `final_grades` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `student_id` INT NOT NULL,
+    FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE,
+    `course_id` INT NOT NULL,
+    FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE,
+    `number_of_exams` INT DEFAULT 0,
+    `final_grade` DECIMAL(5,2),
+    `timestamp` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY unique_student_course (`student_id`, `course_id`)
+);
+
+CREATE TABLE `grades` (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    student_id INT NOT NULL,
+    FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE,
+    course_id INT NOT NULL,
+    FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE,
+    grade DOUBLE NOT NULL,
+    timestamp DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE USER 'john_gradegenerator'@'localhost' IDENTIFIED BY '1234';
+GRANT ALL PRIVILEGES ON grade_generator.* TO 'john_gradegenerator'@'localhost';
+
+INSERT INTO students(student_name) VALUES ("Sarah Connor");
+INSERT INTO courses(course_name) VALUES ("Introduction to Robotics");
+INSERT INTO final_grades(student_id, course_id, number_of_exams, final_grade, timestamp) VALUES (1, 1, 2, 89.75, NOW());

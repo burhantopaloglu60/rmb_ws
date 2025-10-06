@@ -1,0 +1,9 @@
+# example, check page 194 to see how to use parameters in your code
+# /ResultGenerator:
+#   ros__parameters:
+#     parameter: 3
+#     another_parameter: 0.5
+# /RetakeScheduler:
+#   ros__parameters:
+#     parameter: 4
+#     another_parameter: 1.0

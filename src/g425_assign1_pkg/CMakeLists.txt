@@ -42,6 +42,12 @@ target_link_libraries(GradeCalculator GGDatabase)
 #target_link_libraries(RetakeScheduler GGDatabase)
 #target_link_libraries(RetakeGradeDeterminator GGDatabase)
 
+# launch files
+install(DIRECTORY
+  launch
+  DESTINATION share/${PROJECT_NAME}/
+  )
+
 install (TARGETS
 	  GradeCalculator
     #ResultGenerator

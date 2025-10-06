@@ -1,0 +1,3 @@
+<launch>
+    <node pkg="g425_assign1_pkg" exec="GradeCalculator" />
+</launch>

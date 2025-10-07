@@ -6,5 +6,7 @@ string course_name
 int64 student_id
 int32 course_id
 
+int32 number_of_grades
+
 #timestamp
 builtin_interfaces/Time stamp

@@ -7,16 +7,3 @@ float32[] exam_grades
 g425_assign1_interfaces_pkg/Student student
 float32 final_grade
 
-
-## format  <type> <name> <optional_default_value>
-##primitive message types
-#    bool
-#    byte
-#    char
-#    float32, float64
-#    int8, uint8
-#    int16, uint16
-#    int32, uint32
-#    int64, uint64
-#    string
-

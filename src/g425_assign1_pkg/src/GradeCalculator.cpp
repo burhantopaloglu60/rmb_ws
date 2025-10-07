@@ -33,7 +33,7 @@ public:
         this->create_service<Exams>("GradeCalculator", std::bind(&GradeCalculator::calculator, this, _1, _2));
     RCLCPP_INFO(this->get_logger(), "Service Server started");
   }
-  
+
   void calculator(const Exams::Request::SharedPtr request, const Exams::Response::SharedPtr response)
   {
 
@@ -44,8 +44,10 @@ public:
     if (calculatedFinalGrade >= 11)
     {
       response->final_grade = calculatedFinalGrade;
+      RCLCPP_INFO(this->get_logger(), "Calculated final result");
     }
   }
+
 
 
 private:

@@ -55,3 +55,4 @@ GRANT ALL PRIVILEGES ON grade_generator.* TO 'john_gradegenerator'@'localhost';
 INSERT INTO students(student_name) VALUES ("Sarah Connor");
 INSERT INTO courses(course_name) VALUES ("Introduction to Robotics");
 INSERT INTO final_grades(student_id, course_id, number_of_exams, final_grade, timestamp) VALUES (1, 1, 2, 89.75, NOW());
+INSERT INTO student_courses (student_id, course_id) VALUES (1, 1);

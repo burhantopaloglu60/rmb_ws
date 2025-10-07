@@ -15,7 +15,8 @@ Youtube@Stevesteacher
 /* found in header
 #include <mariadb/mysql.h>
 #include <iostream>
-#include <tuple> */
+#include <tuple>
+#include <vector> */
 
 GGDatabase::GGDatabase(const std::string& server = "localhost",          // for educational purposes, plaintext
                        const std::string& user = "john_gradegenerator",  //
@@ -113,7 +114,7 @@ std::string GGDatabase::getStudentName(int s_id)
     std::cout << "result unsuccesful" << std::endl;
   }
 
-  while ((row = mysql_fetch_row(res)) != NULL)  //!= NULL redundant
+  while ((row = mysql_fetch_row(res)) != NULL)  
   {
     result = row[0];
   }
@@ -139,7 +140,7 @@ std::string GGDatabase::getCourseName(int c_id)
     std::cout << "result unsuccesful" << std::endl;
   }
 
-  while ((row = mysql_fetch_row(res)) != NULL)  //!= NULL redundant
+  while ((row = mysql_fetch_row(res)) != NULL)  
   {
     result = row[0];
   }
@@ -165,7 +166,7 @@ int GGDatabase::getStudentId(const std::string& s_name)
     std::cout << "result unsuccesful" << std::endl;
   }
 
-  while ((row = mysql_fetch_row(res)) != NULL)  //!= NULL redundant
+  while ((row = mysql_fetch_row(res)) != NULL)  
   {
     result = std::stoi(row[0]);
   }
@@ -266,10 +267,41 @@ int GGDatabase::getGradeAmountFromCourse(int c_id)
     std::cout << "result unsuccesful" << std::endl;
   }
 
-  while ((row = mysql_fetch_row(res)) != NULL)  //!= NULL redundant
+  while ((row = mysql_fetch_row(res)) != NULL)  
   {
     result = std::stoi(row[0]);
   }
+  mysql_free_result(res);
+  return result;
+}
+
+std::vector<std::tuple<int, int>> GGDatabase::getAllStudentCoursesRel()
+{
+  bool result_success;
+  MYSQL_RES* res;
+  std::vector<std::tuple<int, int>> result;
+  MYSQL_ROW row;
+
+  std::stringstream ss;
+  ss << "SELECT student_id, course_id FROM student_courses;";
+  std::string q = ss.str();
+
+  std::tie(result_success, res) = this->execSQLQuery_(conn_, q);
+
+  if (!result_success)
+  {
+    std::cout << "result unsuccesful" << std::endl;
+    return result;
+  }
+
+  while ((row = mysql_fetch_row(res)) != nullptr)
+    {
+        int student_id = row[0] ? std::stoi(row[0]) : 0;
+        int course_id = row[1] ? std::stoi(row[1]) : 0;
+
+        result.push_back(std::make_tuple(student_id, course_id));
+    }
+
   mysql_free_result(res);
   return result;
 }

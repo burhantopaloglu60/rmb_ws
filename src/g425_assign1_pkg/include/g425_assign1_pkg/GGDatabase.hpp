@@ -16,6 +16,7 @@ Software changes (one line by change):
 #include <mariadb/mysql.h>
 #include <iostream>
 #include <tuple>
+#include <vector>
 
 /**
  * @brief
@@ -102,6 +103,7 @@ public:
   int getGradeAmountFromCourse(int c_id);
   bool addGrade(const DBT_Grade& st_grade);
   bool addFinalGrade(const DBT_FinalGrade& st_finalGrade);
+  std::vector<std::tuple<int, int>> getAllStudentCoursesRel();
 
 private:
   std::tuple<bool, MYSQL_RES*> execSQLQuery_(MYSQL* connection, std::string query);

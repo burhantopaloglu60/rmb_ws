@@ -1,6 +1,10 @@
 sudo apt install libmariadb3 libmariadb-dev mariadb-server mariadb-client
 sudo mariadb-secure-installation //choices don't matter
 sudo mariadb -u root
+
+usage is just
+include "g425_assign1_pkg/GGDatabase.hpp"
+GGDatabase db();
 --------------------------------------------------------------------------
 
 CREATE DATABASE grade_generator;

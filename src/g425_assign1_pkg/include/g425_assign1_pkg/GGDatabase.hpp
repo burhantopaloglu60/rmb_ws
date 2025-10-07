@@ -97,8 +97,11 @@ public:
   std::tuple<bool, MYSQL*> setupConnection();
   std::string getStudentName(int s_id);
   std::string getCourseName(int c_id);
-  int getStudentId(std::string s_name);
-  int getCourseId(std::string s_name);
+  int getStudentId(const std::string& s_name);
+  int getCourseId(const std::string& c_name);
+  int getGradeAmountFromCourse(int c_id);
+  bool addGrade(const DBT_Grade& st_grade);
+  bool addFinalGrade(const DBT_FinalGrade& st_finalGrade);
 
 private:
   std::tuple<bool, MYSQL_RES*> execSQLQuery_(MYSQL* connection, std::string query);

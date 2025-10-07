@@ -41,9 +41,18 @@ public:
   //-- communication and timer functions
   void callBackExams(const Exams::Request::SharedPtr request, const Exams::Response::SharedPtr response)
   {
-    if (request->student.student_fullname == "Wessel")
+    // if (request->student.student_fullname == "Wessel")
+    // {
+    //   response->final_grade = (calculatedFinalGrade + 10.0f);
+    // }
+    float sum = 0.0f;
+    float average = 0;
+    for (float g : request->exam_grades) sum += g;
+    average = request->exam_grades.empty() ? 0.0f : sum / request->exam_grades.size();
+
+    if (average != 0)
     {
-      response->final_grade = (calculatedFinalGrade + 10.0f);
+      response->final_grade = average;
     }
   }
   //--custom functions:

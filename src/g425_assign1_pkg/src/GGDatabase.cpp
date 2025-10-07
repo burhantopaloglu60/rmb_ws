@@ -335,3 +335,37 @@ std::vector<DBT_FinalGrade> GGDatabase::getAllFinalGrades()
   mysql_free_result(res);
   return grades;
 }
+
+std::vector<std::tuple<int, int>> GGDatabase::getMissingFinalGrades()
+{
+  bool result_success;
+  MYSQL_RES* res;
+  std::vector<std::tuple<int, int>> result;
+  MYSQL_ROW row;
+
+  std::string q =
+      "SELECT sc.* FROM student_courses sc "
+      "LEFT JOIN final_grades fg ON sc.student_id = fg.student_id "
+      "AND sc.course_id = fg.course_id "
+      "JOIN courses c ON sc.course_id = c.id "
+      "WHERE fg.id IS NULL AND c.number_of_grades <> 0;";
+
+  std::tie(result_success, res) = this->execSQLQuery_(conn_, q);
+
+  if (!result_success)
+  {
+    std::cout << "result unsuccesful" << std::endl;
+    return result;
+  }
+
+  while ((row = mysql_fetch_row(res)) != nullptr)
+  {
+    int student_id = row[0] ? std::stoi(row[0]) : 0;
+    int course_id = row[1] ? std::stoi(row[1]) : 0;
+
+    result.push_back(std::make_tuple(student_id, course_id));
+  }
+
+  mysql_free_result(res);
+  return result;
+}

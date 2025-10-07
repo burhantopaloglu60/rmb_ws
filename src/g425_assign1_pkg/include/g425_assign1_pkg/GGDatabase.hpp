@@ -38,7 +38,7 @@ struct DBT_Course
 {
   int id;
   std::string course_name;
-  int number_of_exams;
+  int number_of_grades;
 };
 
 /**
@@ -104,6 +104,7 @@ public:
   bool addGrade(const DBT_Grade& st_grade);
   bool addFinalGrade(const DBT_FinalGrade& st_finalGrade);
   std::vector<std::tuple<int, int>> getAllStudentCoursesRel();
+  std::vector<std::tuple<int, int>> getMissingFinalGrades();
   std::vector<DBT_FinalGrade> getAllFinalGrades();
 
 private:

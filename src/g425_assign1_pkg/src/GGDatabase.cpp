@@ -114,7 +114,7 @@ std::string GGDatabase::getStudentName(int s_id)
     std::cout << "result unsuccesful" << std::endl;
   }
 
-  while ((row = mysql_fetch_row(res)) != NULL)  
+  while ((row = mysql_fetch_row(res)) != NULL)
   {
     result = row[0];
   }
@@ -140,7 +140,7 @@ std::string GGDatabase::getCourseName(int c_id)
     std::cout << "result unsuccesful" << std::endl;
   }
 
-  while ((row = mysql_fetch_row(res)) != NULL)  
+  while ((row = mysql_fetch_row(res)) != NULL)
   {
     result = row[0];
   }
@@ -166,7 +166,7 @@ int GGDatabase::getStudentId(const std::string& s_name)
     std::cout << "result unsuccesful" << std::endl;
   }
 
-  while ((row = mysql_fetch_row(res)) != NULL)  
+  while ((row = mysql_fetch_row(res)) != NULL)
   {
     result = std::stoi(row[0]);
   }
@@ -267,7 +267,7 @@ int GGDatabase::getGradeAmountFromCourse(int c_id)
     std::cout << "result unsuccesful" << std::endl;
   }
 
-  while ((row = mysql_fetch_row(res)) != NULL)  
+  while ((row = mysql_fetch_row(res)) != NULL)
   {
     result = std::stoi(row[0]);
   }
@@ -282,9 +282,7 @@ std::vector<std::tuple<int, int>> GGDatabase::getAllStudentCoursesRel()
   std::vector<std::tuple<int, int>> result;
   MYSQL_ROW row;
 
-  std::stringstream ss;
-  ss << "SELECT student_id, course_id FROM student_courses;";
-  std::string q = ss.str();
+  std::string q = "SELECT student_id, course_id FROM student_courses;";
 
   std::tie(result_success, res) = this->execSQLQuery_(conn_, q);
 
@@ -295,13 +293,45 @@ std::vector<std::tuple<int, int>> GGDatabase::getAllStudentCoursesRel()
   }
 
   while ((row = mysql_fetch_row(res)) != nullptr)
-    {
-        int student_id = row[0] ? std::stoi(row[0]) : 0;
-        int course_id = row[1] ? std::stoi(row[1]) : 0;
+  {
+    int student_id = row[0] ? std::stoi(row[0]) : 0;
+    int course_id = row[1] ? std::stoi(row[1]) : 0;
 
-        result.push_back(std::make_tuple(student_id, course_id));
-    }
+    result.push_back(std::make_tuple(student_id, course_id));
+  }
 
   mysql_free_result(res);
   return result;
+}
+
+std::vector<DBT_FinalGrade> GGDatabase::getAllFinalGrades()
+{
+  bool result_success;
+  MYSQL_RES* res;
+  std::vector<DBT_FinalGrade> grades;
+  MYSQL_ROW row;
+
+  std::string q = "SELECT student_id, course_id, number_of_exams, final_grade FROM final_grades;";
+
+  std::tie(result_success, res) = this->execSQLQuery_(conn_, q);
+
+  if (!result_success)
+  {
+    std::cout << "result unsuccesful" << std::endl;
+    return grades;
+  }
+
+  while ((row = mysql_fetch_row(res)) != nullptr)
+  {
+    DBT_FinalGrade grade;
+    grade.student_id = row[0] ? std::stoi(row[0]) : 0;
+    grade.course_id = row[1] ? std::stoi(row[1]) : 0;
+    grade.number_of_exams = row[2] ? std::stoi(row[2]) : 0;
+    grade.final_grade = row[3] ? std::stod(row[3]) : 0.0;
+
+    grades.push_back(grade);
+  }
+
+  mysql_free_result(res);
+  return grades;
 }

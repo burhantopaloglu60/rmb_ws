@@ -11,7 +11,7 @@ always a bonus of 10 points. The final result has to be a number between 10 and 
 /*
 Software changes (one line by change):
 (1) 29.9.2025 created and initialized by Burhan Topaloglu
-...
+(2) 07.10.2025 changed by Rik van Velzen
 */
 
 //--general includes
@@ -29,7 +29,7 @@ class GradeCalculator : public rclcpp::Node
 public:
   GradeCalculator() : Node("g425_gradecalculator_node")
   {
-    template_serviceserver_ =
+    grade_calculator_service_ =
         this->create_service<Exams>("GradeCalculator", std::bind(&GradeCalculator::calculator, this, _1, _2));
     RCLCPP_INFO(this->get_logger(), "Service Server started");
   }
@@ -44,15 +44,17 @@ public:
     if (calculatedFinalGrade >= 11)
     {
       response->final_grade = calculatedFinalGrade;
-      RCLCPP_INFO(this->get_logger(), "Calculated final result");
+      response->student = request->student;
+      RCLCPP_INFO(this->get_logger(), "Calculated final result for %s in %s: %.1f", 
+                                      response->student.student_fullname.c_str(),
+                                      response->student.course_name.c_str(), 
+                                      calculatedFinalGrade);
     }
   }
 
-
-
 private:
   float calculatedFinalGrade = 0;  
-  rclcpp::Service<Exams>::SharedPtr template_serviceserver_;
+  rclcpp::Service<Exams>::SharedPtr grade_calculator_service_;
 
 };
 

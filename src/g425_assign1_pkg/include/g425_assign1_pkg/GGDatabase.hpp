@@ -41,12 +41,13 @@ struct DBT_Course
 };
 
 /**
- * @brief 
+ * @brief
  * DataBase Entry for Table: student_courses excluding value "timestamp"
  */
-struct DBT_StudentCourse {
-    int student_id;  // Foreign key -> students.id
-    int course_id;   // Foreign key -> courses.id
+struct DBT_StudentCourse
+{
+  int student_id;  // Foreign key -> students.id
+  int course_id;   // Foreign key -> courses.id
 };
 
 /**
@@ -57,8 +58,8 @@ struct DBT_StudentCourse {
 struct DBT_FinalGrade
 {
   int id;
-  int student_id;       // Foreign key referencing students.id
-  int course_id;        // Foreign key referencing courses.id
+  int student_id;  // Foreign key referencing students.id
+  int course_id;   // Foreign key referencing courses.id
   int number_of_exams;
   double final_grade;
 };
@@ -91,11 +92,16 @@ public:
              const std::string& password,  // password
              const std::string& database   // schema
   );
+  ~GGDatabase();
 
-  std::tuple<bool, MYSQL*> SetupConnection();
+  std::tuple<bool, MYSQL*> setupConnection();
+  std::string getStudentName(int s_id);
+  std::string getCourseName(int c_id);
+  int getStudentId(std::string s_name);
+  int getCourseId(std::string s_name);
 
 private:
-  std::tuple<bool, MYSQL_RES*> ExecSQLQuery(MYSQL* connection, std::string query);
+  std::tuple<bool, MYSQL_RES*> execSQLQuery_(MYSQL* connection, std::string query);
   MYSQL* conn_;
   std::string server_;
   std::string user_;

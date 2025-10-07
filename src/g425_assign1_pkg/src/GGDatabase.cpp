@@ -9,23 +9,38 @@ Youtube@Stevesteacher
 ...
 */
 
-// dont forget to:
-// mysql_free_result(result.res);
-// mysql_close(con);
-
 #include "g425_assign1_pkg/GGDatabase.hpp"
 #include <mariadb/mysqld_error.h>
+#include <sstream>
 /* found in header
 #include <mariadb/mysql.h>
 #include <iostream>
 #include <tuple> */
 
-GGDatabase::GGDatabase(const std::string& server, const std::string& user,  //
-                       const std::string& password, const std::string& database)
-  : server_(std::move(server)), user_(std::move(user)), //
-  password_(std::move(password)), database_(std::move(database))
+GGDatabase::GGDatabase(const std::string& server = "localhost",          // for educational purposes, plaintext
+                       const std::string& user = "john_gradegenerator",  //
+                       const std::string& password = "1234",             //
+                       const std::string& database = "grade_generator")
+  : server_(std::move(server))
+  , user_(std::move(user))
+  ,  //
+  password_(std::move(password))
+  , database_(std::move(database))
 {
+  bool conn_success;
   std::cout << "Connecting to MariaDB at: " << server_ << std::endl;
+  std::tie(conn_success, conn_) = this->setupConnection();
+
+  if (!conn_success)
+  {
+    std::cout << "connection unsuccesful" << std::endl;
+  }
+  std::cout << "connection succesful!" << std::endl;
+}
+
+GGDatabase::~GGDatabase()
+{
+  mysql_close(conn_);
 }
 
 /**
@@ -34,7 +49,7 @@ GGDatabase::GGDatabase(const std::string& server, const std::string& user,  //
  * @param GGDatabase() the connection is in the members of the database class
  * @return std::tuple<bool , MYSQL *>
  */
-std::tuple<bool, MYSQL*> GGDatabase::SetupConnection()
+std::tuple<bool, MYSQL*> GGDatabase::setupConnection()
 {
   MYSQL* connection = mysql_init(NULL);
   bool success = true;
@@ -66,7 +81,7 @@ std::tuple<bool, MYSQL*> GGDatabase::SetupConnection()
  * @param std::string query
  * @return std::tuple<bool, MYSQL_RES*>
  */
-std::tuple<bool, MYSQL_RES*> GGDatabase::ExecSQLQuery(MYSQL* connection, std::string query)
+std::tuple<bool, MYSQL_RES*> GGDatabase::execSQLQuery_(MYSQL* connection, std::string query)
 {
   bool success = true;
 
@@ -78,4 +93,108 @@ std::tuple<bool, MYSQL_RES*> GGDatabase::ExecSQLQuery(MYSQL* connection, std::st
 
   // mysql_store_result(con) or mysql_use_result(con)
   return std::make_tuple(success, mysql_use_result(connection));
+}
+
+std::string GGDatabase::getStudentName(int s_id)
+{
+  bool result_success;
+  MYSQL_RES* res;
+  std::string result;
+  MYSQL_ROW row;  // the results rows (array)
+
+  std::stringstream ss;
+  ss << "select student_name from students where id=" << s_id << ";";
+  std::string q = ss.str();
+
+  std::tie(result_success, res) = this->execSQLQuery_(conn_, q);
+
+  if (!result_success)
+  {
+    std::cout << "result unsuccesful" << std::endl;
+  }
+
+  while ((row = mysql_fetch_row(res)) != NULL)  //!= NULL redundant
+  {
+    result = row[0];
+  }
+  mysql_free_result(res);
+  return result;
+}
+
+std::string GGDatabase::getCourseName(int c_id)
+{
+  bool result_success;
+  MYSQL_RES* res;
+  std::string result;
+  MYSQL_ROW row;  // the results rows (array)
+
+  std::stringstream ss;
+  ss << "select course_name from courses where id=" << c_id << ";";
+  std::string q = ss.str();
+
+  std::tie(result_success, res) = this->execSQLQuery_(conn_, q);
+
+  if (!result_success)
+  {
+    std::cout << "result unsuccesful" << std::endl;
+  }
+
+  while ((row = mysql_fetch_row(res)) != NULL)  //!= NULL redundant
+  {
+    result = row[0];
+  }
+  mysql_free_result(res);
+  return result;
+}
+
+int GGDatabase::getStudentId(std::string s_name)
+{
+  bool result_success;
+  MYSQL_RES* res;
+  int result;
+  MYSQL_ROW row;
+
+  std::stringstream ss;
+  ss << "select id from students where student_name='" << s_name << "';";
+  std::string q = ss.str();
+
+  std::tie(result_success, res) = this->execSQLQuery_(conn_, q);
+
+  if (!result_success)
+  {
+    std::cout << "result unsuccesful" << std::endl;
+  }
+
+  while ((row = mysql_fetch_row(res)) != NULL)  //!= NULL redundant
+  {
+    result = std::stoi(row[0]);
+  }
+  mysql_free_result(res);
+  return result;
+}
+
+int GGDatabase::getCourseId(std::string c_name)
+{
+  bool result_success;
+  MYSQL_RES* res;
+  int result;
+  MYSQL_ROW row;
+
+  std::stringstream ss;
+  ss << "select id from courses where course_name='" << c_name << "';";
+  std::string q = ss.str();
+
+  std::tie(result_success, res) = this->execSQLQuery_(conn_, q);
+
+  if (!result_success)
+  {
+    std::cout << "result unsuccesful" << std::endl;
+  }
+
+  while ((row = mysql_fetch_row(res)) != NULL)  //!= NULL redundant
+  {
+    result = std::stoi(row[0]);
+  }
+  mysql_free_result(res);
+  return result;
 }

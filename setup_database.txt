@@ -1,6 +1,7 @@
 sudo apt install libmariadb3 libmariadb-dev mariadb-server mariadb-client
 sudo mariadb-secure-installation //choices don't matter
 sudo mariadb -u root
+--------------------------------------------------------------------------
 
 CREATE DATABASE grade_generator;
 USE grade_generator;

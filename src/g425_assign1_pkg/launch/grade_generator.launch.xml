@@ -1,0 +1,5 @@
+<launch>
+    <node pkg="g425_assign1_pkg" exec="GradeCalculator" />
+    <!-- example -->
+    <!-- <param from="$(find-pkg-share g425_assign1_pkg)/config/assign1_params.yaml" /> -->
+</launch>

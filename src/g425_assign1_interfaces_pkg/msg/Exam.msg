@@ -1,3 +1,3 @@
 builtin_interfaces/Time stamp
 g425_assign1_interfaces_pkg/Student student
-float32 tentamen_cijfer
+float32 exam_grade

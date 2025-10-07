@@ -3,7 +3,7 @@
 <package format="3">
   <name>g425_assign1_interfaces_pkg</name>
   <version>0.0.0</version>
-  <description>TODO: Package description</description>
+  <description>Interfaces for ROS2 assignment: Tilmann's Cijfer Generator</description>
   <maintainer email="burhantopaloglu60@gmail.com">burhan</maintainer>
   <license>Apache-2.0</license>
 

@@ -24,46 +24,34 @@ using Exams = g425_assign1_interfaces_pkg::srv::Exams;
 
 using namespace std::placeholders;
 
-//--Node class
 class GradeCalculator : public rclcpp::Node
 {
 public:
-  //-- constuctor:
   GradeCalculator() : Node("g425_gradecalculator_node")
   {
-    //--communication and timer objects:
     template_serviceserver_ =
-        this->create_service<Exams>("GradeCalculator", std::bind(&GradeCalculator::callBackExams, this, _1, _2));
+        this->create_service<Exams>("GradeCalculator", std::bind(&GradeCalculator::calculator, this, _1, _2));
     RCLCPP_INFO(this->get_logger(), "Service Server started");
-    //--custom functions:
   }
-
-  //-- communication and timer functions
-  void callBackExams(const Exams::Request::SharedPtr request, const Exams::Response::SharedPtr response)
+  
+  void calculator(const Exams::Request::SharedPtr request, const Exams::Response::SharedPtr response)
   {
-    // if (request->student.student_fullname == "Wessel")
-    // {
-    //   response->final_grade = (calculatedFinalGrade + 10.0f);
-    // }
-    float sum = 0.0f;
-    float average = 0;
-    for (float g : request->exam_grades) sum += g;
-    average = request->exam_grades.empty() ? 0.0f : sum / request->exam_grades.size();
 
-    if (average != 0)
+    float sum = 0.0f;
+    for (float g : request->exam_grades) sum += g;
+    calculatedFinalGrade = request->exam_grades.empty() ? 0.0f : sum / request->exam_grades.size();
+
+    if (calculatedFinalGrade >= 11)
     {
-      response->final_grade = average;
+      response->final_grade = calculatedFinalGrade;
     }
   }
-  //--custom functions:
-  //...
+
 
 private:
-  float calculatedFinalGrade = 50;  // placeholder of course
-  //--rclcpp variables:
+  float calculatedFinalGrade = 0;  
   rclcpp::Service<Exams>::SharedPtr template_serviceserver_;
-  //--custom variables:
-  //...
+
 };
 
 int main(int argc, char* argv[])

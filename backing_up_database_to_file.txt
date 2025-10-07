@@ -1,0 +1,2 @@
+//To Backup into file:
+mariadb-dump --user=john_gradegenerator --password --lock-tables --extended-insert --databases grade_generator > ./grade_generator.sql

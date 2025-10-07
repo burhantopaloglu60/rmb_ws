@@ -1,7 +1,7 @@
-//To Backup into file:
-mariadb-dump --user=john_gradegenerator --password --lock-tables --extended-insert --databases grade_generator > ./backup/grade_generator.sql
+sudo apt install libmariadb3 libmariadb-dev mariadb-server mariadb-client
+sudo mariadb-secure-installation //choices don't matter
+sudo mariadb -u root
 
-//Create Database (in Mariadb):
 CREATE DATABASE grade_generator;
 USE grade_generator;
 

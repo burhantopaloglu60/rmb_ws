@@ -14,6 +14,16 @@ CREATE TABLE `students` (
 CREATE TABLE `courses` (
     id INT AUTO_INCREMENT PRIMARY KEY,
     `course_name` VARCHAR(100) NOT NULL,
+    `number_of_grades` INT DEFAULT 0,
+    timestamp DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE student_courses (
+    student_id INT NOT NULL,
+    course_id INT NOT NULL,
+    PRIMARY KEY (student_id, course_id),
+    FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE ON UPDATE CASCADE,
     timestamp DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 

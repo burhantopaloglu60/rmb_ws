@@ -14,11 +14,11 @@ Youtube@Stevesteacher
 // mysql_close(con);
 
 #include "g425_assign1_pkg/GGDatabase.hpp"
-#include <mariadb/mysql.h>
 #include <mariadb/mysqld_error.h>
+/* found in header
+#include <mariadb/mysql.h>
 #include <iostream>
-#include <vector>
-#include <tuple>
+#include <tuple> */
 
 GGDatabase::GGDatabase(const std::string& server, const std::string& user,  //
                        const std::string& password, const std::string& database)

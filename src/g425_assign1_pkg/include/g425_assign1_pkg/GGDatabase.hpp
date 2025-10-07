@@ -14,39 +14,65 @@ Software changes (one line by change):
 
 #pragma once  // we want the database to only have one instance
 #include <mariadb/mysql.h>
-// #include <mariadb/mysqld_error.h>
 #include <iostream>
-// #include <vector>
-// #include <tuple>
+#include <tuple>
 
 /**
  * @brief
- * DataBase Entry finalgrade:
- * Use this struct to manipulate database entries, the database itself is only to be called using this struct
+ * DataBase Entry for Table: students excluding value "timestamp"
  */
-struct DBE_finalgrade
+struct DBT_Student
 {
   int id;
   std::string student_name;
-  int student_id;
-  std::string course;
   int course_id;
-  int number_of_exams;
-  double final_grade;
-  std::string timestamp;
 };
 
 /**
  * @brief
- * Table meant for logging ALL grades
+ * DataBase Entry for Table: courses excluding value "timestamp"
+ * @param number_of_exams Number of exams in this course
  */
-struct DBE_grade
+struct DBT_Course
 {
   int id;
-  int student_id;
-  int course_id;
+  std::string course_name;
+  int number_of_exams;
+};
+
+/**
+ * @brief 
+ * DataBase Entry for Table: student_courses excluding value "timestamp"
+ */
+struct DBT_StudentCourse {
+    int student_id;  // Foreign key -> students.id
+    int course_id;   // Foreign key -> courses.id
+};
+
+/**
+ * @brief
+ * DataBase Entry for Table: final_grades excluding value "timestamp"
+ * @param number_of_exams Number of exams taken for this result
+ */
+struct DBT_FinalGrade
+{
+  int id;
+  int student_id;       // Foreign key referencing students.id
+  int course_id;        // Foreign key referencing courses.id
+  int number_of_exams;
+  double final_grade;
+};
+
+/**
+ * @brief
+ * DataBase Entry for Table: grades excluding value "timestamp"
+ */
+struct DBT_Grade
+{
+  int id;
+  int student_id;  // Foreign key referencing students.id
+  int course_id;   // Foreign key referencing courses.id
   double grade;
-  std::string timestamp;
 };
 
 /**
@@ -67,10 +93,8 @@ public:
   );
 
   std::tuple<bool, MYSQL*> SetupConnection();
-  
 
 private:
-
   std::tuple<bool, MYSQL_RES*> ExecSQLQuery(MYSQL* connection, std::string query);
   MYSQL* conn_;
   std::string server_;

@@ -1,5 +1,9 @@
 <launch>
     <node pkg="g425_assign1_pkg" exec="GradeCalculator" />
+    <node pkg="g425_assign1_pkg" exec="ResultGenerator" />
+    <node pkg="g425_assign1_pkg" exec="FinalGradeDeterminator" />
+    <node pkg="g425_assign1_pkg" exec="RetakeGradeDeterminator" />
+    <node pkg="g425_assign1_pkg" exec="RetakeScheduler" />
     <!-- example -->
     <!-- <param from="$(find-pkg-share g425_assign1_pkg)/config/assign1_params.yaml" /> -->
 </launch>

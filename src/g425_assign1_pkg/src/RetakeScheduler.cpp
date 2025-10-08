@@ -21,9 +21,11 @@ one line per change
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp_action/rclcpp_action.hpp>
 #include "g425_assign1_interfaces_pkg/action/retaker.hpp"
+#include "g425_assign1_interfaces_pkg/msg/student.hpp"
 
 using Retaker = g425_assign1_interfaces_pkg::action::Retaker;
 using RetakeGoalHandle = rclcpp_action::ClientGoalHandle<Retaker>;
+using Student = g425_assign1_interfaces_pkg::msg::Student;
 
 class RetakeScheduler : public rclcpp::Node
 {
@@ -31,7 +33,7 @@ public:
     RetakeScheduler() : Node("retake_scheduler")
     {
         retake_actionclient_ = rclcpp_action::create_client<Retaker>(this, "retaker");
-        timer_ = this->create_wall_timer(std::chrono::seconds(5), std::bind(&RetakeScheduler::check_and_schedule, this));
+        timer_ = this->create_wall_timer(std::chrono::seconds(12), std::bind(&RetakeScheduler::check_and_schedule, this));
     }
 
 private:
@@ -45,10 +47,19 @@ private:
         // TO DO collecting students who failed from database 
 
         // Example student
-        auto goal_msg = Retaker::Goal();
-        goal_msg.student = "Melissa";   // teststudent
+        Student s;
+        s.student_id = 1;
+        s.student_fullname = "Melissa";
+        s.course_name = "Minor";
+        s.course_id = 10;
+        s.number_of_grades = 4;
 
-        RCLCPP_INFO(this->get_logger(), "Start retake for %s", goal_msg.student.c_str());
+        auto goal_msg = Retaker::Goal();
+        goal_msg.student = s;   // teststudent
+
+        RCLCPP_INFO(this->get_logger(),
+                    "Scheduling retake for %s (ID: %ld, course: %s)",
+                    s.student_fullname.c_str(), s.student_id, s.course_name.c_str());
 
         auto send_goal_options = rclcpp_action::Client<Retaker>::SendGoalOptions();
         send_goal_options.result_callback =
@@ -56,7 +67,7 @@ private:
             if (result.code == rclcpp_action::ResultCode::SUCCEEDED) {
                 RCLCPP_INFO(rclcpp::get_logger("RetakeScheduler"),
                             "Retake completed: %s, message: %s",
-                            result.result->success ? "true" : "false",
+                            result.result->success ? "Passed" : "Failed",
                             result.result->message.c_str());
             } else {
                 RCLCPP_ERROR(rclcpp::get_logger("RetakeScheduler"), "Retake scheduling failed");

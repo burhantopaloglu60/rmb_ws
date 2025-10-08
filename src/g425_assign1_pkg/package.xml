@@ -14,8 +14,9 @@
   <!-- additional depends -->
   <depend>g425_assign1_interfaces_pkg</depend>
   <!-- MariaDB -->
-  <exec_depend>libmariadb-dev</exec_depend> 
-  <exec_depend>libmariadb3</exec_depend>
+  <depend>libmariadb-dev</depend> 
+  <depend>libmariadb3</depend>
+  <depend>mariadb-connector-cpp</depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>

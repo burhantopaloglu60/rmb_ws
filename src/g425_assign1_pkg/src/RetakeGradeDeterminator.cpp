@@ -29,6 +29,7 @@ one line per change
 #include "g425_assign1_interfaces_pkg/msg/student.hpp"
 #include "g425_assign1_interfaces_pkg/msg/exam.hpp"
 #include "g425_assign1_interfaces_pkg/srv/exams.hpp"
+#include "g425_assign1_pkg/GGDatabase.hpp"
 
 using namespace std::placeholders;
 
@@ -76,6 +77,7 @@ private:
     rclcpp::Publisher<Student>::SharedPtr publisher_;
     rclcpp::Subscription<ExamResults>::SharedPtr subscriber_;
     rclcpp::Publisher<Student>::SharedPtr remove_student_pub_;
+    GGDatabase db;
 
     // Data
     std::vector<float> collected_grades_;
@@ -189,6 +191,25 @@ private:
                 remove_student_pub_->publish(response->student);
 
                 bool passed = (response->final_grade >= 55);
+
+                DBT_FinalGrade new_grade;
+                new_grade.student_id = student.student_id;
+                new_grade.course_id = student.course_id;
+                new_grade.number_of_exams = student.number_of_grades;
+                new_grade.final_grade = response->final_grade;
+
+                if (db.addFinalGrade(new_grade))
+                {
+                    RCLCPP_INFO(this->get_logger(),
+                                "Retake result added to database for %s (%.2f)",
+                                student.student_fullname.c_str(), response->final_grade);
+                }
+                else
+                {
+                    RCLCPP_ERROR(this->get_logger(),
+                                "Failed to insert new final grade for %s",
+                                student.student_fullname.c_str());
+                }
 
                 auto result = std::make_shared<Retaker::Result>();
                 result->success = passed;

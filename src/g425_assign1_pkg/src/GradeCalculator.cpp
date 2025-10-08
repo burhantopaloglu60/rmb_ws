@@ -12,6 +12,7 @@ always a bonus of 10 points. The final result has to be a number between 10 and 
 Software changes (one line by change):
 (1) 29.9.2025 created and initialized by Burhan Topaloglu
 (2) 07.10.2025 changed by Rik van Velzen
+(3) 08.10.2025 finalized first prototype by Burhan Topaloglu
 */
 
 //--general includes
@@ -36,26 +37,45 @@ public:
 
   void calculator(const Exams::Request::SharedPtr request, const Exams::Response::SharedPtr response)
   {
-
+    // make a sum of exam grades
     float sum = 0.0f;
-    for (float g : request->exam_grades) sum += g;
-    calculatedFinalGrade = request->exam_grades.empty() ? 0.0f : sum / request->exam_grades.size();
+    for (float g : request->exam_grades)
+      sum += g;
 
-    if (calculatedFinalGrade >= 11)
+    // add average of all exam grades to final grade
+    calculatedFinalGrade += request->exam_grades.empty() ? 0.0f : sum / request->exam_grades.size();
+
+    // only respond with the grade if there is one
+    if (calculatedFinalGrade != 0.0f)
     {
+      // wessel gets +10 always
+      if (request->student.student_fullname == "Wessel Tip")
+      {
+        calculatedFinalGrade += 10;
+      }
+
+      // clamp calculatedFinalGrade
+      if (calculatedFinalGrade < 10)
+        calculatedFinalGrade = 10;
+      else if (calculatedFinalGrade > 100)
+        calculatedFinalGrade = 100;
+
+      // respond with grade
       response->final_grade = calculatedFinalGrade;
       response->student = request->student;
-      RCLCPP_INFO(this->get_logger(), "Calculated final result for %s in %s: %.1f", 
-                                      response->student.student_fullname.c_str(),
-                                      response->student.course_name.c_str(), 
-                                      calculatedFinalGrade);
+      RCLCPP_INFO(this->get_logger(), "Calculated final result for %s in %s: %.1f",
+                  response->student.student_fullname.c_str(), response->student.course_name.c_str(),
+                  calculatedFinalGrade);
+    }
+    else
+    {
+      // what to do if calculation is 0
     }
   }
 
 private:
-  float calculatedFinalGrade = 0;  
+  double calculatedFinalGrade = 0;
   rclcpp::Service<Exams>::SharedPtr grade_calculator_service_;
-
 };
 
 int main(int argc, char* argv[])

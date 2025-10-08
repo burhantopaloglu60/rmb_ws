@@ -1,6 +1,9 @@
 sudo apt install libmariadb3 libmariadb-dev mariadb-server mariadb-client
 sudo mariadb-secure-installation //choices don't matter
 sudo mariadb -u root
+install the c++ connector for mariadb
+https://mariadb.com/docs/connectors/mariadb-connector-cpp/install-mariadb-connector-cpp
+Direct download link (ubuntu 24.04 Noble x86, 24.04 has no tar.gz for some reason): https://dlm.mariadb.com/4464930/Connectors/cpp/connector-cpp-1.1.7/mariadb-connector-cpp_1.1.7-1+maria~noble_amd64.deb
 
 usage is just
 include "g425_assign1_pkg/GGDatabase.hpp"

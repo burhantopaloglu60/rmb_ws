@@ -90,183 +90,89 @@ std::tuple<bool, MYSQL_RES*> GGDatabase::execSQLQuery_(MYSQL* connection, std::s
   return std::make_tuple(success, mysql_use_result(connection));
 }
 
-std::string GGDatabase::getStudentName(int s_id)
+#pragma region helper_templates
+template <typename T>
+T GGDatabase::fetchSingleValue(const std::string& query)
 {
   bool result_success;
   MYSQL_RES* res;
-  std::string result;
-  MYSQL_ROW row;  // the results rows (array)
+  MYSQL_ROW row;
 
-  std::stringstream ss;
-  ss << "select student_name from students where id=" << s_id << ";";
-  std::string q = ss.str();
-
-  std::tie(result_success, res) = this->execSQLQuery_(conn_, q);
+  std::tie(result_success, res) = execSQLQuery_(conn_, query);
 
   if (!result_success)
   {
-    std::cout << "result unsuccesful" << std::endl;
+    std::cout << "Query failed: " << query << std::endl;
+    return T{};  // default value
   }
 
-  while ((row = mysql_fetch_row(res)) != NULL)
+  T value{};
+  if ((row = mysql_fetch_row(res)) != nullptr)
   {
-    result = row[0];
+    if constexpr (std::is_same_v<T, int>)
+      value = row[0] ? std::stoi(row[0]) : 0;
+    else if constexpr (std::is_same_v<T, double>)
+      value = row[0] ? std::stod(row[0]) : 0.0;
+    else
+      value = row[0] ? row[0] : "";
   }
+
   mysql_free_result(res);
-  return result;
+  return value;
+}
+
+bool GGDatabase::executeInsert(const std::string& query)
+{
+  bool success;
+  MYSQL_RES* res;
+  std::tie(success, res) = execSQLQuery_(conn_, query);
+  if (!success)
+    std::cout << "Insert failed: " << query << std::endl;
+  mysql_free_result(res);
+  return success;
+}
+#pragma endregion helper_templates
+
+std::string GGDatabase::getStudentName(int s_id)
+{
+  return fetchSingleValue<std::string>("SELECT student_name FROM students WHERE id=" + std::to_string(s_id) + ";");
 }
 
 std::string GGDatabase::getCourseName(int c_id)
 {
-  bool result_success;
-  MYSQL_RES* res;
-  std::string result;
-  MYSQL_ROW row;  // the results rows (array)
-
-  std::stringstream ss;
-  ss << "select course_name from courses where id=" << c_id << ";";
-  std::string q = ss.str();
-
-  std::tie(result_success, res) = this->execSQLQuery_(conn_, q);
-
-  if (!result_success)
-  {
-    std::cout << "result unsuccesful" << std::endl;
-  }
-
-  while ((row = mysql_fetch_row(res)) != NULL)
-  {
-    result = row[0];
-  }
-  mysql_free_result(res);
-  return result;
+  return fetchSingleValue<std::string>("SELECT course_name FROM courses WHERE id=" + std::to_string(c_id) + ";");
 }
 
 int GGDatabase::getStudentId(const std::string& s_name)
 {
-  bool result_success;
-  MYSQL_RES* res;
-  int result;
-  MYSQL_ROW row;
-
-  std::stringstream ss;
-  ss << "select id from students where student_name='" << s_name << "';";
-  std::string q = ss.str();
-
-  std::tie(result_success, res) = this->execSQLQuery_(conn_, q);
-
-  if (!result_success)
-  {
-    std::cout << "result unsuccesful" << std::endl;
-  }
-
-  while ((row = mysql_fetch_row(res)) != NULL)
-  {
-    result = std::stoi(row[0]);
-  }
-  mysql_free_result(res);
-  return result;
+  return fetchSingleValue<int>("SELECT id FROM students WHERE student_name='" + s_name + "';");
 }
 
 int GGDatabase::getCourseId(const std::string& c_name)
 {
-  bool result_success;
-  MYSQL_RES* res;
-  int result;
-  MYSQL_ROW row;
-
-  std::stringstream ss;
-  ss << "select id from courses where course_name='" << c_name << "';";
-  std::string q = ss.str();
-
-  std::tie(result_success, res) = this->execSQLQuery_(conn_, q);
-
-  if (!result_success)
-  {
-    std::cout << "result unsuccesful" << std::endl;
-  }
-
-  while ((row = mysql_fetch_row(res)) != NULL)  //!= NULL redundant
-  {
-    result = std::stoi(row[0]);
-  }
-  mysql_free_result(res);
-  return result;
+  return fetchSingleValue<int>("SELECT id FROM courses WHERE course_name='" + c_name + "';");
 }
 
 bool GGDatabase::addGrade(const DBT_Grade& st_grade)
 {
-  bool result_success;
-  MYSQL_RES* res;
-  bool result;
-
   std::stringstream ss;
-  ss << "INSERT INTO grades (student_id, course_id, grade) VALUES ("  //
-     << st_grade.student_id << ", "                                   //
-     << st_grade.course_id << ", "                                    //
-     << st_grade.grade << ");";                                       //
-  std::string q = ss.str();
-
-  std::tie(result_success, res) = this->execSQLQuery_(conn_, q);
-
-  if (!result_success)
-  {
-    std::cout << "result unsuccesful" << std::endl;
-  }
-  result = result_success;
-  mysql_free_result(res);
-  return result;
+  ss << "INSERT INTO grades (student_id, course_id, grade) VALUES (" << st_grade.student_id << "," << st_grade.course_id
+     << "," << st_grade.grade << ");";
+  return executeInsert(ss.str());
 }
 
 bool GGDatabase::addFinalGrade(const DBT_FinalGrade& st_finalGrade)
 {
-  bool result_success;
-  MYSQL_RES* res;
-  bool result;
-
   std::stringstream ss;
-  ss << "INSERT INTO final_grades (student_id, course_id, number_of_exams, final_grade) VALUES ("  //
-     << st_finalGrade.student_id << ", "                                                           //
-     << st_finalGrade.course_id << ", "                                                            //
-     << st_finalGrade.number_of_exams << ", "                                                      //
+  ss << "INSERT INTO final_grades (student_id, course_id, number_of_exams, final_grade) VALUES ("
+     << st_finalGrade.student_id << "," << st_finalGrade.course_id << "," << st_finalGrade.number_of_exams << ","
      << st_finalGrade.final_grade << ");";
-  std::string q = ss.str();
-
-  std::tie(result_success, res) = this->execSQLQuery_(conn_, q);
-
-  if (!result_success)
-  {
-    std::cout << "result unsuccesful" << std::endl;
-  }
-  result = result_success;
-  mysql_free_result(res);
-  return result;
+  return executeInsert(ss.str());
 }
 
 int GGDatabase::getGradeAmountFromCourse(int c_id)
 {
-  bool result_success;
-  MYSQL_RES* res;
-  int result;
-  MYSQL_ROW row;
-
-  std::stringstream ss;
-  ss << "select number_of_grades from courses where id='" << c_id << "';";
-  std::string q = ss.str();
-
-  std::tie(result_success, res) = this->execSQLQuery_(conn_, q);
-
-  if (!result_success)
-  {
-    std::cout << "result unsuccesful" << std::endl;
-  }
-
-  while ((row = mysql_fetch_row(res)) != NULL)
-  {
-    result = std::stoi(row[0]);
-  }
-  mysql_free_result(res);
-  return result;
+  return fetchSingleValue<int>("SELECT number_of_grades FROM courses WHERE id=" + std::to_string(c_id) + ";");
 }
 
 std::vector<std::tuple<int, int>> GGDatabase::getAllStudentCoursesRel()

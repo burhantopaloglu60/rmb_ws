@@ -106,6 +106,10 @@ public:
 
 private:
   std::tuple<bool, MYSQL_RES*> execSQLQuery_(MYSQL* connection, std::string query);
+  template <typename T>
+  T fetchSingleValue(const std::string& query);
+  bool executeInsert(const std::string& query);
+
   MYSQL* conn_;
   std::string server_;
   std::string user_;

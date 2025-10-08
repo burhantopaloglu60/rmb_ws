@@ -88,11 +88,8 @@ struct DBT_Grade
 class GGDatabase
 {
 public:
-  GGDatabase(const std::string& server,    // uri
-             const std::string& user,      // username
-             const std::string& password,  // password
-             const std::string& database   // schema
-  );
+  GGDatabase(const std::string& server = "localhost", const std::string& user = "john_gradegenerator",
+             const std::string& password = "1234", const std::string& database = "grade_generator");
   ~GGDatabase();
 
   std::tuple<bool, MYSQL*> setupConnection();

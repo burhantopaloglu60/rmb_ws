@@ -18,15 +18,9 @@ Youtube@Stevesteacher
 #include <tuple>
 #include <vector> */
 
-GGDatabase::GGDatabase(const std::string& server = "localhost",          // for educational purposes, plaintext
-                       const std::string& user = "john_gradegenerator",  //
-                       const std::string& password = "1234",             //
-                       const std::string& database = "grade_generator")
-  : server_(std::move(server))
-  , user_(std::move(user))
-  ,  //
-  password_(std::move(password))
-  , database_(std::move(database))
+GGDatabase::GGDatabase(const std::string& server, const std::string& user,  //
+                       const std::string& password, const std::string& database)
+  : server_(server), user_(user), password_(password), database_(database)
 {
   bool conn_success;
   std::cout << "Connecting to MariaDB at: " << server_ << std::endl;

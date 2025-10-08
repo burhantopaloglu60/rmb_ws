@@ -1,6 +1,5 @@
 # Goal
-#g425_assign1_interfaces_pkg/Student student
-string student
+g425_assign1_interfaces_pkg/Student student
 ---
 # Result
 bool success

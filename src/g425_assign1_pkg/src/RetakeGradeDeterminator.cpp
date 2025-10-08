@@ -26,80 +26,210 @@ one line per change
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp_action/rclcpp_action.hpp>
 #include "g425_assign1_interfaces_pkg/action/retaker.hpp"
+#include "g425_assign1_interfaces_pkg/msg/student.hpp"
+#include "g425_assign1_interfaces_pkg/msg/exam.hpp"
+#include "g425_assign1_interfaces_pkg/srv/exams.hpp"
+
+using namespace std::placeholders;
 
 using Retaker = g425_assign1_interfaces_pkg::action::Retaker;
 using GoalHandleRetaker = rclcpp_action::ServerGoalHandle<Retaker>;
+using Student = g425_assign1_interfaces_pkg::msg::Student;
+using ExamResults = g425_assign1_interfaces_pkg::msg::Exam;
+using GradeCalculator = g425_assign1_interfaces_pkg::srv::Exams;
 
 class RetakeGradeDeterminator : public rclcpp::Node
 {
 public:
-    RetakeGradeDeterminator()  : Node("retake_grade_determinator")
+    RetakeGradeDeterminator() : Node("retake_grade_determinator")
     {
+        // Action server
         retake_actionserver_ = rclcpp_action::create_server<Retaker>(
             this,
             "retaker",
-            std::bind(&RetakeGradeDeterminator::handle_goal, this, std::placeholders::_1, std::placeholders::_2),
-            std::bind(&RetakeGradeDeterminator::handle_cancel, this, std::placeholders::_1),
-            std::bind(&RetakeGradeDeterminator::handle_accepted, this, std::placeholders::_1));
+            std::bind(&RetakeGradeDeterminator::handle_goal, this, _1, _2),
+            std::bind(&RetakeGradeDeterminator::handle_cancel, this, _1),
+            std::bind(&RetakeGradeDeterminator::handle_accepted, this, _1));
+
+        // Service client
+        grade_calculator_client_ = this->create_client<GradeCalculator>("GradeCalculator");
+
+        // Publisher (vraagt ResultGenerator om nieuwe random cijfers)
+        publisher_ = this->create_publisher<Student>("retake_students", 10);
+
+        // Subscriber (ontvangt elk individueel cijfer van ResultGenerator)
+        subscriber_ = this->create_subscription<ExamResults>(
+            "exam_results", 10,
+            std::bind(&RetakeGradeDeterminator::examResultsCallback, this, _1));
+
+        // Publisher to remove student from ResultGenerator
+        remove_student_pub_ = this->create_publisher<Student>(
+            "remove_students", 10);
+
+        RCLCPP_INFO(this->get_logger(), "RetakeGradeDeterminator node started");
     }
 
 private:
+    // Communication
     rclcpp_action::Server<Retaker>::SharedPtr retake_actionserver_;
+    rclcpp::Client<GradeCalculator>::SharedPtr grade_calculator_client_;
+    rclcpp::Publisher<Student>::SharedPtr publisher_;
+    rclcpp::Subscription<ExamResults>::SharedPtr subscriber_;
+    rclcpp::Publisher<Student>::SharedPtr remove_student_pub_;
 
+    // Data
+    std::vector<float> collected_grades_;
+    Student active_student_;
+    bool collecting_ = false;
+    std::mutex data_mutex_;
+
+    // Action goal handler
     rclcpp_action::GoalResponse handle_goal(
         const rclcpp_action::GoalUUID &,
         std::shared_ptr<const Retaker::Goal> goal)
     {
-        RCLCPP_INFO(this->get_logger(), "Received retake for student: %s", goal->student.c_str());
+        const auto &student = goal->student;
+        RCLCPP_INFO(this->get_logger(),
+                    "Received retake request for student: %s (ID: %ld, course: %s, needs %d grades)",
+                    student.student_fullname.c_str(),
+                    student.student_id,
+                    student.course_name.c_str(),
+                    student.number_of_grades);
         return rclcpp_action::GoalResponse::ACCEPT_AND_EXECUTE;
     }
 
+    // Action cancel handler
     rclcpp_action::CancelResponse handle_cancel(const std::shared_ptr<GoalHandleRetaker>)
     {
         RCLCPP_INFO(this->get_logger(), "Retake cancelled");
+        collecting_ = false;
         return rclcpp_action::CancelResponse::ACCEPT;
     }
 
+    // Action accepted handler
     void handle_accepted(const std::shared_ptr<GoalHandleRetaker> goal_handle)
     {
         std::thread{std::bind(&RetakeGradeDeterminator::execute, this, goal_handle)}.detach();
     }
 
+    // Execute logic
     void execute(const std::shared_ptr<GoalHandleRetaker> goal_handle)
     {
-        auto feedback = std::make_shared<Retaker::Feedback>();
-        auto result = std::make_shared<Retaker::Result>();
+        const auto &student = goal_handle->get_goal()->student;
+        active_student_ = student;
+        collected_grades_.clear();
+        collecting_ = true;
 
-        // Simulate exam results instead of using result generator and grade calculator
-        int sum = 0;
-        int n = 3;
-        for (int i = 0; i < n; i++) {
-            int grade = 10 + (rand() % 91); // random grade between 10 to 100
-            sum += grade;
 
-            RCLCPP_INFO(this->get_logger(), "Tentamen result %d received: %d", i + 1, grade);
-            std::this_thread::sleep_for(std::chrono::seconds(1));
+        RCLCPP_INFO(this->get_logger(),
+                    "Requesting %d new exam results for %s (ID: %ld)...",
+                    student.number_of_grades,
+                    student.student_fullname.c_str(),
+                    student.student_id);
+                    
+        // Vraag de ResultGenerator om nieuwe random resultaten te publiceren
+        publisher_->publish(student);
+
+        // Wacht tot er voldoende resultaten zijn
+        rclcpp::Rate rate(2);
+        int tries = 0;
+
+        while (rclcpp::ok())
+        {
+            {
+                std::lock_guard<std::mutex> lock(data_mutex_);
+                if ((int)collected_grades_.size() >= student.number_of_grades)
+                    break;
+            }
+
+            if (++tries > 30)
+            {
+                RCLCPP_ERROR(this->get_logger(),
+                             "Timeout waiting for enough exam results for %s",
+                             student.student_fullname.c_str());
+                auto result = std::make_shared<Retaker::Result>();
+                result->success = false;
+                result->message = "Not enough exam results received";
+                goal_handle->abort(result);
+                collecting_ = false;
+                return;
+            }
+            rate.sleep();
         }
 
-        int final_grade = sum / n;
-        if (final_grade < 10) final_grade = 10;
-        if (final_grade > 100) final_grade = 100;
+        // Servicecall
+        if (!grade_calculator_client_->wait_for_service(std::chrono::seconds(5)))
+        {
+            RCLCPP_ERROR(this->get_logger(), "GradeCalculator service not available");
+            auto result = std::make_shared<Retaker::Result>();
+            result->success = false;
+            result->message = "Service unavailable";
+            goal_handle->abort(result);
+            collecting_ = false;
+            return;
+        }
 
-        if (final_grade >= 55) result->success = true;
-        if (final_grade < 55) result->success = false;
-        result->message = "Final grade calculated";
+        auto request = std::make_shared<GradeCalculator::Request>();
+        request->student = student;
 
-        goal_handle->succeed(result);
+        {
+            std::lock_guard<std::mutex> lock(data_mutex_);
+            request->exam_grades = collected_grades_;
+        }
 
-        RCLCPP_INFO(this->get_logger(), "Retake completed with final grade: %d", final_grade);
+        RCLCPP_INFO(this->get_logger(),
+                    "Sending %zu exam results to GradeCalculator...",
+                    request->exam_grades.size());
+
+        grade_calculator_client_->async_send_request(
+            request,
+            [this, goal_handle, student](rclcpp::Client<GradeCalculator>::SharedFuture future)
+            {
+                auto response = future.get();
+                remove_student_pub_->publish(response->student);
+
+                bool passed = (response->final_grade >= 55);
+
+                auto result = std::make_shared<Retaker::Result>();
+                result->success = passed;
+                result->message = passed ? "Retake passed" : "Retake failed";
+                goal_handle->succeed(result);
+
+                RCLCPP_INFO(this->get_logger(),
+                            "Retake completed for %s (ID: %ld) → %s (final grade: %.1f)",
+                            student.student_fullname.c_str(),
+                            student.student_id,
+                            passed ? "PASSED" : "FAILED",
+                            response->final_grade);
+
+                collecting_ = false;
+            });
     }
 
+    // Elke keer dat er een cijfer binnenkomt van de ResultGenerator
+    void examResultsCallback(const ExamResults::SharedPtr msg)
+    {
+        if (!collecting_)
+            return; // Alleen verzamelen als een actie actief is
+
+        std::lock_guard<std::mutex> lock(data_mutex_);
+
+        collected_grades_.push_back(msg->exam_grade);
+
+        RCLCPP_INFO(this->get_logger(),
+                    "Received exam result: %.2f for %s (total collected: %zu / %d)",
+                    msg->exam_grade,
+                    msg->student.student_fullname.c_str(),
+                    collected_grades_.size(),
+                    msg->student.number_of_grades);
+    }
 };
 
-int main(int argc, char ** argv)
+int main(int argc, char **argv)
 {
     rclcpp::init(argc, argv);
     rclcpp::spin(std::make_shared<RetakeGradeDeterminator>());
     rclcpp::shutdown();
     return 0;
 }
+

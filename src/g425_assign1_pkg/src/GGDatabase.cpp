@@ -1,12 +1,13 @@
 /*
-Let there be functions for Reading and Appending database file at "data/student_db.csv"
 Yes, I know plaintext passwords are bad but this is for educational purposes -Burhan
 
 Software changes (one line by change):
 (1) 29.09.2025 created and initialized by Burhan Topaloglu
-(2) 03.10.2025 basic connection functionality by Burhan Topaloglu, mariadb connection basics guided by
-Youtube@Stevesteacher
-...
+(2) 03.10.2025 basic connection functionality by Burhan Topaloglu, mariadb connection basics guide by Stevesteacher
+(3) 07.10.2025 added all functionality by Burhan Topaloglu
+(4) 08.10.2025 simplified with Templates and finalised functionality by Burhan Topaloglu
+
+Tested by Burhan Topaloglu on each iteration
 */
 
 #include "g425_assign1_pkg/GGDatabase.hpp"

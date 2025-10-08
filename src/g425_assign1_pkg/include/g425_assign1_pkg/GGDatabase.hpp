@@ -1,12 +1,11 @@
 /*
 Header file for GGDatabase.cpp -Burhan Topaloglu
-*/
 
-/*
 Software changes (one line by change):
 (1) 29.09.2025 created and initialized by Burhan Topaloglu
 (2) 03.10.2025 basic connection functionality by Burhan Topaloglu
-...
+(3) 07.10.2025 added all functionality by Burhan Topaloglu
+(4) 08.10.2025 simplified with Templates and finalised functionality by Burhan Topaloglu
 */
 
 #ifndef __GGDATABASE_HPP__

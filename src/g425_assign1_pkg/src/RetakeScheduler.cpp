@@ -35,13 +35,10 @@ using Student = g425_assign1_interfaces_pkg::msg::Student;
 class RetakeScheduler : public rclcpp::Node
 {
 public:
-    RetakeScheduler() 
-        : Node("retake_scheduler"), 
-          db("localhost", "john_gradegenerator", "1234", "grade_generator"),
-          processingRetake(false)
+    RetakeScheduler() : Node("retake_scheduler"), processingRetake(false)
     {
         retake_actionclient_ = rclcpp_action::create_client<Retaker>(this, "retaker");
-        timer_ = this->create_wall_timer(std::chrono::seconds(12),
+        timer_ = this->create_wall_timer(std::chrono::seconds(10),
                                          std::bind(&RetakeScheduler::check_and_schedule, this));
     }
 
@@ -52,7 +49,7 @@ private:
 
     std::set<std::pair<int, int>> scheduledRetakes;
 
-    // Queue en mutex voor sequentieel verwerken
+    // Queue and mutex for sequential processing
     std::queue<Student> retakeQueue;
     bool processingRetake;
     std::mutex queueMutex;
@@ -63,16 +60,16 @@ private:
 
         std::lock_guard<std::mutex> lock(queueMutex);
 
-        // Voeg nieuwe onvoldoendes toe aan de queue
+        // Add new failing grades to the queue
         std::vector<DBT_FinalGrade> finalGrades = db.getAllFinalGrades();
         for (const auto &fg : finalGrades)
         {
             auto key = std::make_pair(fg.student_id, fg.course_id);
 
-            // Alleen herkansingen voor onvoldoendes
+            // Only retakes for failed grades
             if (fg.final_grade >= 10 && fg.final_grade <= 54)
             {
-                // Als deze combinatie nog niet gepland of in queue, voeg toe
+                // If this combination is not yet planned or in queue, add
                 if (scheduledRetakes.find(key) == scheduledRetakes.end())
                 {
                     Student s;
@@ -88,7 +85,7 @@ private:
             }
         }
 
-        // Start de volgende herkansing als er nog geen actieve is
+        // Start the next retake if there is no active one yet
         if (!processingRetake && !retakeQueue.empty())
         {
             startNextRetake();
@@ -120,7 +117,7 @@ private:
                             current.course_name.c_str(),
                             result.result->success ? "Passed" : "Failed");
 
-                // Als student een onvoldoende haalt, mag opnieuw, dus verwijderen uit scheduledRetakes
+                // If a student fails, he/she may retake the exam again, so remove it from scheduledRetakes
                 if (!result.result->success)
                 {
                     scheduledRetakes.erase(key);
@@ -134,7 +131,7 @@ private:
 
             processingRetake = false;
 
-            // Start direct de volgende herkansing uit de queue
+            // Start the next retake from the queue
             startNextRetake();
         };
 

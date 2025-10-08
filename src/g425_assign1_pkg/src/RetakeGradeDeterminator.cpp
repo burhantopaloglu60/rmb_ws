@@ -55,10 +55,10 @@ public:
         // Service client
         grade_calculator_client_ = this->create_client<GradeCalculator>("GradeCalculator");
 
-        // Publisher (vraagt ResultGenerator om nieuwe random cijfers)
+        // Publisher (asks ResultGenerator for new random numbers)
         publisher_ = this->create_publisher<Student>("retake_students", 10);
 
-        // Subscriber (ontvangt elk individueel cijfer van ResultGenerator)
+        // Subscriber (receives each individual number from ResultGenerator)
         subscriber_ = this->create_subscription<ExamResults>(
             "exam_results", 10,
             std::bind(&RetakeGradeDeterminator::examResultsCallback, this, _1));
@@ -129,10 +129,10 @@ private:
                     student.student_fullname.c_str(),
                     student.student_id);
                     
-        // Vraag de ResultGenerator om nieuwe random resultaten te publiceren
+        // Ask the ResultGenerator to publish new random results
         publisher_->publish(student);
 
-        // Wacht tot er voldoende resultaten zijn
+        // Wait until there are enough results
         rclcpp::Rate rate(2);
         int tries = 0;
 
@@ -227,11 +227,11 @@ private:
             });
     }
 
-    // Elke keer dat er een cijfer binnenkomt van de ResultGenerator
+    // Every time a number comes in from the ResultGenerator this function is called
     void examResultsCallback(const ExamResults::SharedPtr msg)
     {
         if (!collecting_)
-            return; // Alleen verzamelen als een actie actief is
+            return; // Collect only when an action is active
 
         std::lock_guard<std::mutex> lock(data_mutex_);
 

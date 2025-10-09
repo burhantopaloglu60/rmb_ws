@@ -56,7 +56,7 @@ public:
         grade_calculator_client_ = this->create_client<GradeCalculator>("GradeCalculator");
 
         // Publisher (asks ResultGenerator for new random numbers)
-        publisher_ = this->create_publisher<Student>("retake_students", 10);
+        publisher_ = this->create_publisher<Student>("add_students", 10);
 
         // Subscriber (receives each individual number from ResultGenerator)
         subscriber_ = this->create_subscription<ExamResults>(

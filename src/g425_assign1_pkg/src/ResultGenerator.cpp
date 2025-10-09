@@ -43,16 +43,14 @@ class ResultGenerator : public rclcpp::Node
 	ResultGenerator() : Node("ResultGenerator_node")
 	{	
         srand(time(nullptr));
-        // Load initial student/course combinations from DB
-        // students_ = load_students_from_db();
 
         // Publisher for exam results
         exam_pub_ = this->create_publisher<Exam>(
             "exam_results", 10);
 
         // Subscriber to add retake students
-        retake_sub_ = this->create_subscription<Student>(
-        "retake_students", 10,
+        add_student_sub_ = this->create_subscription<Student>(
+        "add_students", 10,
         std::bind(&ResultGenerator::add_student, this, _1));
         
         // Subscriber for remove students
@@ -66,15 +64,7 @@ class ResultGenerator : public rclcpp::Node
             std::bind(&ResultGenerator::publish_random_result, this));
 
         RCLCPP_INFO(this->get_logger(), "Tentamen Result Generator Node started.");
-
-        // Voeg een teststudent toe
-            Student test_student;
-            test_student.student_fullname = "Rik van Velzen";
-            test_student.course_name = "Robotics";
-            test_student.student_id = 123456;
-            test_student.course_id = 101;
-            test_student.number_of_grades = 3; // of total_expected_grades
-            students_.push_back(test_student);
+        
 	}
 
 	private:
@@ -83,7 +73,7 @@ class ResultGenerator : public rclcpp::Node
     {
         // Controleer of er studenten zijn
             if (students_.empty()) {
-                RCLCPP_WARN(this->get_logger(), "No students available to generate results, loading database again.");
+                RCLCPP_WARN(this->get_logger(), "Geen studenten beschikbaar.");
                 // students_ = load_students_from_db();
                 return;
             }
@@ -103,6 +93,14 @@ class ResultGenerator : public rclcpp::Node
 
         // Publiceer
         exam_pub_->publish(exam_msg);
+        // Sla het resultaat op in de database
+        
+        DBT_Grade grade;
+        grade.student_id = chosen_student.student_id;
+        grade.course_id = chosen_student.course_id;
+        grade.grade = mark;
+
+        db.addGrade(grade);
 
         RCLCPP_INFO(this->get_logger(),
                     "Published result: %s, Course: %s, Mark: %.1f",
@@ -173,15 +171,16 @@ class ResultGenerator : public rclcpp::Node
                         student.course_id);
         }
     }
+
     // ROS2 communication objects
     rclcpp::Publisher<Exam>::SharedPtr exam_pub_;
-    rclcpp::Subscription<Student>::SharedPtr retake_sub_;
+    rclcpp::Subscription<Student>::SharedPtr add_student_sub_;
     rclcpp::Subscription<Student>::SharedPtr remove_student_sub_;
     rclcpp::TimerBase::SharedPtr timer_;
 
     // Internal storage of students
     std::vector<Student> students_;
-
+    GGDatabase db;
 };
 
 int main(int argc, char **argv)

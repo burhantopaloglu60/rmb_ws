@@ -1,9 +1,18 @@
 <launch>
-    <node pkg="g425_assign1_pkg" exec="GradeCalculator" />
-    <node pkg="g425_assign1_pkg" exec="ResultGenerator" />
-    <node pkg="g425_assign1_pkg" exec="FinalGradeDeterminator" />
-    <node pkg="g425_assign1_pkg" exec="RetakeGradeDeterminator" />
-    <node pkg="g425_assign1_pkg" exec="RetakeScheduler" /> 
+    <node pkg="g425_assign1_pkg" exec="GradeCalculator" >
+        <param from="$(find-pkg-share g425_assign1_pkg)/config/assign1_params.yaml" />
+    </node>
+    <node pkg="g425_assign1_pkg" exec="ResultGenerator" >
+        <param from="$(find-pkg-share g425_assign1_pkg)/config/assign1_params.yaml" />
+    </node>
+    <node pkg="g425_assign1_pkg" exec="FinalGradeDeterminator" >
+        <param from="$(find-pkg-share g425_assign1_pkg)/config/assign1_params.yaml" />
+    </node>
+    <node pkg="g425_assign1_pkg" exec="RetakeGradeDeterminator" >
+        <param from="$(find-pkg-share g425_assign1_pkg)/config/assign1_params.yaml" />
+    </node>
+    <node pkg="g425_assign1_pkg" exec="RetakeScheduler" >
+        <param from="$(find-pkg-share g425_assign1_pkg)/config/assign1_params.yaml" />
+    </node>
     <!-- example -->
-    <!-- <param from="$(find-pkg-share g425_assign1_pkg)/config/assign1_params.yaml" /> -->
 </launch>

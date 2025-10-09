@@ -19,10 +19,8 @@ Rik
 #include "g425_assign1_interfaces_pkg/msg/student.hpp"
 #include "g425_assign1_pkg/GGDatabase.hpp"
 
-#define CALC_GRADE_TIMEOUT 5.0  // seconds
-#define DB_CHECK_INTERVAL 10   // seconds
-
 using namespace std::placeholders;
+
 using Exams = g425_assign1_interfaces_pkg::srv::Exams;
 using Exam = g425_assign1_interfaces_pkg::msg::Exam;
 using Student = g425_assign1_interfaces_pkg::msg::Student;
@@ -33,7 +31,11 @@ public:
     // -- Constructor:
     FinalGradeDeterminator() : Node("FinalGradeDeterminator_node")
     {
-        // get_students_from_db();
+        this->declare_parameter("CALC_GRADE_TIMEOUT", 5);
+        this->declare_parameter("DB_CHECK_INTERVAL", 10);
+        
+        db_check_interval = this->get_parameter("DB_CHECK_INTERVAL").as_int();
+        calc_grade_timeout = this->get_parameter("CALC_GRADE_TIMEOUT").as_int();
         // Subscriber for exam results
         exam_sub_ = this->create_subscription<Exam>(
             "exam_results", 10,
@@ -50,7 +52,7 @@ public:
             "remove_students", 10);
 
         timer_ = this->create_wall_timer(
-            std::chrono::seconds(DB_CHECK_INTERVAL),
+            std::chrono::seconds(db_check_interval),
             std::bind(&FinalGradeDeterminator::check_database, this));
 
         RCLCPP_INFO(this->get_logger(), "FinalGradeDeterminator node started.");
@@ -121,7 +123,7 @@ private:
     void calculate_grade(const Student &entry, const std::vector<float> &grades)
     {
         auto start_time = this->now();
-        auto timeout = rclcpp::Duration::from_seconds(CALC_GRADE_TIMEOUT);
+        auto timeout = rclcpp::Duration::from_seconds(calc_grade_timeout);
         while (!exam_client_->service_is_ready()) {
             auto elapsed = this->now() - start_time;
             if (elapsed >= timeout) {
@@ -283,6 +285,8 @@ private:
     std::vector<Student> student_courses_;
     std::map<std::pair<int64_t, int32_t>, std::vector<float>> student_grades_;
     GGDatabase db;  // Database object
+    int db_check_interval;
+    int calc_grade_timeout;
 
 };
 

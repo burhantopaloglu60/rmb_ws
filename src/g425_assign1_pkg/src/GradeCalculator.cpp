@@ -38,6 +38,7 @@ public:
 
   void calculator(const Exams::Request::SharedPtr request, const Exams::Response::SharedPtr response)
   {
+    calculatedFinalGrade = 0.0f;  // reset for next calculation
     // make a sum of exam grades
     float sum = 0.0f;
     for (float g : request->exam_grades)
@@ -72,7 +73,6 @@ public:
     {
       // what to do if calculation is 0
     }
-    calculatedFinalGrade = 0.0f; // reset for next calculation
   }
 
 private:

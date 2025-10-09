@@ -41,8 +41,7 @@ class ResultGenerator : public rclcpp::Node
 	public:
 	//-- constuctor: 
 	ResultGenerator() : Node("ResultGenerator_node")
-	{	
-        srand(time(nullptr));
+	{
         this->declare_parameter("EXAM_PUBLISH_INTERVAL", 2);
         this->declare_parameter("MIN_MARK", 10);
         this->declare_parameter("MAX_MARK", 100);
@@ -85,10 +84,12 @@ class ResultGenerator : public rclcpp::Node
             }
 
         // Kies een random student
+        srand(time(NULL)); // Seed voor random generator
         size_t idx = rand() % students_.size();
         auto chosen_student = students_[idx];
 
         // Genereer een random mark
+        srand(time(NULL)); // Seed voor random generator
         float mark = static_cast<float>((rand() % max_mark) + min_mark);
 
         // Vul het Exam bericht

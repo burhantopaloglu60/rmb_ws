@@ -13,6 +13,9 @@ Melissa
 --Software changes:
 one line per change 
 (1) created 01.10.2025: developer-Melissa van Leeuwen reviewer(s)-X
+(2)
+(3)
+(4) changed 9.10.2025: functionality for checking if the failed grade already has had a passed retake added: developer-Melissa van Leeuwen reviewer(s)-X
 ...
 */
 
@@ -27,6 +30,7 @@ one line per change
 #include <set>
 #include <queue>
 #include <mutex>
+#include <algorithm> 
 
 using Retaker = g425_assign1_interfaces_pkg::action::Retaker;
 using RetakeGoalHandle = rclcpp_action::ClientGoalHandle<Retaker>;
@@ -65,6 +69,24 @@ private:
         for (const auto &fg : finalGrades)
         {
             auto key = std::make_pair(fg.student_id, fg.course_id);
+            
+
+            // Skip if this student id and course id combination is already planned
+            if (scheduledRetakes.find(key) != scheduledRetakes.end())
+                continue;
+
+            // Check whether this student has already passed
+            bool hasPassingGrade = std::any_of(finalGrades.begin(), finalGrades.end(),
+                                               [&](const DBT_FinalGrade &g)
+                                               {
+                                                   return g.student_id == fg.student_id &&
+                                                          g.course_id == fg.course_id &&
+                                                          g.final_grade >= 55;
+                                               });
+
+            if (hasPassingGrade)
+                continue; // Student already passed, continue
+
 
             // Only retakes for failed grades
             if (fg.final_grade >= 10 && fg.final_grade <= 54)

@@ -15,12 +15,13 @@ Software changes (one line by change):
 (3) 08.10.2025 finalized first prototype by Burhan Topaloglu
 */
 
-//--general includes
 #include "rclcpp/rclcpp.hpp"
-//--custom includes
+
 #include "g425_assign1_interfaces_pkg/srv/exams.hpp"
 
-//--using
+#define BONUS_POINTS 10
+#define BONUS_NAME "Wessel Tip"
+
 using Exams = g425_assign1_interfaces_pkg::srv::Exams;
 
 using namespace std::placeholders;
@@ -49,9 +50,9 @@ public:
     if (calculatedFinalGrade != 0.0f)
     {
       // wessel gets +10 always
-      if (request->student.student_fullname == "Wessel Tip")
+      if (request->student.student_fullname == "BONUS_NAME")
       {
-        calculatedFinalGrade += 10;
+        calculatedFinalGrade += BONUS_POINTS;
       }
 
       // clamp calculatedFinalGrade
@@ -71,6 +72,7 @@ public:
     {
       // what to do if calculation is 0
     }
+    calculatedFinalGrade = 0.0f; // reset for next calculation
   }
 
 private:

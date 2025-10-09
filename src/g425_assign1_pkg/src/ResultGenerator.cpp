@@ -32,6 +32,10 @@ one line per change
 #include "g425_assign1_interfaces_pkg/msg/student.hpp"
 #include "g425_assign1_pkg/GGDatabase.hpp"
 
+#define EXAM_PUBLISH_INTERVAL 2  // seconds
+#define MIN_MARK 10
+#define MAX_MARK 100 - MIN_MARK + 1
+
 using namespace std::placeholders;
 using Exam = g425_assign1_interfaces_pkg::msg::Exam;
 using Student = g425_assign1_interfaces_pkg::msg::Student;
@@ -60,7 +64,7 @@ class ResultGenerator : public rclcpp::Node
 
         // Timer to generate results every 2s
         timer_ = this->create_wall_timer(
-            std::chrono::seconds(2),
+            std::chrono::seconds(EXAM_PUBLISH_INTERVAL),
             std::bind(&ResultGenerator::publish_random_result, this));
 
         RCLCPP_INFO(this->get_logger(), "Tentamen Result Generator Node started.");
@@ -83,7 +87,7 @@ class ResultGenerator : public rclcpp::Node
         auto chosen_student = students_[idx];
 
         // Genereer een random mark
-        float mark = static_cast<float>((rand() % 91) + 10);
+        float mark = static_cast<float>((rand() % MAX_MARK) + MIN_MARK);
 
         // Vul het Exam bericht
         Exam exam_msg;

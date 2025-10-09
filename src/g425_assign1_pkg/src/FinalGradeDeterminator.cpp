@@ -19,6 +19,8 @@ Rik
 #include "g425_assign1_interfaces_pkg/msg/student.hpp"
 #include "g425_assign1_pkg/GGDatabase.hpp"
 
+#define CALC_GRADE_TIMEOUT 5.0  // seconds
+#define DB_CHECK_INTERVAL 10   // seconds
 
 using namespace std::placeholders;
 using Exams = g425_assign1_interfaces_pkg::srv::Exams;

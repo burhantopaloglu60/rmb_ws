@@ -41,8 +41,12 @@ class RetakeScheduler : public rclcpp::Node
 public:
     RetakeScheduler() : Node("retake_scheduler"), processingRetake(false)
     {
+        this->declare_parameter("SCHEDULE_TIME", 10);
+
+        schedule_time_ = this->get_parameter("SCHEDULE_TIME").as_int();
+
         retake_actionclient_ = rclcpp_action::create_client<Retaker>(this, "retaker");
-        timer_ = this->create_wall_timer(std::chrono::seconds(10),
+        timer_ = this->create_wall_timer(std::chrono::seconds(schedule_time_),
                                          std::bind(&RetakeScheduler::check_and_schedule, this));
     }
 
@@ -52,6 +56,7 @@ private:
     GGDatabase db;
 
     std::set<std::pair<int, int>> scheduledRetakes;
+    int schedule_time_;
 
     // Queue and mutex for sequential processing
     std::queue<Student> retakeQueue;

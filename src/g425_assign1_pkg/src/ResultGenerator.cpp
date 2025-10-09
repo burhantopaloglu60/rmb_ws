@@ -47,8 +47,8 @@ class ResultGenerator : public rclcpp::Node
         this->declare_parameter("MAX_MARK", 100);
 
         exam_publish_interval = this->get_parameter("EXAM_PUBLISH_INTERVAL").as_int();
-        min_mark = this->get_parameter("MIN_MARK").as_int();
-        max_mark = this->get_parameter("MAX_MARK").as_int() - min_mark + 1;
+        min_mark_ = this->get_parameter("MIN_MARK").as_int();
+        max_mark_ = this->get_parameter("MAX_MARK").as_int() - min_mark_ + 1;
         // Publisher for exam results
         exam_pub_ = this->create_publisher<Exam>(
             "exam_results", 10);
@@ -79,7 +79,7 @@ class ResultGenerator : public rclcpp::Node
         // Controleer of er studenten zijn
             if (students_.empty()) {
                 RCLCPP_WARN(this->get_logger(), "Geen studenten beschikbaar.");
-                // students_ = load_students_from_db();
+                // students_ = load_students_from_db_();
                 return;
             }
 
@@ -90,7 +90,7 @@ class ResultGenerator : public rclcpp::Node
 
         // Genereer een random mark
         srand(time(NULL)); // Seed voor random generator
-        float mark = static_cast<float>((rand() % max_mark) + min_mark);
+        float mark = static_cast<float>((rand() % max_mark_) + min_mark_);
 
         // Vul het Exam bericht
         Exam exam_msg;
@@ -107,7 +107,7 @@ class ResultGenerator : public rclcpp::Node
         grade.course_id = chosen_student.course_id;
         grade.grade = mark;
 
-        db.addGrade(grade);
+        db_.addGrade(grade);
 
         RCLCPP_INFO(this->get_logger(),
                     "Published result: %s, Course: %s, Mark: %.1f",
@@ -187,10 +187,10 @@ class ResultGenerator : public rclcpp::Node
 
     // Internal storage of students
     std::vector<Student> students_;
-    GGDatabase db;
+    GGDatabase db_;
     int exam_publish_interval;
-    int min_mark;
-    int max_mark;
+    int min_mark_;
+    int max_mark_;
 };
 
 int main(int argc, char **argv)

@@ -13,9 +13,11 @@
 # /g425_gradecalculator_node:
   # ros__parameters:
    # Add parameters here if needed
-# /RetakeScheduler_node:
-  # ros__parameters:
+/RetakeScheduler_node:
+  ros__parameters:
+    SCHEDULE_TIME: 10
    # Add parameters here if needed
-# /retake_grade_determinator:
-  # ros__parameters:
-   # Add parameters here if needed
+/retake_grade_determinator:
+  ros__parameters:
+    RETAKE_GRADE: 55
+  #  Add parameters here if needed

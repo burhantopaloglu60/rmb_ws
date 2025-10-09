@@ -44,6 +44,9 @@ class RetakeGradeDeterminator : public rclcpp::Node
 public:
     RetakeGradeDeterminator() : Node("retake_grade_determinator")
     {
+        this->declare_parameter("RETAKE_GRADE", 55);
+
+        retake_grade_ = this->get_parameter("RETAKE_GRADE").as_int();
         // Action server
         retake_actionserver_ = rclcpp_action::create_server<Retaker>(
             this,
@@ -84,6 +87,7 @@ private:
     Student active_student_;
     bool collecting_ = false;
     std::mutex data_mutex_;
+    int retake_grade_;
 
     // Action goal handler
     rclcpp_action::GoalResponse handle_goal(
@@ -190,7 +194,7 @@ private:
                 auto response = future.get();
                 remove_student_pub_->publish(response->student);
 
-                bool passed = (response->final_grade >= 55);
+                bool passed = (response->final_grade >= retake_grade_);
 
                 DBT_FinalGrade new_grade;
                 new_grade.student_id = student.student_id;

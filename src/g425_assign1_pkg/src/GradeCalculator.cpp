@@ -80,6 +80,7 @@ private:
   rclcpp::Service<Exams>::SharedPtr grade_calculator_service_;
 };
 
+#ifndef TESTING_EXCLUDE_MAIN
 int main(int argc, char* argv[])
 {
   rclcpp::init(argc, argv);
@@ -88,3 +89,4 @@ int main(int argc, char* argv[])
   rclcpp::shutdown();
   return 0;
 }
+#endif

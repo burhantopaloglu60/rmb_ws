@@ -67,14 +67,17 @@ if(BUILD_TESTING)
   # test files
   ament_add_gtest(${PROJECT_NAME}_utest_grade_calculator test/unit/utest_grade_calculator.cpp)
   ament_add_gtest(${PROJECT_NAME}_utest_final_grade_determinator test/unit/utest_final_grade_determinator.cpp)
+  ament_add_gtest(${PROJECT_NAME}_utest_result_generator test/unit/utest_result_generator.cpp)
 
   # target_include_directories(${PROJECT_NAME}_utest_grade_calculator PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include> $<INSTALL_INTERFACE:include>)
 
   # dependencies
   ament_target_dependencies(${PROJECT_NAME}_utest_grade_calculator rclcpp g425_assign1_interfaces_pkg)
   ament_target_dependencies(${PROJECT_NAME}_utest_final_grade_determinator rclcpp g425_assign1_interfaces_pkg)
+  ament_target_dependencies(${PROJECT_NAME}_utest_result_generator rclcpp g425_assign1_interfaces_pkg std_msgs)
 
   target_link_libraries(${PROJECT_NAME}_utest_final_grade_determinator GGDatabase ${MYSQL_LIBS})
+  target_link_libraries(${PROJECT_NAME}_utest_result_generator GGDatabase ${MYSQL_LIBS})
 endif()
 
 ament_package()

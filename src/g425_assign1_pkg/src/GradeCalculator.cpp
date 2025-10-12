@@ -51,7 +51,7 @@ public:
     if (calculatedFinalGrade != 0.0f)
     {
       // wessel gets +10 always
-      if (request->student.student_fullname == "BONUS_NAME")
+      if (request->student.student_fullname == BONUS_NAME)
       {
         calculatedFinalGrade += BONUS_POINTS;
       }

@@ -69,21 +69,30 @@ if(BUILD_TESTING)
   ament_add_gtest(${PROJECT_NAME}_utest_final_grade_determinator test/unit/utest_final_grade_determinator.cpp)
   ament_add_gtest(${PROJECT_NAME}_utest_result_generator test/unit/utest_result_generator.cpp)
   ament_add_gtest(${PROJECT_NAME}_utest_ggDatabase test/unit/utest_ggDatabase.cpp)
+  ament_add_gtest(${PROJECT_NAME}_utest_retake_scheduler test/unit/utest_retake_scheduler.cpp)
+  ament_add_gtest(${PROJECT_NAME}_utest_retake_grade_determinator test/unit/utest_retake_grade_determinator.cpp)
 
   ament_add_gtest(${PROJECT_NAME}_systest_grade_generator test/systest_grade_generator.cpp)
 
   # target_include_directories(${PROJECT_NAME}_utest_grade_calculator PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include> $<INSTALL_INTERFACE:include>)
 
+  target_compile_definitions(${PROJECT_NAME}_utest_retake_scheduler PRIVATE UNIT_TEST)
+  target_compile_definitions(${PROJECT_NAME}_utest_retake_grade_determinator PRIVATE UNIT_TEST)
+  
   # dependencies
   ament_target_dependencies(${PROJECT_NAME}_utest_grade_calculator rclcpp g425_assign1_interfaces_pkg)
   ament_target_dependencies(${PROJECT_NAME}_utest_final_grade_determinator rclcpp g425_assign1_interfaces_pkg)
   ament_target_dependencies(${PROJECT_NAME}_utest_result_generator rclcpp g425_assign1_interfaces_pkg std_msgs)
+  ament_target_dependencies(${PROJECT_NAME}_utest_retake_scheduler rclcpp rclcpp_action g425_assign1_interfaces_pkg) 
+  ament_target_dependencies(${PROJECT_NAME}_utest_retake_grade_determinator rclcpp rclcpp_action g425_assign1_interfaces_pkg) 
 
   ament_target_dependencies(${PROJECT_NAME}_systest_grade_generator rclcpp rclcpp_action g425_assign1_interfaces_pkg std_msgs)
 
   target_link_libraries(${PROJECT_NAME}_utest_final_grade_determinator GGDatabase ${MYSQL_LIBS})
   target_link_libraries(${PROJECT_NAME}_utest_result_generator GGDatabase ${MYSQL_LIBS})
   target_link_libraries(${PROJECT_NAME}_utest_ggDatabase GGDatabase ${MYSQL_LIBS})
+  target_link_libraries(${PROJECT_NAME}_utest_retake_scheduler GGDatabase ${MYSQL_LIBS})
+  target_link_libraries(${PROJECT_NAME}_utest_retake_grade_determinator GGDatabase ${MYSQL_LIBS})
 
   target_link_libraries(${PROJECT_NAME}_systest_grade_generator GGDatabase ${MYSQL_LIBS})
 endif()

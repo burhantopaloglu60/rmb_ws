@@ -18,7 +18,9 @@ Melissa
 --Software changes:
 one line per change 
 (1) created 01.10.2025: developer-Melissa van Leeuwen reviewer(s)-X
-...
+(2) changed 07.10.2025: updated existing functionalities and added new functionalities: developer-Melissa van Leeuwen
+(3) changed 07.10.2025: added database functionality: developer-Melissa van Leeuwen
+(4) changed 13.10.2025: added some code for testing: developer-Melissa van Leeuwen
 */
 
 //-- tester: X
@@ -38,6 +40,12 @@ using GoalHandleRetaker = rclcpp_action::ServerGoalHandle<Retaker>;
 using Student = g425_assign1_interfaces_pkg::msg::Student;
 using ExamResults = g425_assign1_interfaces_pkg::msg::Exam;
 using GradeCalculator = g425_assign1_interfaces_pkg::srv::Exams;
+
+
+#ifdef UNIT_TEST
+#define private public
+#define protected public
+#endif
 
 class RetakeGradeDeterminator : public rclcpp::Node
 {
@@ -248,9 +256,11 @@ private:
                     collected_grades_.size(),
                     msg->student.number_of_grades);
     }
+
+    
 };
 
-#ifndef TESTING_EXCLUDE_MAIN
+#ifndef UNIT_TEST
 int main(int argc, char **argv)
 {
     rclcpp::init(argc, argv);

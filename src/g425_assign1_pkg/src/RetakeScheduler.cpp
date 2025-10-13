@@ -12,14 +12,11 @@ Melissa
 /*
 --Software changes:
 one line per change 
-(1) created 01.10.2025: developer-Melissa van Leeuwen reviewer(s)-X
-(2)
-(3)
-(4) changed 9.10.2025: functionality for checking if the failed grade already has had a passed retake added: developer-Melissa van Leeuwen reviewer(s)-X
-...
+(1) created 01.10.2025: developer-Melissa van Leeuwen 
+(2) changed 07.10.2025: updated existing functionalities and added database functionality: developer-Melissa van Leeuwen
+(3) changed 09.10.2025: functionality for checking if the failed grade already has had a passed retake added: developer-Melissa van Leeuwen
+(4) changed 13.10.2025: added some code for testing: developer-Melissa van Leeuwen
 */
-
-//-- tester: X
 
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp_action/rclcpp_action.hpp>
@@ -36,18 +33,28 @@ using Retaker = g425_assign1_interfaces_pkg::action::Retaker;
 using RetakeGoalHandle = rclcpp_action::ClientGoalHandle<Retaker>;
 using Student = g425_assign1_interfaces_pkg::msg::Student;
 
+#ifdef UNIT_TEST
+#define private public
+#define protected public
+#endif
+
 class RetakeScheduler : public rclcpp::Node
 {
 public:
-    RetakeScheduler() : Node("retake_scheduler"), processingRetake(false)
+    RetakeScheduler(bool enable_timer = true, bool test_mode = false)
+        : Node("retake_scheduler"), processingRetake(false), test_mode_(test_mode)
     {
         this->declare_parameter("SCHEDULE_TIME", 10);
 
         schedule_time_ = this->get_parameter("SCHEDULE_TIME").as_int();
 
         retake_actionclient_ = rclcpp_action::create_client<Retaker>(this, "retaker");
-        timer_ = this->create_wall_timer(std::chrono::seconds(schedule_time_),
+
+        if (enable_timer)
+        {
+            timer_ = this->create_wall_timer(std::chrono::seconds(schedule_time_),
                                          std::bind(&RetakeScheduler::check_and_schedule, this));
+        }
     }
 
 private:
@@ -63,9 +70,15 @@ private:
     bool processingRetake;
     std::mutex queueMutex;
 
+    bool test_mode_;
+
     void check_and_schedule()
     {
-        retake_actionclient_->wait_for_action_server();
+        // When testing the action server is not running, so skip the wait
+        if (!test_mode_) 
+        {
+            retake_actionclient_->wait_for_action_server();
+        } 
 
         std::lock_guard<std::mutex> lock(queueMutex);
 
@@ -119,7 +132,7 @@ private:
         }
     }
 
-    void startNextRetake()
+    virtual void startNextRetake()
     {
         if (retakeQueue.empty()) return;
 
@@ -166,7 +179,7 @@ private:
     }
 };
 
-#ifndef TESTING_EXCLUDE_MAIN
+#ifndef UNIT_TEST
 int main(int argc, char ** argv)
 {
     rclcpp::init(argc, argv);

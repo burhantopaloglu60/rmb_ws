@@ -27,7 +27,7 @@ using Student = g425_assign1_interfaces_pkg::msg::Student;
 
 class FinalGradeDeterminator : public rclcpp::Node
 {
-public:
+    public:
     // -- Constructor:
     FinalGradeDeterminator() : Node("FinalGradeDeterminator_node")
     {
@@ -56,11 +56,14 @@ public:
             std::bind(&FinalGradeDeterminator::check_database, this));
 
         RCLCPP_INFO(this->get_logger(), "FinalGradeDeterminator node started.");
-        get_students_from_db();
-    }
-    
-private:
 
+        #ifndef TESTING_EXCLUDE_MAIN
+        get_students_from_db();
+        #endif
+    }
+    #ifndef TESTING_EXCLUDE_MAIN
+	private:
+    #endif
     void exam_callback(const Exam::SharedPtr msg)
     {   
         int64_t sid = msg->student.student_id;
@@ -113,9 +116,9 @@ private:
     }
     void check_database(){
         if(student_courses_.empty()) {
-            get_students_from_db();
             RCLCPP_WARN(this->get_logger(),
                         "Geen studenten meer in de lijst, nieuwe studenten uit database aan het ophalen...");
+            get_students_from_db();
 
         }
     }

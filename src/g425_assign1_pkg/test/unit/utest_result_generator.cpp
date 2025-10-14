@@ -46,6 +46,133 @@ TEST_F(TestResultGenerator, TestNodeCreation)
   EXPECT_GT(node_->count_subscribers("remove_students"), 0u);
 }
 
+TEST_F(TestResultGenerator, AddStudent)
+{
+  Student student;
+  student.student_fullname = "Test Student";
+  student.student_id = 12345;
+  student.course_name = "Test Course";
+  student.course_id = 101;
+
+  // Initially, the students_ vector should be empty
+  EXPECT_TRUE(node_->students_.empty());
+
+  // Add a student
+  node_->add_student(student);
+
+  // Now the students_ vector should contain one student
+  ASSERT_EQ(node_->students_.size(), 1u);
+  EXPECT_EQ(node_->students_[0].student_fullname, "Test Student");
+  EXPECT_EQ(node_->students_[0].student_id, 12345);
+  EXPECT_EQ(node_->students_[0].course_name, "Test Course");
+  EXPECT_EQ(node_->students_[0].course_id, 101);
+}
+
+TEST_F(TestResultGenerator, AddDuplicateStudent)
+{
+  Student student;
+  student.student_fullname = "Test Student";
+  student.student_id = 12345;
+  student.course_name = "Test Course";
+  student.course_id = 101;
+
+    // Capture log output
+  testing::internal::CaptureStderr();
+
+  // Add a student
+  node_->add_student(student);
+  ASSERT_EQ(node_->students_.size(), 1u);
+
+  // Adding the same student again should not duplicate
+  node_->add_student(student);
+  ASSERT_EQ(node_->students_.size(), 1u); // Still one student
+  
+  std::string output = testing::internal::GetCapturedStderr();
+  std::cerr << output << std::flush;
+  EXPECT_NE(output.find("Student Test Student (12345) voor course Test Course (101) bestaat al. Niet toegevoegd."), std::string::npos);
+}
+
+TEST_F(TestResultGenerator, RemoveStudent)
+{
+  Student student;
+  student.student_fullname = "Test Student";
+  student.student_id = 12345;
+  student.course_name = "Test Course";
+  student.course_id = 101;
+
+  // Add a student first
+  node_->add_student(student);
+  
+  ASSERT_EQ(node_->students_.size(), 1u);
+  // Remove the student
+  node_->remove_student(student);
+  EXPECT_TRUE(node_->students_.empty());
+}
+
+TEST_F(TestResultGenerator, RemoveNonExistentStudent)
+{
+  Student student;
+  student.student_fullname = "Test Student";
+  student.student_id = 12345;
+  student.course_name = "Test Course";
+  student.course_id = 101;
+
+    // Capture log output
+  testing::internal::CaptureStderr();
+
+  // Ensure students_ vector is empty
+  node_->students_.clear();
+  ASSERT_TRUE(node_->students_.empty());
+
+  // Attempt to remove a non-existent student
+  node_->remove_student(student);
+  // The students_ vector should still be empty
+  EXPECT_TRUE(node_->students_.empty());
+  std::string output = testing::internal::GetCapturedStderr();
+  std::cerr << output << std::flush;
+  EXPECT_NE(output.find("Student Test Student (12345) voor course Test Course (101) niet gevonden. Kan niet verwijderen."), std::string::npos);
+}
+
+TEST_F(TestResultGenerator, PublishRandomResultWithoutStudents)
+{
+  // Ensure students_ vector is empty
+  node_->students_.clear();
+  ASSERT_TRUE(node_->students_.empty());
+
+  // Capture log output
+  testing::internal::CaptureStderr();
+
+  // Call publish_random_result, should warn about no students
+  node_->publish_random_result();
+  
+  std::string output = testing::internal::GetCapturedStderr();
+  std::cerr << output << std::flush;
+  EXPECT_NE(output.find("Geen studenten beschikbaar."), std::string::npos);
+}
+
+TEST_F(TestResultGenerator, PublishRandomResultWithStudent)
+{
+  Student student;
+  student.student_fullname = "Test Student";
+  student.student_id = 1;
+  student.course_name = "Test Course";
+  student.course_id = 1;
+
+  // Add a student
+  node_->add_student(student);
+  ASSERT_EQ(node_->students_.size(), 1u);
+
+  // Capture log output
+  testing::internal::CaptureStderr();
+
+  // Call publish_random_result, should publish a result
+  node_->publish_random_result();
+
+  std::string output = testing::internal::GetCapturedStderr();
+  EXPECT_NE(output.find("Published result: Test Student, Course: Test Course"), std::string::npos);
+}
+
+
 int main(int argc, char** argv)
 {
   testing::InitGoogleTest(&argc, argv);

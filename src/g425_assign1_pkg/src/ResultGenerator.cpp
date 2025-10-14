@@ -71,9 +71,11 @@ class ResultGenerator : public rclcpp::Node
         RCLCPP_INFO(this->get_logger(), "Tentamen Result Generator Node started.");
         
 	}
-
+    
+    #ifndef TESTING_EXCLUDE_MAIN
 	private:
-
+    #endif
+    
     void publish_random_result()
     {
         // Controleer of er studenten zijn

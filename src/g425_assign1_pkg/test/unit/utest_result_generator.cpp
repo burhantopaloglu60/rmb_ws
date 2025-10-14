@@ -89,7 +89,7 @@ TEST_F(TestResultGenerator, AddDuplicateStudent)
   
   std::string output = testing::internal::GetCapturedStderr();
   std::cerr << output << std::flush;
-  EXPECT_NE(output.find("Student Test Student (12345) voor course Test Course (101) bestaat al. Niet toegevoegd."), std::string::npos);
+  EXPECT_NE(output.find("Student Test Student (12345) for course Test Course (101) already exists. Ignored."), std::string::npos);
 }
 
 TEST_F(TestResultGenerator, RemoveStudent)
@@ -130,7 +130,7 @@ TEST_F(TestResultGenerator, RemoveNonExistentStudent)
   EXPECT_TRUE(node_->students_.empty());
   std::string output = testing::internal::GetCapturedStderr();
   std::cerr << output << std::flush;
-  EXPECT_NE(output.find("Student Test Student (12345) voor course Test Course (101) niet gevonden. Kan niet verwijderen."), std::string::npos);
+  EXPECT_NE(output.find("Student Test Student (12345) for course Test Course (101) not found. Can't remove student."), std::string::npos);
 }
 
 TEST_F(TestResultGenerator, PublishRandomResultWithoutStudents)
@@ -147,7 +147,7 @@ TEST_F(TestResultGenerator, PublishRandomResultWithoutStudents)
   
   std::string output = testing::internal::GetCapturedStderr();
   std::cerr << output << std::flush;
-  EXPECT_NE(output.find("Geen studenten beschikbaar."), std::string::npos);
+  EXPECT_NE(output.find("No students available."), std::string::npos);
 }
 
 TEST_F(TestResultGenerator, PublishRandomResultWithStudent)

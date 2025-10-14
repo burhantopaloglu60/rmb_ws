@@ -8,8 +8,19 @@ results (enough: = the collection number that was retrieved from the database) i
 request to the “cijfer” calculator node. After it got the final cijfer back it inserts the final
 “cijfer” in the database and sends a message to the cijfer generator to stop the generation
 for this student/course combination."
+
 Rik
 */ 
+
+/*
+--Software changes:
+one line per change 
+(1) created 30.9.2025: developer-Rik van Velzen
+(2) changed 7.10.2025: All functionality added: developer-Rik van Velzen
+(3) changed 13.10.2025: Changed log messages to English: developer-Rik van Velzen
+(4) changed 13.10.2025: Added comments and cleaned up code: developer-Rik van Velzen
+...
+*/
 
 #include "rclcpp/rclcpp.hpp"
 #include <vector>
@@ -77,7 +88,7 @@ class FinalGradeDeterminator : public rclcpp::Node
         if (it == student_courses_.end())
         {
             RCLCPP_WARN(this->get_logger(),
-                        "Ontvangen grade voor onbekende student/course: %s (%ld) / %s (%d). Genegeerd.",
+                        "Received grade for unknown student/course: %s (%ld) / %s (%d). Ignored.",
                         msg->student.student_fullname.c_str(),
                         sid,
                         msg->student.course_name.c_str(),
@@ -90,7 +101,7 @@ class FinalGradeDeterminator : public rclcpp::Node
         auto &grades = student_grades_[{sid, cid}];
 
         RCLCPP_INFO(this->get_logger(),
-                    "Grade %.1f toegevoegd aan %s (%s). Nu %zu van %d ontvangen.",
+                    "Grade %.1f added to %s (%s). Now %zu of %d Received.",
                     msg->exam_grade,
                     it->student_fullname.c_str(),
                     it->course_name.c_str(),
@@ -101,7 +112,7 @@ class FinalGradeDeterminator : public rclcpp::Node
         if (static_cast<int>(grades.size()) >= it->number_of_grades)
         {
             RCLCPP_INFO(this->get_logger(),
-                        "Alle %d grades ontvangen voor %s (%s). Final grade wordt berekend.",
+                        "All %d grades received for %s (%s). Final grade is getting calculated.",
                         it->number_of_grades,
                         it->student_fullname.c_str(),
                         it->course_name.c_str());
@@ -117,7 +128,7 @@ class FinalGradeDeterminator : public rclcpp::Node
     void check_database(){
         if(student_courses_.empty()) {
             RCLCPP_WARN(this->get_logger(),
-                        "Geen studenten meer in de lijst, nieuwe studenten uit database aan het ophalen...");
+                        "No more students in list, new students retreiving from database...");
             get_students_from_db();
 
         }
@@ -161,7 +172,7 @@ class FinalGradeDeterminator : public rclcpp::Node
         std::vector<std::tuple<int, int>> student_course_rel = db.getMissingFinalGrades();
 
         RCLCPP_INFO(this->get_logger(),
-                    "%zu student-course relaties uit de database gehaald.",
+                    "%zu student-course relations retreived from database.",
                     student_course_rel.size());
 
         // For each (student_id, course_id) pair → fill in student info
@@ -183,7 +194,7 @@ class FinalGradeDeterminator : public rclcpp::Node
                             });
             if (it != student_courses_.end()) {
                 RCLCPP_WARN(this->get_logger(),
-                        "Student %s (%ld) voor course %s (%d) bestaat al. Niet toegevoegd.",
+                        "Student %s (%ld) for course %s (%d) already exists. Skipping duplicate.",
                         s.student_fullname.c_str(),
                         s.student_id,
                         s.course_name.c_str(),
@@ -206,7 +217,7 @@ class FinalGradeDeterminator : public rclcpp::Node
         }
         if (student_courses_.empty()) {
                 RCLCPP_WARN(this->get_logger(),
-                        "Geen studenten gevonden die een final grade nodig hebben.");
+                        "No more students found without a final grade.");
                 return;
         }
         // Log final count
@@ -241,7 +252,7 @@ class FinalGradeDeterminator : public rclcpp::Node
 
         if (db.addFinalGrade(final_grade_entry)) {
             RCLCPP_INFO(this->get_logger(),
-                        "Final grade voor %s (%ld) in %s (%d) opgeslagen in database.",
+                        "Final grade for %s (%ld) in %s (%d) saved in database.",
                         response->student.student_fullname.c_str(),
                         response->student.student_id,
                         response->student.course_name.c_str(),
@@ -264,7 +275,7 @@ class FinalGradeDeterminator : public rclcpp::Node
         if (it != student_courses_.end()) {
             student_courses_.erase(it, student_courses_.end());
             RCLCPP_INFO(this->get_logger(),
-                        "Student %s (%ld) verwijderd uit student_courses_ vector.",
+                        "Student %s (%ld) removed from student/courses vector.",
                         response->student.student_fullname.c_str(),
                         response->student.student_id);
         }

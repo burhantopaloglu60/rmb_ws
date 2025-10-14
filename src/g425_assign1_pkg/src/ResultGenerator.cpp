@@ -18,8 +18,10 @@ Rik
 /*
 --Software changes:
 one line per change 
-(1) created 30.9.2025: developer-Rik van Velzen reviewer(s)-X
-(2) changed 7.10.2025: All functionality added: developer-Rik van Velzen reviewer(s)-Til
+(1) created 30.9.2025: developer-Rik van Velzen
+(2) changed 7.10.2025: All functionality added: developer-Rik van Velzen
+(3) changed 13.10.2025: Changed log messages to English: developer-Rik van Velzen
+(4) changed 13.10.2025: Added comments and cleaned up code: developer-Rik van Velzen
 ...
 */
 
@@ -80,7 +82,7 @@ class ResultGenerator : public rclcpp::Node
     {
         // Controleer of er studenten zijn
             if (students_.empty()) {
-                RCLCPP_WARN(this->get_logger(), "Geen studenten beschikbaar.");
+                RCLCPP_WARN(this->get_logger(), "No students available.");
                 // students_ = load_students_from_db_();
                 return;
             }
@@ -112,7 +114,7 @@ class ResultGenerator : public rclcpp::Node
         db_.addGrade(grade);
 
         RCLCPP_INFO(this->get_logger(),
-                    "Published result: %s, Course: %s, Mark: %.1f",
+                    "Published result: %s, Course: %s, mark: %.1f",
                     chosen_student.student_fullname.c_str(),
                     chosen_student.course_name.c_str(),
                     mark);
@@ -131,7 +133,7 @@ class ResultGenerator : public rclcpp::Node
 
         if (it != students_.end()) {
             RCLCPP_WARN(this->get_logger(),
-                        "Student %s (%ld) voor course %s (%d) bestaat al. Niet toegevoegd.",
+                        "Student %s (%ld) for course %s (%d) already exists. Ignored.",
                         student.student_fullname.c_str(),
                         student.student_id,
                         student.course_name.c_str(),
@@ -143,7 +145,7 @@ class ResultGenerator : public rclcpp::Node
         students_.push_back(student);
 
         RCLCPP_INFO(this->get_logger(),
-                    "Student toegevoegd: %s (%ld) / %s (%d)",
+                    "Student added: %s (%ld) / %s (%d)",
                     student.student_fullname.c_str(),
                     student.student_id,
                     student.course_name.c_str(),
@@ -164,7 +166,7 @@ class ResultGenerator : public rclcpp::Node
         if (it != students_.end()) {
             students_.erase(it, students_.end());
             RCLCPP_INFO(this->get_logger(),
-                        "Student verwijderd: %s (%ld) / %s (%d)",
+                        "Student removed: %s (%ld) / %s (%d)",
                         student.student_fullname.c_str(),
                         student.student_id,
                         student.course_name.c_str(),
@@ -173,7 +175,7 @@ class ResultGenerator : public rclcpp::Node
         // Student niet gevonden
         else {
             RCLCPP_WARN(this->get_logger(),
-                        "Student %s (%ld) voor course %s (%d) niet gevonden. Kan niet verwijderen.",
+                        "Student %s (%ld) for course %s (%d) not found. Can't remove student.",
                         student.student_fullname.c_str(),
                         student.student_id,
                         student.course_name.c_str(),

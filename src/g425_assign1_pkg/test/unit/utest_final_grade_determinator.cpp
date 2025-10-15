@@ -87,7 +87,7 @@ TEST_F(TestFinalGradeDeterminator, ExamCallbackUnknownStudent)
   node_->exam_callback(exam_msg);
   std::string output = testing::internal::GetCapturedStderr();
   std::cout << output;
-  EXPECT_NE(output.find("Ontvangen grade voor onbekende student/course"), std::string::npos);
+  EXPECT_NE(output.find("Received grade for unknown student/course:"), std::string::npos);
 }
 
 
@@ -189,7 +189,7 @@ TEST_F(TestFinalGradeDeterminator, CalculateFinalGradeServiceUnavailable)
   
   std::string output = testing::internal::GetCapturedStderr();
   std::cout << output;
-  EXPECT_NE(output.find("Waiting for GradeCalculator service to become available..."), std::string::npos);
+  EXPECT_NE(output.find("GradeCalculator service not available after 5 seconds. Giving up for student"), std::string::npos);
 }
 
 

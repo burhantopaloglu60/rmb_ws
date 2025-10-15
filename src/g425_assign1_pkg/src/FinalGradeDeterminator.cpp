@@ -47,6 +47,7 @@ class FinalGradeDeterminator : public rclcpp::Node
         
         db_check_interval = this->get_parameter("DB_CHECK_INTERVAL").as_int();
         calc_grade_timeout = this->get_parameter("CALC_GRADE_TIMEOUT").as_int();
+
         // Subscriber for exam results
         exam_sub_ = this->create_subscription<Exam>(
             "exam_results", 10,
@@ -130,29 +131,19 @@ class FinalGradeDeterminator : public rclcpp::Node
             RCLCPP_WARN(this->get_logger(),
                         "No more students in list, new students retreiving from database...");
             get_students_from_db();
-
         }
     }
 
     void calculate_grade(const Student &entry, const std::vector<float> &grades)
     {
-        auto start_time = this->now();
-        auto timeout = rclcpp::Duration::from_seconds(calc_grade_timeout);
-        while (!exam_client_->service_is_ready()) {
-            auto elapsed = this->now() - start_time;
-            if (elapsed >= timeout) {
+            if (!exam_client_->wait_for_service(std::chrono::seconds(5)))
+            {
                 RCLCPP_ERROR(this->get_logger(),
                             "GradeCalculator service not available after 5 seconds. Giving up for student %s / %s",
                             entry.student_fullname.c_str(),
                             entry.course_name.c_str());
                 return;
             }
-
-            RCLCPP_WARN_THROTTLE(this->get_logger(), *this->get_clock(), 1000,
-                                "Waiting for GradeCalculator service to become available...");
-            rclcpp::sleep_for(std::chrono::milliseconds(100)); // wait 0.1s before retry
-        }
-
         auto request = std::make_shared<Exams::Request>();
         request->student = entry;
         request->exam_grades = grades;  // stuur alle cijfers mee
@@ -180,8 +171,7 @@ class FinalGradeDeterminator : public rclcpp::Node
         {
             rclcpp::sleep_for(std::chrono::milliseconds(100));
             Student s;
-            s.student_id = std::get<0>(entry);
-            s.course_id = std::get<1>(entry);
+            std::tie(s.student_id, s.course_id) = entry;
             s.student_fullname = db.getStudentName(s.student_id);
             s.course_name = db.getCourseName(s.course_id);
             s.number_of_grades = db.getGradeAmountFromCourse(s.course_id);
@@ -239,10 +229,6 @@ class FinalGradeDeterminator : public rclcpp::Node
                     response->student.student_fullname.c_str(),
                     response->student.course_name.c_str(),
                     response->final_grade);
-
-        // Simuleer het "opslaan" van de student in de database door een verwijderbericht te publiceren.
-        // In dit geval betekent het dat de student niet meer verder beoordeeld hoeft te worden.
-        remove_student_pub_->publish(response->student);
         
         DBT_FinalGrade final_grade_entry;
         final_grade_entry.student_id = response->student.student_id;
@@ -272,8 +258,11 @@ class FinalGradeDeterminator : public rclcpp::Node
                    s.course_id == response->student.course_id;
         });
 
-        if (it != student_courses_.end()) {
+        if (it != student_courses_.end()) 
+        {
             student_courses_.erase(it, student_courses_.end());
+            // Notify ResultGenerator to stop generating results for this student/course
+            remove_student_pub_->publish(response->student);
             RCLCPP_INFO(this->get_logger(),
                         "Student %s (%ld) removed from student/courses vector.",
                         response->student.student_fullname.c_str(),

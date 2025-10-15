@@ -42,9 +42,11 @@ class FinalGradeDeterminator : public rclcpp::Node
     // -- Constructor:
     FinalGradeDeterminator() : Node("FinalGradeDeterminator_node")
     {
+        // Declare parameters
         this->declare_parameter("CALC_GRADE_TIMEOUT", 5);
         this->declare_parameter("DB_CHECK_INTERVAL", 10);
-        
+
+        // Load parameters
         db_check_interval = this->get_parameter("DB_CHECK_INTERVAL").as_int();
         calc_grade_timeout = this->get_parameter("CALC_GRADE_TIMEOUT").as_int();
 
@@ -52,7 +54,7 @@ class FinalGradeDeterminator : public rclcpp::Node
         exam_sub_ = this->create_subscription<Exam>(
             "exam_results", 10,
             std::bind(&FinalGradeDeterminator::exam_callback, this, std::placeholders::_1));
-
+        
         // Service client for grade calculation
         exam_client_ = this->create_client<Exams>(
             "GradeCalculator");
@@ -73,15 +75,17 @@ class FinalGradeDeterminator : public rclcpp::Node
         get_students_from_db();
         #endif
     }
+
     #ifndef TESTING_EXCLUDE_MAIN
 	private:
     #endif
+
     void exam_callback(const Exam::SharedPtr msg)
     {   
         int64_t sid = msg->student.student_id;
         int32_t cid = msg->student.course_id;
 
-        // Zoek bestaand student/course record
+        // Zoek bestaand student-course record
         auto it = std::find_if(student_courses_.begin(), student_courses_.end(),
                             [&](const Student &s)
                             { return s.student_id == sid && s.course_id == cid; });
@@ -260,6 +264,7 @@ class FinalGradeDeterminator : public rclcpp::Node
 
         if (it != student_courses_.end()) 
         {
+            // Remove student/course from local list
             student_courses_.erase(it, student_courses_.end());
             // Notify ResultGenerator to stop generating results for this student/course
             remove_student_pub_->publish(response->student);
@@ -286,6 +291,8 @@ class FinalGradeDeterminator : public rclcpp::Node
 
     // Array van student-course structs
     std::vector<Student> student_courses_;
+    // Map om ontvangen cijfers per student/course bij te houden
+    // Key: (student_id, course_id), Value: vector van ontvangen cijfers
     std::map<std::pair<int64_t, int32_t>, std::vector<float>> student_grades_;
     GGDatabase db;  // Database object
     int db_check_interval;

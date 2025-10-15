@@ -44,10 +44,11 @@ class ResultGenerator : public rclcpp::Node
 	//-- constuctor: 
 	ResultGenerator() : Node("ResultGenerator_node")
 	{
+        // Declare parameters
         this->declare_parameter("EXAM_PUBLISH_INTERVAL", 2);
         this->declare_parameter("MIN_MARK", 10);
         this->declare_parameter("MAX_MARK", 100);
-
+        // Load parameters
         exam_publish_interval = this->get_parameter("EXAM_PUBLISH_INTERVAL").as_int();
         min_mark_ = this->get_parameter("MIN_MARK").as_int();
         max_mark_ = this->get_parameter("MAX_MARK").as_int() - min_mark_ + 1;
@@ -83,7 +84,6 @@ class ResultGenerator : public rclcpp::Node
         // Controleer of er studenten zijn
             if (students_.empty()) {
                 RCLCPP_WARN(this->get_logger(), "No students available.");
-                // students_ = load_students_from_db_();
                 return;
             }
 

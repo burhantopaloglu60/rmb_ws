@@ -16,7 +16,7 @@ find_package(rclcpp REQUIRED)
 find_package(rclcpp_action REQUIRED)
 find_package(std_msgs REQUIRED)  
 
-find_package(g425_assign3_interfaces_pkg REQUIRED)
+# find_package(g425_assign3_interfaces_pkg REQUIRED)
 
 include_directories(include)
 

@@ -37,8 +37,8 @@ void loop() {
   Serial.print(accelEvent.acceleration.y); Serial.print(", ");
   Serial.print(accelEvent.acceleration.z);
 
-  // Print rotation acceleration (angular velocity?)
-  Serial.print(" | Rotation Accel (rad/s): ");
+  // Print "rotation acceleration" (angular velocity?), rotational velocity from top down
+  Serial.print(" | Angular Velocity (rad/s): ");
   Serial.println(gyroEvent.gyro.z);
 
   delay(200);

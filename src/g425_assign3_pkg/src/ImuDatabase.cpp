@@ -1,6 +1,8 @@
 /*
 Yes, I know plaintext passwords are bad but this is for educational purposes -Burhan
 
+Software changes:
+04-11-2025 created file by using previous GGDatabase.cpp as template - Burhan Topaloglu
 */
 
 #include "g425_assign3_pkg/ImuDatabase.hpp"
@@ -10,7 +12,8 @@ Yes, I know plaintext passwords are bad but this is for educational purposes -Bu
 #include <mariadb/mysql.h>
 #include <iostream>
 #include <tuple>
-#include <vector> */
+#include <vector>
+#include <chrono> */
 
 ImuDatabase::ImuDatabase(const std::string& server, const std::string& user,  //
                          const std::string& password, const std::string& database)
@@ -127,148 +130,54 @@ bool ImuDatabase::executeInsert(const std::string& query)
 }
 #pragma endregion helper_templates
 
-// std::string ImuDatabase::getStudentName(int s_id)
-// {
-//   return fetchSingleValue<std::string>("SELECT student_name FROM students WHERE id=" + std::to_string(s_id) + ";");
-// }
-
-// std::string ImuDatabase::getCourseName(int c_id)
-// {
-//   return fetchSingleValue<std::string>("SELECT course_name FROM courses WHERE id=" + std::to_string(c_id) + ";");
-// }
-
-// int ImuDatabase::getStudentId(const std::string& s_name)
-// {
-//   return fetchSingleValue<int>("SELECT id FROM students WHERE student_name='" + s_name + "';");
-// }
-
-// int ImuDatabase::getCourseId(const std::string& c_name)
-// {
-//   return fetchSingleValue<int>("SELECT id FROM courses WHERE course_name='" + c_name + "';");
-// }
-
-// bool ImuDatabase::addGrade(const DBT_Grade& st_grade)
-// {
-//   std::stringstream ss;
-//   ss << "INSERT INTO grades (student_id, course_id, grade) VALUES (" << st_grade.student_id << "," <<
-//   st_grade.course_id
-//      << "," << st_grade.grade << ");";
-//   return executeInsert(ss.str());
-// }
-
-// bool ImuDatabase::addFinalGrade(const DBT_FinalGrade& st_finalGrade)
-// {
-//   std::stringstream ss;
-//   ss << "INSERT INTO final_grades (student_id, course_id, number_of_exams, final_grade) VALUES ("
-//      << st_finalGrade.student_id << "," << st_finalGrade.course_id << "," << st_finalGrade.number_of_exams << ","
-//      << st_finalGrade.final_grade << ");";
-//   return executeInsert(ss.str());
-// }
-
-// int ImuDatabase::getGradeAmountFromCourse(int c_id)
-// {
-//   return fetchSingleValue<int>("SELECT number_of_grades FROM courses WHERE id=" + std::to_string(c_id) + ";");
-// }
-
-// std::vector<std::tuple<int, int>> ImuDatabase::getAllStudentCoursesRel()
-// {
-//   bool result_success;
-//   MYSQL_RES* res;
-//   std::vector<std::tuple<int, int>> result;
-//   MYSQL_ROW row;
-
-//   std::string q = "SELECT student_id, course_id FROM student_courses;";
-
-//   std::tie(result_success, res) = this->execSQLQuery_(conn_, q);
-
-//   if (!result_success)
-//   {
-//     std::cout << "result unsuccesful" << std::endl;
-//     return result;
-//   }
-
-//   while ((row = mysql_fetch_row(res)) != nullptr)
-//   {
-//     int student_id = row[0] ? std::stoi(row[0]) : 0;
-//     int course_id = row[1] ? std::stoi(row[1]) : 0;
-
-//     result.push_back(std::make_tuple(student_id, course_id));
-//   }
-
-//   mysql_free_result(res);
-//   return result;
-// }
-
-// std::vector<DBT_FinalGrade> ImuDatabase::getAllFinalGrades()
-// {
-//   bool result_success;
-//   MYSQL_RES* res;
-//   std::vector<DBT_FinalGrade> grades;
-//   MYSQL_ROW row;
-
-//   std::string q = "SELECT student_id, course_id, number_of_exams, final_grade FROM final_grades;";
-
-//   std::tie(result_success, res) = this->execSQLQuery_(conn_, q);
-
-//   if (!result_success)
-//   {
-//     std::cout << "result unsuccesful" << std::endl;
-//     return grades;
-//   }
-
-//   while ((row = mysql_fetch_row(res)) != nullptr)
-//   {
-//     DBT_FinalGrade grade;
-//     grade.student_id = row[0] ? std::stoi(row[0]) : 0;
-//     grade.course_id = row[1] ? std::stoi(row[1]) : 0;
-//     grade.number_of_exams = row[2] ? std::stoi(row[2]) : 0;
-//     grade.final_grade = row[3] ? std::stod(row[3]) : 0.0;
-
-//     grades.push_back(grade);
-//   }
-
-//   mysql_free_result(res);
-//   return grades;
-// }
-
-// std::vector<std::tuple<int, int>> ImuDatabase::getMissingFinalGrades()
-// {
-//   bool result_success;
-//   MYSQL_RES* res;
-//   std::vector<std::tuple<int, int>> result;
-//   MYSQL_ROW row;
-
-//   std::string q =
-//       "SELECT sc.* FROM student_courses sc "
-//       "LEFT JOIN final_grades fg ON sc.student_id = fg.student_id "
-//       "AND sc.course_id = fg.course_id "
-//       "JOIN courses c ON sc.course_id = c.id "
-//       "WHERE fg.id IS NULL AND c.number_of_grades <> 0;";
-
-//   std::tie(result_success, res) = this->execSQLQuery_(conn_, q);
-
-//   if (!result_success)
-//   {
-//     std::cout << "result unsuccesful" << std::endl;
-//     return result;
-//   }
-
-//   while ((row = mysql_fetch_row(res)) != nullptr)
-//   {
-//     int student_id = row[0] ? std::stoi(row[0]) : 0;
-//     int course_id = row[1] ? std::stoi(row[1]) : 0;
-
-//     result.push_back(std::make_tuple(student_id, course_id));
-//   }
-
-//   mysql_free_result(res);
-//   return result;
-// }
-
 DBT_Measurement getMeasurementById(int id)
 {
+  bool result_success;
+  MYSQL_RES* res;
+  DBT_Measurement measurement;
+  MYSQL_ROW row;
+
+  std::string q =
+      "SELECT id, timestamp, linear_accel_x, linear_accel_y, linear_accel_z, angular_velocity_z FROM bno055_data WHERE "
+      "id = " +
+      std::to_string(id) + ";";
+
+  std::tie(result_success, res) = this->execSQLQuery_(conn_, q);
+
+  if (!result_success)
+  {
+    std::cout << "result unsuccesful" << std::endl;
+    return measurement;
+  }
+
+  if ((row = mysql_fetch_row(res)) != nullptr)
+  {
+    measurement.id = row[0] ? std::stol(row[0]) : 0;
+    // Convert timestamp from string to chrono::system_clock::time_point
+    if (row[1])
+    {
+      std::time_t ts = static_cast<std::time_t>(std::stoll(row[1]));
+      measurement.timestamp = std::chrono::system_clock::from_time_t(ts);
+    }
+    measurement.linear_accel_x = row[2] ? std::stod(row[2]) : 0.0;
+    measurement.linear_accel_y = row[3] ? std::stod(row[3]) : 0.0;
+    measurement.linear_accel_z = row[4] ? std::stod(row[4]) : 0.0;
+    measurement.angular_velocity_z = row[5] ? std::stod(row[5]) : 0.0;
+  }
+
+  mysql_free_result(res);
+  return measurement;
 }
 
 bool addMeasurement(const DBT_Measurement& measurement)
 {
+  std::stringstream ss;
+  // Convert timestamp to time_t for storage
+  std::time_t ts = std::chrono::system_clock::to_time_t(measurement.timestamp);
+
+  ss << "INSERT INTO bno055_data (timestamp, linear_accel_x, linear_accel_y, linear_accel_z, angular_velocity_z) "
+        "VALUES ("
+     << ts << "," << measurement.linear_accel_x << "," << measurement.linear_accel_y << ","
+     << measurement.linear_accel_z << "," << measurement.angular_velocity_z << ");";
+  return executeInsert(ss.str());
 }

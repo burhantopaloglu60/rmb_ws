@@ -21,9 +21,9 @@ struct DBT_Measurement
 {
   long id;
   std::chrono::system_clock::time_point timestamp; //steady clock?
-  double linear_acceleration_x;
-  double linear_acceleration_y;
-  double linear_acceleration_z;
+  double linear_accel_x;
+  double linear_accel_y;
+  double linear_accel_z;
   double angular_velocity_z;
 };
 

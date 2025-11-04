@@ -16,13 +16,13 @@ find_package(rclcpp REQUIRED)
 find_package(rclcpp_action REQUIRED)
 find_package(std_msgs REQUIRED)  
 
-# find_package(g425_assign3_interfaces_pkg REQUIRED)
+find_package(g425_assign3_interfaces_pkg REQUIRED)
 
 include_directories(include)
 
 # executables
 # add_library(GGDatabase src/GGDatabase.cpp)
-# add_executable(GradeCalculator src/GradeCalculator.cpp)
+add_executable(ESP32Subscriber src/Subscriber.cpp)
 # add_executable(ResultGenerator src/ResultGenerator.cpp)
 # add_executable(FinalGradeDeterminator src/FinalGradeDeterminator.cpp)
 # add_executable(RetakeScheduler src/RetakeScheduler.cpp)
@@ -30,7 +30,7 @@ include_directories(include)
 
 # dependencies
 # ament_target_dependencies(GGDatabase rclcpp g425_assign1_interfaces_pkg)
-# ament_target_dependencies(GradeCalculator rclcpp g425_assign1_interfaces_pkg )
+ament_target_dependencies(ESP32Subscriber rclcpp g425_assign3_interfaces_pkg std_msgs )
 # ament_target_dependencies(ResultGenerator rclcpp g425_assign1_interfaces_pkg std_msgs )
 # ament_target_dependencies(FinalGradeDeterminator rclcpp g425_assign1_interfaces_pkg )
 # ament_target_dependencies(RetakeScheduler rclcpp rclcpp_action g425_assign1_interfaces_pkg )
@@ -53,6 +53,7 @@ install(DIRECTORY
   )
 
 install (TARGETS
+    ESP32Subscriber
 	  # GradeCalculator
     # ResultGenerator
     # FinalGradeDeterminator

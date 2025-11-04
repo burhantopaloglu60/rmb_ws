@@ -7,15 +7,17 @@ endif()
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
+find_package(builtin_interfaces REQUIRED)
 # uncomment the following section in order to fill in
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
 
-# find_package(rosidl_default_generators REQUIRED)
-# rosidl_generate_interfaces(${PROJECT_NAME}
+find_package(rosidl_default_generators REQUIRED)
+rosidl_generate_interfaces(${PROJECT_NAME}
   # we will add the name of our custom interfaces here
-  # "msg/Exam.msg"
-  # )
+  "msg/Imudata.msg"
+  DEPENDENCIES builtin_interfaces
+)
 ament_export_dependencies(rosidl_default_runtime)
 
 # if(BUILD_TESTING)

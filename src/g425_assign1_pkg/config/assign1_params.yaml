@@ -6,7 +6,7 @@
 
 /ResultGenerator_node:
   ros__parameters:
-    EXAM_PUBLISH_INTERVAL: 2
+    EXAM_PUBLISH_INTERVAL: 1
     MIN_MARK: 10
     MAX_MARK: 100
     

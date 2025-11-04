@@ -22,12 +22,12 @@ void setup() {
 
   // Initialize BNO055
   if (!bno.begin()) {
-    Serial.println("❌ Failed to find BNO055 chip!");
+    Serial.println("Failed to find BNO055 chip!");
     while (1);
   }
   delay(1000);
   bno.setExtCrystalUse(true);
-  Serial.println("✅ BNO055 initialized");
+  Serial.println("BNO055 initialized");
 
   // Initialize micro-ROS
   set_microros_transports();

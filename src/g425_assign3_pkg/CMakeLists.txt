@@ -15,6 +15,7 @@ find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_action REQUIRED)
 find_package(std_msgs REQUIRED)  
+find_package(sensor_msgs REQUIRED)
 
 find_package(g425_assign3_interfaces_pkg REQUIRED)
 
@@ -23,6 +24,7 @@ include_directories(include)
 # executables
 # add_library(GGDatabase src/GGDatabase.cpp)
 add_executable(ESP32Subscriber src/Subscriber.cpp)
+add_executable(udp_imu_bridge src/IMU_receiver_publisher.cpp)
 # add_executable(ResultGenerator src/ResultGenerator.cpp)
 # add_executable(FinalGradeDeterminator src/FinalGradeDeterminator.cpp)
 # add_executable(RetakeScheduler src/RetakeScheduler.cpp)
@@ -30,7 +32,8 @@ add_executable(ESP32Subscriber src/Subscriber.cpp)
 
 # dependencies
 # ament_target_dependencies(GGDatabase rclcpp g425_assign1_interfaces_pkg)
-ament_target_dependencies(ESP32Subscriber rclcpp g425_assign3_interfaces_pkg std_msgs )
+ament_target_dependencies(ESP32Subscriber rclcpp sensor_msgs std_msgs )
+ament_target_dependencies(udp_imu_bridge rclcpp sensor_msgs std_msgs )
 # ament_target_dependencies(ResultGenerator rclcpp g425_assign1_interfaces_pkg std_msgs )
 # ament_target_dependencies(FinalGradeDeterminator rclcpp g425_assign1_interfaces_pkg )
 # ament_target_dependencies(RetakeScheduler rclcpp rclcpp_action g425_assign1_interfaces_pkg )
@@ -54,6 +57,7 @@ install(DIRECTORY
 
 install (TARGETS
     ESP32Subscriber
+    udp_imu_bridge
 	  # GradeCalculator
     # ResultGenerator
     # FinalGradeDeterminator

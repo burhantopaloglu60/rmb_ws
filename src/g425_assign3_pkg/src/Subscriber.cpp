@@ -1,6 +1,5 @@
 #include "rclcpp/rclcpp.hpp"
 #include "std_msgs/msg/string.hpp"
-#include "g425_assign3_interfaces_pkg/msg/imudata.hpp"
 
 using namespace std::placeholders;
 using String = std_msgs::msg::String;

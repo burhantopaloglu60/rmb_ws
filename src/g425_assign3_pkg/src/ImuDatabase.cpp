@@ -130,7 +130,7 @@ bool ImuDatabase::executeInsert(const std::string& query)
 }
 #pragma endregion helper_templates
 
-DBT_Measurement getMeasurementById(int id)
+DBT_Measurement ImuDatabase::getMeasurementById(int id)
 {
   bool result_success;
   MYSQL_RES* res;
@@ -169,7 +169,7 @@ DBT_Measurement getMeasurementById(int id)
   return measurement;
 }
 
-bool addMeasurement(const DBT_Measurement& measurement)
+bool ImuDatabase::addMeasurement(const DBT_Measurement& measurement)
 {
   std::stringstream ss;
   // Convert timestamp to time_t for storage

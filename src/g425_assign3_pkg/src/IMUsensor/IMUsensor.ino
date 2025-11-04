@@ -53,6 +53,8 @@ void setup() {
 
   // Indicate no orientation data available
   imu_msg.orientation_covariance[0] = -1;
+  imu_msg.angular_velocity_covariance[0] = -1;
+  imu_msg.linear_acceleration_covariance[0] = -1;
 }
 
 void loop() {

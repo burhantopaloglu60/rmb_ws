@@ -3,62 +3,62 @@
 // #include <Adafruit_BNO055.h>
 // #include <utility/imumaths.h>
 
-<<<<<<< Updated upstream
-Adafruit_BNO055 bno = Adafruit_BNO055(55);
-long prevTimestamp = 0;
-double prevAngVelocity = 0;
+// <<<<<<< Updated upstream
+// Adafruit_BNO055 bno = Adafruit_BNO055(55);
+// long prevTimestamp = 0;
+// double prevAngVelocity = 0;
 
-long timestamp = 0; 
-double angVelocity = 0;
-double orientationVect[3] = {0,0,0}; //x,y,z,
+// long timestamp = 0; 
+// double angVelocity = 0;
+// double orientationVect[3] = {0,0,0}; //x,y,z,
 
-double angularAcceleration = 0.0f;
+// double angularAcceleration = 0.0f;
 
-void setup() {
-  Serial.begin(9600);
+// void setup() {
+//   Serial.begin(9600);
 
-  bno.begin();
-  bno.setExtCrystalUse(true);
-}
-// output to ros = (timestamp IRL + x orientation + y orientation + z orientation + angular acceleration from topdown)
-// Angular accel (rad/s²), xyz (Quaternion)
-void loop() {
-  //sensors_event_t accelEvent; the accelerometer has no angular acceleration, not needed
-  sensors_event_t gyroEvent;
+//   bno.begin();
+//   bno.setExtCrystalUse(true);
+// }
+// // output to ros = (timestamp IRL + x orientation + y orientation + z orientation + angular acceleration from topdown)
+// // Angular accel (rad/s²), xyz (Quaternion)
+// void loop() {
+//   //sensors_event_t accelEvent; the accelerometer has no angular acceleration, not needed
+//   sensors_event_t gyroEvent;
 
-  // Get linear acceleration and gyroscope data
-  //bno.getEvent(&accelEvent, Adafruit_BNO055::VECTOR_ACCELEROMETER);
-  bno.getEvent(&gyroEvent, Adafruit_BNO055::VECTOR_GYROSCOPE);
+//   // Get linear acceleration and gyroscope data
+//   //bno.getEvent(&accelEvent, Adafruit_BNO055::VECTOR_ACCELEROMETER);
+//   bno.getEvent(&gyroEvent, Adafruit_BNO055::VECTOR_GYROSCOPE);
 
-  //throw everything in to variables!
-  angVelocity = gyroEvent.gyro.z;
-  orientationVect[0] = gyroEvent.orientation.x;
-  orientationVect[1] = gyroEvent.orientation.y;
-  orientationVect[2] = gyroEvent.orientation.z;
-  timestamp = gyroEvent.timestamp;
+//   //throw everything in to variables!
+//   angVelocity = gyroEvent.gyro.z;
+//   orientationVect[0] = gyroEvent.orientation.x;
+//   orientationVect[1] = gyroEvent.orientation.y;
+//   orientationVect[2] = gyroEvent.orientation.z;
+//   timestamp = gyroEvent.timestamp;
 
-  if(prevTimestamp > 0 )
-  {
-    // calculate angular acceleration and send it in ros message
-    // angular acceleration = dω​ / dt 
-    angularAcceleration = ( (angVelocity - prevAngVelocity) / ( (double)(timestamp - prevTimestamp)/1000) ); // we get dt in seconds and divide the delta velocity by it 
-    Serial.print("orientation x: ");
-    Serial.print(orientationVect[0]);
-    Serial.print(" | orientation y: ");
-    Serial.print(orientationVect[1]);
-    Serial.print(" | orientation z: ");
-    Serial.print(orientationVect[2]);
-    Serial.print(" | rotation accel in rad/s²: ");
-    Serial.println(angularAcceleration);
+//   if(prevTimestamp > 0 )
+//   {
+//     // calculate angular acceleration and send it in ros message
+//     // angular acceleration = dω​ / dt 
+//     angularAcceleration = ( (angVelocity - prevAngVelocity) / ( (double)(timestamp - prevTimestamp)/1000) ); // we get dt in seconds and divide the delta velocity by it 
+//     Serial.print("orientation x: ");
+//     Serial.print(orientationVect[0]);
+//     Serial.print(" | orientation y: ");
+//     Serial.print(orientationVect[1]);
+//     Serial.print(" | orientation z: ");
+//     Serial.print(orientationVect[2]);
+//     Serial.print(" | rotation accel in rad/s²: ");
+//     Serial.println(angularAcceleration);
 
-  }
-  prevAngVelocity = angVelocity;
-  prevTimestamp = timestamp; // save previous timestamp to get angular accel
+//   }
+//   prevAngVelocity = angVelocity;
+//   prevTimestamp = timestamp; // save previous timestamp to get angular accel
 
-  delay(200); // polling timer
-}
+//   delay(200); // polling timer
+// }
 
-=======
+// =======
 // Adafruit_BNO055 bno = Adafruit_BNO055(55);
 
 // void setup() 
@@ -96,4 +96,4 @@ void loop() {
 
 //   delay(100);
 // }
->>>>>>> Stashed changes
+// >>>>>>> Stashed changes

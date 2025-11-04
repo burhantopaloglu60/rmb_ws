@@ -21,29 +21,20 @@ find_package(g425_assign3_interfaces_pkg REQUIRED)
 include_directories(include)
 
 # executables
-# add_library(GGDatabase src/GGDatabase.cpp)
+add_library(ImuDatabase src/ImuDatabase.cpp)
 add_executable(ESP32Subscriber src/Subscriber.cpp)
-# add_executable(ResultGenerator src/ResultGenerator.cpp)
-# add_executable(FinalGradeDeterminator src/FinalGradeDeterminator.cpp)
-# add_executable(RetakeScheduler src/RetakeScheduler.cpp)
-# add_executable(RetakeGradeDeterminator src/RetakeGradeDeterminator.cpp)
+
 
 # dependencies
-# ament_target_dependencies(GGDatabase rclcpp g425_assign1_interfaces_pkg)
+ament_target_dependencies(ImuDatabase rclcpp g425_assign3_interfaces_pkg)
 ament_target_dependencies(ESP32Subscriber rclcpp g425_assign3_interfaces_pkg std_msgs )
-# ament_target_dependencies(ResultGenerator rclcpp g425_assign1_interfaces_pkg std_msgs )
-# ament_target_dependencies(FinalGradeDeterminator rclcpp g425_assign1_interfaces_pkg )
-# ament_target_dependencies(RetakeScheduler rclcpp rclcpp_action g425_assign1_interfaces_pkg )
-# ament_target_dependencies(RetakeGradeDeterminator rclcpp rclcpp_action g425_assign1_interfaces_pkg )
+
 
 # libraries
-# target_compile_options(GGDatabase PRIVATE ${MYSQL_CFLAGS})
-# target_link_libraries(GGDatabase ${MYSQL_LIBS})
-# target_link_libraries(GradeCalculator GGDatabase ${MYSQL_LIBS})
-# target_link_libraries(ResultGenerator GGDatabase ${MYSQL_LIBS})
-# target_link_libraries(FinalGradeDeterminator GGDatabase ${MYSQL_LIBS})
-# target_link_libraries(RetakeScheduler GGDatabase ${MYSQL_LIBS})
-# target_link_libraries(RetakeGradeDeterminator GGDatabase ${MYSQL_LIBS})
+target_compile_options(ImuDatabase PRIVATE ${MYSQL_CFLAGS})
+target_link_libraries(ImuDatabase ${MYSQL_LIBS})
+# target_link_libraries(NODE ImuDatabase ${MYSQL_LIBS})
+
 
 # launch files
 install(DIRECTORY
@@ -54,11 +45,6 @@ install(DIRECTORY
 
 install (TARGETS
     ESP32Subscriber
-	  # GradeCalculator
-    # ResultGenerator
-    # FinalGradeDeterminator
-    # RetakeScheduler
-    # RetakeGradeDeterminator
           DESTINATION lib/${PROJECT_NAME}
           )
 

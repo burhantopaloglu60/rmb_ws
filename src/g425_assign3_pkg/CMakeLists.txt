@@ -14,7 +14,10 @@ execute_process(COMMAND mysql_config --libs
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_action REQUIRED)
-find_package(std_msgs REQUIRED)  
+find_package(std_msgs REQUIRED)   
+find_package(rclcpp_lifecycle REQUIRED)
+find_package(sensor_msgs REQUIRED)
+find_package(lifecycle_msgs REQUIRED)
 
 find_package(g425_assign3_interfaces_pkg REQUIRED)
 
@@ -22,18 +25,21 @@ include_directories(include)
 
 # executables
 add_library(ImuDatabase src/ImuDatabase.cpp)
-add_executable(ESP32Subscriber src/Subscriber.cpp)
-
+add_executable(ESP32Subscriber src/Subscriber.cpp )
+add_executable(ImuLifecycleNode src/ImuLifecycleNode.cpp)
+add_executable(LifecycleManager src/LifecycleManager.cpp)
 
 # dependencies
 ament_target_dependencies(ImuDatabase rclcpp g425_assign3_interfaces_pkg)
-ament_target_dependencies(ESP32Subscriber rclcpp g425_assign3_interfaces_pkg std_msgs )
-
+ament_target_dependencies(ESP32Subscriber rclcpp g425_assign3_interfaces_pkg sensor_msgs)
+ament_target_dependencies(ImuLifecycleNode rclcpp rclcpp_lifecycle sensor_msgs lifecycle_msgs)
+ament_target_dependencies(LifecycleManager rclcpp lifecycle_msgs sensor_msgs)
 
 # libraries
 target_compile_options(ImuDatabase PRIVATE ${MYSQL_CFLAGS})
 target_link_libraries(ImuDatabase ${MYSQL_LIBS})
 # target_link_libraries(NODE ImuDatabase ${MYSQL_LIBS})
+target_link_libraries(ESP32Subscriber ImuDatabase ${MYSQL_LIBS})
 
 
 # launch files
@@ -45,6 +51,8 @@ install(DIRECTORY
 
 install (TARGETS
     ESP32Subscriber
+    ImuLifecycleNode
+    LifecycleManager
           DESTINATION lib/${PROJECT_NAME}
           )
 

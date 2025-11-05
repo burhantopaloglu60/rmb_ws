@@ -1,0 +1,8 @@
+<launch>
+    <node pkg="g425_assign3_pkg" exec="ESP32Subscriber" >
+    </node>
+    <node pkg="g425_assign3_pkg" exec="ImuLifecycleNode" >
+    </node>
+    <node pkg="g425_assign3_pkg" exec="LifecycleManager" >
+    </node>
+</launch>

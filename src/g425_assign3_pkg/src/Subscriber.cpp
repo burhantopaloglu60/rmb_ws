@@ -37,7 +37,9 @@ public:
     RCLCPP_INFO(this->get_logger(), "Lifecycle node subscriber started, waiting for messages...");
   }
 
+#ifndef TESTING_EXCLUDE_MAIN
 private:
+#endif
   void imuCallback(const sensor_msgs::msg::Imu::SharedPtr msg)
   {
     RCLCPP_INFO(
@@ -80,6 +82,7 @@ private:
   std::shared_ptr<ImuDatabase> database_;
 };
 
+#ifndef TESTING_EXCLUDE_MAIN
 int main(int argc, char ** argv)
 {
   rclcpp::init(argc, argv);
@@ -88,4 +91,4 @@ int main(int argc, char ** argv)
   rclcpp::shutdown();
   return 0;
 }
-
+#endif

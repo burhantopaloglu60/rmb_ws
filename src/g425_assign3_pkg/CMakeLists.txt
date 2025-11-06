@@ -67,30 +67,20 @@ if(BUILD_TESTING)
   find_package(ament_cmake_gtest REQUIRED)
 
   # test files
-  # ament_add_gtest(${PROJECT_NAME}_utest_grade_calculator test/unit/utest_grade_calculator.cpp)
-  # ament_add_gtest(${PROJECT_NAME}_utest_final_grade_determinator test/unit/utest_final_grade_determinator.cpp)
-  # ament_add_gtest(${PROJECT_NAME}_utest_result_generator test/unit/utest_result_generator.cpp)
-  # ament_add_gtest(${PROJECT_NAME}_utest_ggDatabase test/unit/utest_ggDatabase.cpp)
-  # ament_add_gtest(${PROJECT_NAME}_utest_retake_scheduler test/unit/utest_retake_scheduler.cpp)
-  # ament_add_gtest(${PROJECT_NAME}_utest_retake_grade_determinator test/unit/utest_retake_grade_determinator.cpp)
-
-  # ament_add_gtest(${PROJECT_NAME}_systest_grade_generator test/systest_grade_generator.cpp)
-
-  # target_include_directories(${PROJECT_NAME}_utest_grade_calculator PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include> $<INSTALL_INTERFACE:include>)
-
-  # target_compile_definitions(${PROJECT_NAME}_utest_retake_scheduler PRIVATE UNIT_TEST)
-  # target_compile_definitions(${PROJECT_NAME}_utest_retake_grade_determinator PRIVATE UNIT_TEST)
+  ament_add_gtest(utest_imu_lifecycle_node test/unit/utest_imu_lifecycle.cpp)
+  ament_add_gtest(utest_lifecycle_manager test/unit/utest_lifecycle_manager.cpp)
+  ament_add_gtest(utest_subscriber test/unit/utest_subscriber.cpp)
+  
+  target_compile_definitions(utest_imu_lifecycle_node PRIVATE TESTING_EXCLUDE_MAIN)
+  target_compile_definitions(utest_lifecycle_manager PRIVATE TESTING_EXCLUDE_MAIN)
+  target_compile_definitions(utest_subscriber PRIVATE TESTING_EXCLUDE_MAIN)
   
   # dependencies
-  # ament_target_dependencies(${PROJECT_NAME}_utest_grade_calculator rclcpp g425_assign1_interfaces_pkg)
-  # ament_target_dependencies(${PROJECT_NAME}_utest_final_grade_determinator rclcpp g425_assign1_interfaces_pkg)
-  # ament_target_dependencies(${PROJECT_NAME}_utest_result_generator rclcpp g425_assign1_interfaces_pkg std_msgs)
-  # ament_target_dependencies(${PROJECT_NAME}_utest_retake_scheduler rclcpp rclcpp_action g425_assign1_interfaces_pkg) 
-  # ament_target_dependencies(${PROJECT_NAME}_utest_retake_grade_determinator rclcpp rclcpp_action g425_assign1_interfaces_pkg) 
-
-  # ament_target_dependencies(${PROJECT_NAME}_systest_grade_generator rclcpp rclcpp_action g425_assign1_interfaces_pkg std_msgs)
-
-  # target_link_libraries(${PROJECT_NAME}_utest_final_grade_determinator GGDatabase ${MYSQL_LIBS})
+  ament_target_dependencies(utest_imu_lifecycle_node rclcpp rclcpp_lifecycle sensor_msgs lifecycle_msgs)
+  ament_target_dependencies(utest_lifecycle_manager rclcpp lifecycle_msgs sensor_msgs)
+  ament_target_dependencies(utest_subscriber rclcpp g425_assign3_interfaces_pkg sensor_msgs)
+  
+  target_link_libraries(utest_subscriber ImuDatabase ${MYSQL_LIBS})
   # target_link_libraries(${PROJECT_NAME}_utest_result_generator GGDatabase ${MYSQL_LIBS})
   # target_link_libraries(${PROJECT_NAME}_utest_ggDatabase GGDatabase ${MYSQL_LIBS})
   # target_link_libraries(${PROJECT_NAME}_utest_retake_scheduler GGDatabase ${MYSQL_LIBS})

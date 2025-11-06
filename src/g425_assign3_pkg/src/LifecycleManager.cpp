@@ -236,6 +236,7 @@ void wake_executor(std::shared_future<void> future, rclcpp::executors::SingleThr
   exec.cancel();
 }
 
+#ifndef TESTING_EXCLUDE_MAIN
 int main(int argc, char ** argv)
 {
   setvbuf(stdout, NULL, _IONBF, BUFSIZ);
@@ -264,3 +265,4 @@ int main(int argc, char ** argv)
   rclcpp::shutdown();
   return 0;
 }
+#endif

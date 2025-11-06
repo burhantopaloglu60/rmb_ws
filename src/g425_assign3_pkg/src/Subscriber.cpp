@@ -17,8 +17,6 @@ one line per change
 #include "g425_assign3_pkg/ImuDatabase.hpp"
 
 using namespace std::placeholders;
-using ImuDatabase = g425_assign3_pkg::ImuDatabase;
-using DBT_Measurement = g425_assign3_pkg::DBT_Measurement;
 
 class LifecycleNodeSubscriber : public rclcpp::Node
 {
@@ -33,7 +31,7 @@ public:
     subscription_ = this->create_subscription<sensor_msgs::msg::Imu>(
       "/imu_data", 
       10, 
-      std::bind(&LifecycleNodeSubscriber::imuCallback, this, std::placeholders::_1)
+      std::bind(&LifecycleNodeSubscriber::imuCallback, this, _1)
     );
 
     RCLCPP_INFO(this->get_logger(), "Lifecycle node subscriber started, waiting for messages...");

@@ -1,6 +1,24 @@
+/*
+Node description:
+Node that add the IMU data in a database.
+
+This node subscribes to the /imu_data topic, receives IMU messages (sensor_msgs/msg/Imu), 
+logs the linear acceleration and angular velocity data and stores the measurements into a MariaDB database. 
+*/ 
+
+/*
+--Software changes:
+one line per change 
+(1) created 04.11.2025: developer-Melissa van Leeuwen 
+*/
 #include "rclcpp/rclcpp.hpp"
 #include "std_msgs/msg/string.hpp"
-#include "g425_assign3_interfaces_pkg/msg/imudata.hpp"
+#include "sensor_msgs/msg/imu.hpp"
+#include "g425_assign3_pkg/ImuDatabase.hpp"
+
+using namespace std::placeholders;
+using ImuDatabase = g425_assign3_pkg::ImuDatabase;
+using DBT_Measurement = g425_assign3_pkg::DBT_Measurement;
 
 class LifecycleNodeSubscriber : public rclcpp::Node
 {

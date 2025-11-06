@@ -1,3 +1,14 @@
+/*
+Node description:
+Node that receives IMU data via UDP and publishes it as ROS2 IMU messages.
+ 
+*/ 
+
+/*
+--Software changes:
+one line per change 
+(1) created 04.11.2025: developer-Rik van Velzen 
+*/
 #include <rclcpp/rclcpp.hpp>
 #include <string>
 #include <array>

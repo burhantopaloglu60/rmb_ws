@@ -97,5 +97,5 @@ void loop() {
   Serial.print(imu_msg.linear_acceleration.y); Serial.print(", ");
   Serial.println(imu_msg.linear_acceleration.z);
 
-  delay(500);
+  delay(200);
 }

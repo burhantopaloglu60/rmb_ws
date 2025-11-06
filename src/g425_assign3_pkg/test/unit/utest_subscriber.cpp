@@ -83,6 +83,34 @@ TEST_F(TestLifecycleNodeSubscriber, ReceivesImuMessageOverTopic)
   SUCCEED();  // if there is no crash, the test is successful
 }
 
+// Test 4: Node handles extreme/invalid IMU values
+TEST_F(TestLifecycleNodeSubscriber, ImuCallbackHandlesExtremeValues)
+{
+  auto node = std::make_shared<LifecycleNodeSubscriber>();
+
+  auto msg = std::make_shared<sensor_msgs::msg::Imu>();
+  
+  // Extreme values
+  msg->linear_acceleration.x = std::numeric_limits<double>::infinity();
+  msg->linear_acceleration.y = -std::numeric_limits<double>::infinity();
+  msg->linear_acceleration.z = std::numeric_limits<double>::quiet_NaN();
+  
+  msg->angular_velocity.x = std::numeric_limits<double>::infinity();
+  msg->angular_velocity.y = -std::numeric_limits<double>::infinity();
+  msg->angular_velocity.z = std::numeric_limits<double>::quiet_NaN();
+  
+  msg->header.stamp.sec = 1730000002;
+  msg->header.stamp.nanosec = 0;
+
+  // Call the callback
+  EXPECT_NO_THROW({
+    node->imuCallback(msg);
+  });
+
+  SUCCEED(); // If no crash or exceptions, test passes
+}
+
+
 int main(int argc, char **argv)
 {
   testing::InitGoogleTest(&argc, argv);

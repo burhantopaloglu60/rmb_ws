@@ -31,6 +31,9 @@ public:
         this->declare_parameter<double>("tolerance", 1e-6);
         tolerance_ = this->get_parameter("tolerance").as_double();
 
+        this->declare_parameter<double>("timer_period_ms", 200);
+        timer_period_ms_ = this->get_parameter("timer_period_ms").as_int();
+
         // Create UDP socket
         sockfd_ = socket(AF_INET, SOCK_DGRAM, 0);
         if (sockfd_ < 0) {
@@ -55,7 +58,7 @@ public:
 
         // Timer for polling data
         timer_ = this->create_wall_timer(
-            std::chrono::milliseconds(200),
+            std::chrono::milliseconds(timer_period_ms_),
             std::bind(&Udp_Imu_bridge::receive_data, this)
         );
 
@@ -138,6 +141,7 @@ private:
     int sockfd_;
     int port_;
     int tolerance_;
+    int timer_period_ms_;
     rclcpp::TimerBase::SharedPtr timer_;
     rclcpp::Publisher<Imu>::SharedPtr imu_pub_;
 };

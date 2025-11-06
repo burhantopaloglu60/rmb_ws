@@ -10,7 +10,7 @@
   <depend>rclcpp</depend>
 
   <!-- additional depends -->
-  <depend>g425_assign1_interfaces_pkg</depend>
+  <depend>g425_assign3_interfaces_pkg</depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>

@@ -1,35 +1,75 @@
 #include "rclcpp/rclcpp.hpp"
 #include "std_msgs/msg/string.hpp"
+#include "g425_assign3_interfaces_pkg/msg/imudata.hpp"
 
-using namespace std::placeholders;
-using String = std_msgs::msg::String;
-class ESP32Subscriber : public rclcpp::Node
+class LifecycleNodeSubscriber : public rclcpp::Node
 {
 public:
-  ESP32Subscriber() : Node("esp32_subscriber_node")
+  LifecycleNodeSubscriber()
+  : Node("lifecycle_node_subscriber")
   {
-    subscription_ = this->create_subscription<String>(
-      "esp32_topic",
-      10,
-      std::bind(&ESP32Subscriber::topic_callback, this, _1));
+    // Initialize database
+    database_ = std::make_shared<ImuDatabase>("localhost", "john_imu", "1234", "hello_imu");
 
-    RCLCPP_INFO(this->get_logger(), "ESP32 subscriber initialized. Listening on /esp32_topic...");
+    // Subscriber op het topic /imu_data
+    subscription_ = this->create_subscription<sensor_msgs::msg::Imu>(
+      "/imu_data", 
+      10, 
+      std::bind(&LifecycleNodeSubscriber::imuCallback, this, std::placeholders::_1)
+    );
+
+    RCLCPP_INFO(this->get_logger(), "Lifecycle node subscriber started, waiting for messages...");
   }
 
 private:
-  void topic_callback(const String::SharedPtr msg) const
+  void imuCallback(const sensor_msgs::msg::Imu::SharedPtr msg)
   {
-    RCLCPP_INFO(this->get_logger(), "Received from ESP32: '%s'", msg->data.c_str());
+    RCLCPP_INFO(
+      get_logger(),
+      "Received IMU data:\n"
+      "Linear Acceleration: x=%.3f, y=%.3f, z=%.3f\n"
+      "Angular Velocity: x=%.3f, y=%.3f, z=%.3f\n"
+      "Time: sec=%u, nanosec=%u",
+      msg->linear_acceleration.x,
+      msg->linear_acceleration.y,
+      msg->linear_acceleration.z,
+      msg->angular_velocity.x,
+      msg->angular_velocity.y,
+      msg->angular_velocity.z,
+      msg->header.stamp.sec,
+      msg->header.stamp.nanosec
+    );
+
+    // Put data in the database
+    DBT_Measurement measurement;
+    // Convert ROS2 time to std::chrono::system_clock::time_point
+    std::chrono::system_clock::time_point timestamp =
+    std::chrono::system_clock::time_point{
+      std::chrono::seconds(msg->header.stamp.sec) +
+      std::chrono::nanoseconds(msg->header.stamp.nanosec)
+    };
+    measurement.timestamp = timestamp;
+    measurement.linear_accel_x = msg->linear_acceleration.x;
+    measurement.linear_accel_y = msg->linear_acceleration.y;
+    measurement.linear_accel_z = msg->linear_acceleration.z;
+    measurement.angular_velocity_z = msg->angular_velocity.z;
+
+    if (!database_->addMeasurement(measurement))
+    {
+      RCLCPP_ERROR(get_logger(), "Could not put IMU data into database!");
+    }
   }
 
-  rclcpp::Subscription<String>::SharedPtr subscription_;
-private:
+  rclcpp::Subscription<sensor_msgs::msg::Imu>::SharedPtr subscription_;
+  std::shared_ptr<ImuDatabase> database_;
 };
-int main(int argc, char **argv)
+
+int main(int argc, char ** argv)
 {
-    rclcpp::init(argc, argv);
-    auto node = std::make_shared<ESP32Subscriber>();
-    rclcpp::spin(node);
-    rclcpp::shutdown();
-    return 0;
+  rclcpp::init(argc, argv);
+  auto node = std::make_shared<LifecycleNodeSubscriber>();
+  rclcpp::spin(node);
+  rclcpp::shutdown();
+  return 0;
 }
+

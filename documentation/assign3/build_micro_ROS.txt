@@ -22,6 +22,8 @@ source install/local_setup.bash
 
 # Download micro-ROS-Agent packages
 ros2 run micro_ros_setup create_agent_ws.sh
+ros2 run micro_ros_setup create_firmware_ws.sh freertos esp32
+
 
 # Build step
 ros2 run micro_ros_setup build_agent.sh

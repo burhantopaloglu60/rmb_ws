@@ -6,7 +6,7 @@
     args="serial --dev /dev/ttyUSB0 -b 115200"
     output="screen">
   </node>
-  <node pkg="g425_assign3_pkg" exec="ESP32Subscriber" >
+  <node pkg="g425_assign3_pkg" exec="LifecycleNodeSubscriber" >
     <param from="$(find-pkg-share g425_assign3_pkg)/config/assign3_params.yaml" />
     <param name="connection_type" value="false"/>
   </node>

@@ -61,9 +61,12 @@ public:
   explicit LifecycleManager(const std::string & node_name)
   : Node(node_name), data_received_(false)
   {
+    this->declare_parameter<bool>("connection_type", 1); // 0 for wired, 1 for wireless
+    connection_type_ = this->get_parameter("connection_type").as_bool();
+    
     // Subscriber for ESP32 data to check connection
     esp_sub_ = this->create_subscription<sensor_msgs::msg::Imu>(
-      "/esp32_topic", 10,
+      "/imu_data_esp", 10,
       std::bind(&LifecycleManager::esp_callback, this, std::placeholders::_1)
     );
 
@@ -188,7 +191,7 @@ public:
       return false;
     }
   }
-
+  bool connection_type_; // false = wired, true = wireless
 private:
   std::shared_ptr<rclcpp::Client<lifecycle_msgs::srv::GetState>> client_get_state_;
   std::shared_ptr<rclcpp::Client<lifecycle_msgs::srv::ChangeState>> client_change_state_;
@@ -210,22 +213,28 @@ void lifecycle_monitor(std::shared_ptr<LifecycleManager> lifecycle_manager)
   }
   lifecycle_manager->get_state();
 
-  while (rclcpp::ok()) {
-    unsigned int current_state = lifecycle_manager->get_state();
-    bool connection_alive = lifecycle_manager->is_connection_alive();
+    if (lifecycle_manager->connection_type_) { // wireless connection
+      // rclcpp::sleep_for(std::chrono::nanoseconds(0.5)); // wait for 2 seconds before activating
+    lifecycle_manager->change_state(Transition::TRANSITION_ACTIVATE);
+    lifecycle_manager->get_state();
+  }
+  else{
+    while (rclcpp::ok()) {
+      unsigned int current_state = lifecycle_manager->get_state();
+      bool connection_alive = lifecycle_manager->is_connection_alive();
 
-    if (connection_alive &&
-        current_state != lifecycle_msgs::msg::State::PRIMARY_STATE_ACTIVE) {
-      RCLCPP_INFO(lifecycle_manager->get_logger(), "IMU data received → activate node");
-      lifecycle_manager->change_state(Transition::TRANSITION_ACTIVATE);
-      lifecycle_manager->get_state();
-    } else if (!connection_alive &&
-               current_state == lifecycle_msgs::msg::State::PRIMARY_STATE_ACTIVE) {
-      RCLCPP_WARN(lifecycle_manager->get_logger(), "No data received → deactivate node");
-      lifecycle_manager->change_state(Transition::TRANSITION_DEACTIVATE);
-      lifecycle_manager->get_state();
+      if (connection_alive &&
+          current_state != lifecycle_msgs::msg::State::PRIMARY_STATE_ACTIVE) {
+        RCLCPP_INFO(lifecycle_manager->get_logger(), "IMU data received → activate node");
+        lifecycle_manager->change_state(Transition::TRANSITION_ACTIVATE);
+        lifecycle_manager->get_state();
+      } else if (!connection_alive &&
+                current_state == lifecycle_msgs::msg::State::PRIMARY_STATE_ACTIVE) {
+        RCLCPP_WARN(lifecycle_manager->get_logger(), "No data received → deactivate node");
+        lifecycle_manager->change_state(Transition::TRANSITION_DEACTIVATE);
+        lifecycle_manager->get_state();
+      }
     }
-
     rate.sleep();
   }
 }

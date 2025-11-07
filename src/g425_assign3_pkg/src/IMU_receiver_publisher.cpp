@@ -31,30 +31,10 @@ public:
         this->declare_parameter<double>("tolerance", 1e-6);
         tolerance_ = this->get_parameter("tolerance").as_double();
 
-        this->declare_parameter<double>("timer_period_ms", 200);
+        this->declare_parameter<int>("timer_period_ms", 200);
         timer_period_ms_ = this->get_parameter("timer_period_ms").as_int();
 
-        // Create UDP socket
-        sockfd_ = socket(AF_INET, SOCK_DGRAM, 0);
-        if (sockfd_ < 0) {
-            RCLCPP_FATAL(this->get_logger(), "Failed to create UDP socket");
-            rclcpp::shutdown();
-            return;
-        }
-
-        sockaddr_in addr{};
-        addr.sin_family = AF_INET;
-        addr.sin_addr.s_addr = INADDR_ANY;
-        addr.sin_port = htons(port_);
-
-        if (bind(sockfd_, (struct sockaddr*)&addr, sizeof(addr)) < 0) {
-            RCLCPP_FATAL(this->get_logger(), "Failed to bind UDP socket to port %d", port_);
-            close(sockfd_);
-            rclcpp::shutdown();
-            return;
-        }
-
-        RCLCPP_INFO(this->get_logger(), "Listening for UDP packets on port %d...", port_);
+        connect_socket();
 
         // Timer for polling data
         timer_ = this->create_wall_timer(
@@ -62,7 +42,7 @@ public:
             std::bind(&Udp_Imu_bridge::receive_data, this)
         );
 
-        imu_pub_ = this->create_publisher<Imu>("imu_data", 50);
+        imu_pub_ = this->create_publisher<Imu>("imu_data_esp", 50);
     }
 
     ~Udp_Imu_bridge()
@@ -71,6 +51,27 @@ public:
     }
 
 private:
+    void connect_socket()
+    {
+        sockfd_ = socket(AF_INET, SOCK_DGRAM, 0);
+        if (sockfd_ < 0) {
+            RCLCPP_ERROR(this->get_logger(), "Failed to create socket");
+            return;
+        }
+
+        sockaddr_in server_addr{};
+        server_addr.sin_family = AF_INET;
+        server_addr.sin_addr.s_addr = INADDR_ANY;
+        server_addr.sin_port = htons(port_);
+
+        if (bind(sockfd_, (struct sockaddr*)&server_addr, sizeof(server_addr)) < 0) {
+            RCLCPP_ERROR(this->get_logger(), "Failed to bind socket");
+            close(sockfd_);
+            return;
+        }
+
+        RCLCPP_INFO(this->get_logger(), "Listening for UDP packets on port %d...", port_);
+    }
     void receive_data()
     {
         char buffer[256];

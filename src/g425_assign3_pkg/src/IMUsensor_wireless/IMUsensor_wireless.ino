@@ -1,6 +1,6 @@
 /*
 Node description:
-Lifecycle Node for handling IMU data from an ESP32.
+UDP server that sends data from the IMU to the Lifecyclenode receiver over WiFi.
 */ 
 
 /*
@@ -8,6 +8,7 @@ Lifecycle Node for handling IMU data from an ESP32.
 one line per change 
 (1) created 03.11.2025: developer-Rik van Velzen 
 */
+
 #include <WiFi.h>
 #include <Wire.h>
 #include <Adafruit_Sensor.h>

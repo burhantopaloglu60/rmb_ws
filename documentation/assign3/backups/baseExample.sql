@@ -33,13 +33,13 @@ DROP TABLE IF EXISTS `bno055_data`;
 /*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `bno055_data` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `timestamp` timestamp NOT NULL,
+  `timestamp` timestamp NOT NULL DEFAULT current_timestamp(),
   `linear_accel_x` double NOT NULL,
   `linear_accel_y` double NOT NULL,
   `linear_accel_z` double NOT NULL,
   `angular_velocity_z` double NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=94 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -60,4 +60,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-11-04 16:28:47
+-- Dump completed on 2025-11-07 12:25:47

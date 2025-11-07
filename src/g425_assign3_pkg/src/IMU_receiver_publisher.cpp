@@ -1,4 +1,11 @@
 /*
+=====================================================
+=================DEPRECATED FILE=====================
+=====================================================
+Functionality moved to ImuLifecycleNode.cpp
+*/
+
+/*
 Node description:
 Node that receives IMU data via UDP and publishes it as ROS2 IMU messages.
  

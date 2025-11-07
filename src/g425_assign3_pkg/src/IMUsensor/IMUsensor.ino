@@ -1,6 +1,6 @@
 /*
 Node description:
-Lifecycle Node for handling IMU data from an ESP32.
+Node for handling IMU data wired from an ESP32 to a PC.
 */ 
 
 /*
@@ -8,6 +8,7 @@ Lifecycle Node for handling IMU data from an ESP32.
 one line per change 
 (1) created 28.10.2025: developer-Rik van Velzen 
 */
+
 #include <Wire.h>
 #include <Adafruit_Sensor.h>
 #include <Adafruit_BNO055.h>

@@ -18,6 +18,7 @@ to control the target lifecycle node.
 --Software changes:
 one line per change 
 (1) created 30.10.2025: developer-Melissa van Leeuwen 
+(2) edited 06.11.2025: developer-Rik van Velzen, functionality to make wireless connection working added
 */
 
 #include <chrono>

@@ -1,3 +1,14 @@
+/*
+Node description:
+Node that receives IMU data via UDP and publishes it as ROS2 IMU messages.
+ 
+*/ 
+
+/*
+--Software changes:
+one line per change 
+(1) created 30.10.2025: developer-Burhan Topaloglu
+*/
 #include <Wire.h>
 #include <Adafruit_Sensor.h>
 #include <Adafruit_BNO055.h>

@@ -1,3 +1,13 @@
+/*
+Node description:
+Lifecycle Node for handling IMU data from an ESP32.
+*/ 
+
+/*
+--Software changes:
+one line per change 
+(1) created 03.11.2025: developer-Rik van Velzen 
+*/
 #include <WiFi.h>
 #include <Wire.h>
 #include <Adafruit_Sensor.h>
@@ -9,12 +19,8 @@
 const char* ssid = "IMU";
 const char* password = "IMUsensor1234";
 
-// const char* ssid = "TP-LINK_5";
-// const char* password = "TL/0975.,vVlin12";
-
 // UDP settings
 const char* host_ip = "10.42.0.1"; // ROS2 PC IP
-// const char* host_ip = "192.168.178.157";
 
 const int host_port = 5005;
 WiFiUDP udp;

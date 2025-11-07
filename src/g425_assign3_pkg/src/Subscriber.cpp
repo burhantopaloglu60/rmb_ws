@@ -31,7 +31,7 @@ public:
     subscription_ = this->create_subscription<sensor_msgs::msg::Imu>(
       "/imu_data", 
       10, 
-      std::bind(&LifecycleNodeSubscriber::imuCallback, this, _1)
+      std::bind(&LifecycleNodeSubscriber::imuCallback, this, std::placeholders::_1)
     );
 
     RCLCPP_INFO(this->get_logger(), "Lifecycle node subscriber started, waiting for messages...");
@@ -40,6 +40,7 @@ public:
 #ifndef TESTING_EXCLUDE_MAIN
 private:
 #endif
+
   void imuCallback(const sensor_msgs::msg::Imu::SharedPtr msg)
   {
     RCLCPP_INFO(

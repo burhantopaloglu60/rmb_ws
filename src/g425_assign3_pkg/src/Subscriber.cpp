@@ -2,7 +2,7 @@
 Node description:
 Node that add the IMU data in a database.
 
-This node subscribes to the imu_data topic, receives IMU messages (sensor_msgs/msg/Imu), 
+This node subscribes to the /imu_data topic, receives IMU messages (sensor_msgs/msg/Imu), 
 logs the linear acceleration and angular velocity data and stores the measurements into a MariaDB database. 
 */ 
 

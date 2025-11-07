@@ -172,12 +172,10 @@ DBT_Measurement ImuDatabase::getMeasurementById(int id)
 bool ImuDatabase::addMeasurement(const DBT_Measurement& measurement)
 {
   std::stringstream ss;
-  // Convert timestamp to time_t for storage
-  std::time_t ts = std::chrono::system_clock::to_time_t(measurement.timestamp);
 
-  ss << "INSERT INTO bno055_data (timestamp, linear_accel_x, linear_accel_y, linear_accel_z, angular_velocity_z) "
+  ss << "INSERT INTO bno055_data (linear_accel_x, linear_accel_y, linear_accel_z, angular_velocity_z) "
         "VALUES ("
-     << ts << "," << measurement.linear_accel_x << "," << measurement.linear_accel_y << ","
+     << measurement.linear_accel_x << "," << measurement.linear_accel_y << ","
      << measurement.linear_accel_z << "," << measurement.angular_velocity_z << ");";
   return executeInsert(ss.str());
 }

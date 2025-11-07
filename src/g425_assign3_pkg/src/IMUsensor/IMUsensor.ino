@@ -45,7 +45,7 @@ void setup() {
     &publisher,
     &node,
     ROSIDL_GET_MSG_TYPE_SUPPORT(sensor_msgs, msg, Imu),
-    "esp32_topic"
+    "imu_data_esp"
   );
 
   // Init executor

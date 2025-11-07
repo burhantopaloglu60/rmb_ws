@@ -2,8 +2,8 @@
 Node description:
 Lifecycle Node for handling IMU data from an ESP32.
 
-This node subscribes to IMU messages published by an ESP32 on the `/esp32_topic`
-and republishes them to `/imu_data` — intended for a database subscriber node.
+This node subscribes to IMU messages published by an ESP32 on the `imu_data_esp`
+and republishes them to `imu_data` — intended for a database subscriber node.
  
 The node have the following states:
 - In the configuring state, it sets up publishers and subscribers.
@@ -96,8 +96,10 @@ public:
     RCLCPP_INFO(get_logger(), "Node deactivated.");
     return CallbackReturn::SUCCESS;
   }
-
+  
+#ifndef TESTING_EXCLUDE_MAIN
 private:
+#endif
   void connect_socket()
   {
       sockfd_ = socket(AF_INET, SOCK_DGRAM, 0);

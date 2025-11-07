@@ -2,7 +2,7 @@
 Node description:
 Node that manages the lifecycle state of the IMU Lifecycle Node
 
-This node monitors incoming IMU data from the ESP32 on the `/esp32_topic`.
+This node monitors incoming IMU data from the ESP32 on the `imu_data_esp`.
 It automatically transitions the `imu_lifecycle_node` between lifecycle states
 (`configure`, `activate`, `deactivate`) based on data availability.
 

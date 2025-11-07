@@ -1,6 +1,13 @@
 /*
+=====================================================
+=================DEPRECATED FILE=====================
+=====================================================
+Functionality moved to and combined with IMUsensor.cpp and IMUsensor_wireless.cpp
+*/
+
+/*
 Node description:
-Node that receives IMU data via UDP and publishes it as ROS2 IMU messages.
+Node that receives IMU data from the sensor.
  
 */ 
 

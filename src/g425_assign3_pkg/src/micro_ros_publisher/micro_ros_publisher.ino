@@ -1,6 +1,13 @@
 /*
+=====================================================
+=================DEPRECATED FILE=====================
+=====================================================
+Functionality moved to and combined with IMUsensor.cpp and IMUsensor_wireless.cpp
+*/
+
+/*
 Node description:
-Node that publishes IMU data from an ESP32 via micro-ROS.
+Node that publishes test data from an ESP32 via micro-ROS.
 */ 
 
 /*

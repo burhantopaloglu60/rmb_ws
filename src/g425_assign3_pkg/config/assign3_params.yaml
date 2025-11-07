@@ -1,5 +1,6 @@
-udp_imu_publisher:
+/**:
   ros__parameters:
     port: 5005
     tolerance: 1e-6
     timer_period_ms: 200
+    connection_type: true   # false = wired, true = wireless

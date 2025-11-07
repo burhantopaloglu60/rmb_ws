@@ -2,6 +2,7 @@
     <node pkg="g425_assign3_pkg" exec="ESP32Subscriber" >
     </node>
     <node pkg="g425_assign3_pkg" exec="ImuLifecycleNode" >
+    <param from="$(find-pkg-share g425_assign3_pkg)/config/assign3_params.yaml" />
     </node>
     <node pkg="g425_assign3_pkg" exec="LifecycleManager" >
     </node>

@@ -12,14 +12,4 @@
     args="serial --dev /dev/ttyUSB0 -b 115200"
     output="screen">
   </node>
-
-
-  <!-- Custom IMU UDP Node -->
-  <!-- <node
-    pkg="g425_assign3_pkg"
-    exec="udp_imu_subscriber"
-    name="udp_imu_subscriber"
-    output="screen">
-    <param from="$(find-pkg-share g425_assign3_pkg)/config/assign3_params.yaml" />
-  </node> -->
 </launch>

@@ -55,11 +55,6 @@ install (TARGETS
     ImuLifecycleNode
     LifecycleManager
     udp_imu_bridge
-	  # GradeCalculator
-    # ResultGenerator
-    # FinalGradeDeterminator
-    # RetakeScheduler
-    # RetakeGradeDeterminator
           DESTINATION lib/${PROJECT_NAME}
           )
 
@@ -81,12 +76,7 @@ if(BUILD_TESTING)
   ament_target_dependencies(utest_subscriber rclcpp g425_assign3_interfaces_pkg sensor_msgs)
   
   target_link_libraries(utest_subscriber ImuDatabase ${MYSQL_LIBS})
-  # target_link_libraries(${PROJECT_NAME}_utest_result_generator GGDatabase ${MYSQL_LIBS})
-  # target_link_libraries(${PROJECT_NAME}_utest_ggDatabase GGDatabase ${MYSQL_LIBS})
-  # target_link_libraries(${PROJECT_NAME}_utest_retake_scheduler GGDatabase ${MYSQL_LIBS})
-  # target_link_libraries(${PROJECT_NAME}_utest_retake_grade_determinator GGDatabase ${MYSQL_LIBS})
 
-  # target_link_libraries(${PROJECT_NAME}_systest_grade_generator GGDatabase ${MYSQL_LIBS})
 endif()
 
 ament_package()

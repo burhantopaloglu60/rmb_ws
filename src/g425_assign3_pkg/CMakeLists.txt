@@ -25,17 +25,17 @@ include_directories(include)
 
 # executables
 add_library(ImuDatabase src/ImuDatabase.cpp)
-add_executable(udp_imu_bridge src/IMU_receiver_publisher.cpp)
+# add_executable(udp_imu_bridge src/IMU_receiver_publisher.cpp)
 add_executable(LifecycleNodeSubscriber src/Subscriber.cpp )
 add_executable(ImuLifecycleNode src/ImuLifecycleNode.cpp)
 add_executable(LifecycleManager src/LifecycleManager.cpp)
 
 # dependencies
 ament_target_dependencies(ImuDatabase rclcpp g425_assign3_interfaces_pkg)
+# ament_target_dependencies(udp_imu_bridge rclcpp sensor_msgs std_msgs )
 ament_target_dependencies(LifecycleNodeSubscriber rclcpp g425_assign3_interfaces_pkg sensor_msgs)
 ament_target_dependencies(ImuLifecycleNode rclcpp rclcpp_lifecycle sensor_msgs lifecycle_msgs)
 ament_target_dependencies(LifecycleManager rclcpp lifecycle_msgs sensor_msgs)
-ament_target_dependencies(udp_imu_bridge rclcpp sensor_msgs std_msgs )
 
 # libraries
 target_compile_options(ImuDatabase PRIVATE ${MYSQL_CFLAGS})
@@ -54,7 +54,7 @@ install (TARGETS
     LifecycleNodeSubscriber
     ImuLifecycleNode
     LifecycleManager
-    udp_imu_bridge
+    # udp_imu_bridge
           DESTINATION lib/${PROJECT_NAME}
           )
 

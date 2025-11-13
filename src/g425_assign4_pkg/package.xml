@@ -3,14 +3,22 @@
 <package format="3">
   <name>g425_assign4_pkg</name>
   <version>0.0.0</version>
-  <description>TODO: Package description</description>
-  <maintainer email="burhantopaloglu60@gmail.com">burhan</maintainer>
-  <license>TODO: License declaration</license>
+  <description>Assignment 3: IMU sensor</description>
+  <maintainer email="51375105+rik0905@users.noreply.github.com">rik</maintainer>
+  <license>Apache 2.0</license>
 
-  <buildtool_depend>ament_cmake</buildtool_depend>
+  <depend>rclcpp</depend>
 
+  <!-- additional depends -->
+  <depend>g425_assign4_interfaces_pkg</depend>
+    <!-- MariaDB -->
+  <depend>libmariadb-dev</depend> 
+  <depend>libmariadb3</depend>
+  <depend>mariadb-connector-cpp</depend>
+  
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
+  <test_depend>ament_cmake_gtest</test_depend>
 
   <export>
     <build_type>ament_cmake</build_type>

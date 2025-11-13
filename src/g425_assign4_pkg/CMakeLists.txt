@@ -24,7 +24,7 @@ find_package(g425_assign4_interfaces_pkg REQUIRED)
 include_directories(include)
 
 # executables
-add_library(ImuDatabase src/ImuDatabase.cpp)
+# add_library(ImuDatabase src/ImuDatabase.cpp)
 # add_executable(udp_imu_bridge src/IMU_receiver_publisher.cpp)
 # add_executable(LifecycleNodeSubscriber src/Subscriber.cpp )
 # add_executable(ImuLifecycleNode src/ImuLifecycleNode.cpp)

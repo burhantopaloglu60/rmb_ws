@@ -5,7 +5,7 @@ UDP server that sends data from the IMU to the Lifecyclenode receiver over WiFi.
 
 /*
 --Software changes:
-one line per change 
+one line per change position_approximator_mecanum
 (1) created 03.11.2025: developer-Rik van Velzen 
 */
 

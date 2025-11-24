@@ -25,13 +25,15 @@ include_directories(include)
 
 # executables
 # add_library(ImuDatabase src/ImuDatabase.cpp)
-# add_executable(udp_imu_bridge src/IMU_receiver_publisher.cpp)
+add_executable(position_approximator_mecanum src/position_approximator_mecanum.cpp)
+add_executable(WheelVelocitySimulator src/sim_test.cpp)
 # add_executable(LifecycleNodeSubscriber src/Subscriber.cpp )
 # add_executable(ImuLifecycleNode src/ImuLifecycleNode.cpp)
 # add_executable(LifecycleManager src/LifecycleManager.cpp)
 
 # dependencies
-# ament_target_dependencies(ImuDatabase rclcpp g425_assign4_interfaces_pkg)
+ament_target_dependencies(position_approximator_mecanum rclcpp g425_assign4_interfaces_pkg)
+ament_target_dependencies(WheelVelocitySimulator rclcpp g425_assign4_interfaces_pkg)
 # ament_target_dependencies(udp_imu_bridge rclcpp sensor_msgs std_msgs )
 # ament_target_dependencies(LifecycleNodeSubscriber rclcpp g425_assign3_interfaces_pkg sensor_msgs)
 # ament_target_dependencies(ImuLifecycleNode rclcpp rclcpp_lifecycle sensor_msgs lifecycle_msgs)
@@ -51,10 +53,8 @@ install(DIRECTORY
   )
 
 install (TARGETS
-    # LifecycleNodeSubscriber
-    # ImuLifecycleNode
-    # LifecycleManager
-    # udp_imu_bridge
+    position_approximator_mecanum
+    WheelVelocitySimulator
           DESTINATION lib/${PROJECT_NAME}
           )
 

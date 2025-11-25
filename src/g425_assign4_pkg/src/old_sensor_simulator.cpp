@@ -14,7 +14,7 @@ Key components:
 - Interval struct representing parametrized motion segments
 - Parameter-based interval loader
 - Polynomial evaluator for constant, linear, and quadratic motions
-- Publisher: /sensor_sim (Float64MultiArray)
+- Publisher: /imu_sim_velocity (Float64MultiArray)
 
 Message format:
 [data[0], data[1], data[2], data[3]] = [linear_x, linear_y, linear_z, angular_z]
@@ -93,7 +93,7 @@ public:
   {
     // Declare parameters
     this->declare_parameter<int>("rate_hz", 50);
-    this->declare_parameter<std::string>("topic", "sensor_sim");
+    this->declare_parameter<std::string>("topic", "imu_sim_velocity");
 
     rate_hz_ = this->get_parameter("rate_hz").as_int();
     topic_ = this->get_parameter("topic").as_string();

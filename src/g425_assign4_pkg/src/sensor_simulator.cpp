@@ -14,7 +14,7 @@ zero.
 
 Parameters:
   - rate_hz: publishing rate (default 50 Hz)
-  - topic: output topic (default "sensor_sim")
+  - topic: output topic (default "imu_sim_acceleration")
   - intervals.N.*: axis, polynomial type, time range, and values
 
 The node publishes at the configured rate and continuously outputs simulated
@@ -93,7 +93,7 @@ public:
   {
     // Declare parameters
     this->declare_parameter<int>("rate_hz", 50);
-    this->declare_parameter<std::string>("topic", "sensor_sim");
+    this->declare_parameter<std::string>("topic", "imu_sim_acceleration");
 
     rate_hz_ = this->get_parameter("rate_hz").as_int();
     topic_ = this->get_parameter("topic").as_string();

@@ -94,7 +94,7 @@ public:
   WheelVelocitySimulator() : Node("wheel_velocity_simulator_node")
   {
     this->declare_parameter<int>("rate_hz", 50);
-    this->declare_parameter<std::string>("topic", "mecanum_sim");
+    this->declare_parameter<std::string>("topic", "mecanum_velocity");
 
     rate_hz_ = this->get_parameter("rate_hz").as_int();
     topic_ = this->get_parameter("topic").as_string();

@@ -9,4 +9,14 @@
         output="screen">
         <param from="$(find-pkg-share g425_assign4_pkg)/config/params_assign4.yaml" />
     </node>
+    
+    <!-- Database Publisher Node -->
+    <node pkg="g425_assign4_pkg" exec="DatabasePublisher" name="DatabasePublisher_node" output="screen">
+        <param from="$(find-pkg-share g425_assign4_pkg)/config/params_assign4.yaml" />
+    </node>
+
+    <!-- Position Aproximator mecanum node -->
+    <node pkg="g425_assign4_pkg" exec="position_approximator_mecanum" name="position_approximator_mecanum_node" output="screen">
+        <param from="$(find-pkg-share g425_assign4_pkg)/config/params_assign4.yaml" />
+    </node>
 </launch>

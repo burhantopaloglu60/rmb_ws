@@ -92,7 +92,7 @@ public:
   SensorSimulator() : rclcpp::Node("sensor_simulator_node")
   {
     // Declare parameters
-    this->declare_parameter<int>("rate_hz", 50);
+    this->declare_parameter<int>("rate_hz", 1);
     this->declare_parameter<std::string>("topic", "imu_sim_acceleration");
 
     rate_hz_ = this->get_parameter("rate_hz").as_int();

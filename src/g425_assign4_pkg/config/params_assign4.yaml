@@ -74,5 +74,9 @@ position_approximator_mecanum_node:
     wheel_radius: 0.05  # meters
     robot_length: 0.3   # meters
     robot_width: 0.2    # meters
+    start_x: 0.0       # meters
+    start_y: 0.0       # meters
+    start_z: 0.0       # meters
+    start_yaw: 0.0     # radians
     topic_sub: "mecanum_velocity"
     topic_pub: "mecanum_pos"

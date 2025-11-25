@@ -9,6 +9,7 @@ Software changes (one line by change):
 */
 #include <rclcpp/rclcpp.hpp>
 #include "g425_assign4_interfaces_pkg/msg/mecanum.hpp"
+#include "g425_assign4_interfaces_pkg/msg/position_data.hpp"
 
 using namespace std::placeholders;
 using mecanum = g425_assign4_interfaces_pkg::msg::Mecanum;
@@ -18,9 +19,12 @@ class position_approximator_mecanum : public rclcpp::Node
 public:
     position_approximator_mecanum() : Node("position_approximator_mecanum_node")
     {
-        mecanum_sub_ = this->create_subscription<mecanum>(
-        "mecanum_sim", 10,
-        std::bind(&position_approximator_mecanum::calculate_mecanum, this, _1));
+        // mecanum_sub_ = this->create_subscription<mecanum>(
+        // "mecanum_sim", 10,
+        // std::bind(&position_approximator_mecanum::calculate_mecanum, this, _1));
+        mecanum_pub_ = this->create_publisher<mecanum>("mecanum_data", 10);
+
+        RCLCPP_INFO(this->get_logger(), "position_approximator_mecanum_node active.");
     }
 private:
     void calculate_mecanum(const mecanum &msg)
@@ -52,6 +56,7 @@ private:
     rclcpp::Time last_stamp_;
     bool first_msg_ = true;
     rclcpp::Subscription<mecanum>::SharedPtr mecanum_sub_;
+    rclcpp::Publisher<mecanum>::SharedPtr mecanum_pub_;
 };
 int main(int argc, char **argv)
 {

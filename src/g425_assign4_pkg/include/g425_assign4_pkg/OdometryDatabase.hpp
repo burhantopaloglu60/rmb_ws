@@ -1,5 +1,6 @@
 /*
-Header file for OdometryDatabase.cpp -Burhan Topaloglu
+Header file for OdometryDatabase.cpp - Rik van Velzen
+  25-11-2025 created file by using previous ImuDatabase.hpp as template - Rik van Velzen
 
 */
 

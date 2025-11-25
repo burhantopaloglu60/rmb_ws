@@ -17,6 +17,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   # we will add the name of our custom interfaces here
   "msg/Mecanum.msg"
   "msg/PositionData.msg"
+  "msg/ImuSim.msg"
   DEPENDENCIES builtin_interfaces
 )
 ament_export_dependencies(rosidl_default_runtime)

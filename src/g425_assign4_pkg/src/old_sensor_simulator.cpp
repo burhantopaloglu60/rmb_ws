@@ -1,35 +1,35 @@
 /*
-Node Description — Sensor Simulator
+this one uses velocity so I changed to acceleration in the new one
 
-This node publishes simulated acceleration measurements for testing odometry
-and motion-processing pipelines. It outputs linear accelerations (x, y, z)
-and angular acceleration (z) as g425_assign4_interfaces_pkg/msg/ImuSim.
+Node description:
+This node simulates linear and angular velocity sensor data for testing odometry
+or motion-related nodes. It publishes std_msgs::msg::Float64MultiArray messages
+containing four values: linear velocities (x, y, z) and angular velocity (z). 
 
-Acceleration values are generated from time-defined intervals loaded via ROS2
-parameters. Each interval targets one axis (linear_x, linear_y, linear_z,
-angular_z) and uses a constant, linear, or quadratic polynomial. For linear
-and quadratic segments, the node computes the derivative of the velocity
-polynomial; overlapping intervals are summed. Outside all intervals, output is
-zero.
+The velocity values are defined over time intervals loaded from ROS2 parameters.
+Each interval can be modeled as a constant, linear, or quadratic polynomial.
+Outside all defined intervals, the output is zero.
 
-Parameters:
-  - rate_hz: publishing rate (default 50 Hz)
-  - topic: output topic (default "sensor_sim")
-  - intervals.N.*: axis, polynomial type, time range, and values
+Key components:
+- Interval struct representing parametrized motion segments
+- Parameter-based interval loader
+- Polynomial evaluator for constant, linear, and quadratic motions
+- Publisher: /sensor_sim (Float64MultiArray)
 
-The node publishes at the configured rate and continuously outputs simulated
-accelerations based on the active intervals.
+Message format:
+[data[0], data[1], data[2], data[3]] = [linear_x, linear_y, linear_z, angular_z]
+
 */
 
 /*
 Software changes:
 (1) 18.11.2025 created by Burhan Topaloglu (based on assignment specification)
 (2) 25.11.2025 modified by Burhan (improved integration with other nodes using GPT)
-(3) 25-11-2025 modified by Burhan (changed message type to ImuSim and published accelerations instead of velocities, new file)
 */
 
+
 #include <rclcpp/rclcpp.hpp>
-#include "g425_assign4_interfaces_pkg/msg/imu_sim.hpp"
+#include <std_msgs/msg/float64_multi_array.hpp>
 #include <set>
 #include <string>
 #include <vector>
@@ -105,16 +105,17 @@ public:
 
     if (intervals_.size() < 4)
     {
-      RCLCPP_WARN(this->get_logger(), "Only %zu intervals found. Assignment requires at least 4 intervals.",
+      RCLCPP_WARN(this->get_logger(),
+                  "Only %zu intervals found. Assignment requires at least 4 intervals.",
                   intervals_.size());
     }
 
-    pub_ = this->create_publisher<g425_assign4_interfaces_pkg::msg::ImuSim>(topic_, 10);
+    pub_ = this->create_publisher<std_msgs::msg::Float64MultiArray>(topic_, 10);
 
     auto period = std::chrono::milliseconds(1000 / std::max(1, rate_hz_));
     timer_ = this->create_wall_timer(period, std::bind(&SensorSimulator::on_timer, this));
 
-    RCLCPP_INFO(this->get_logger(), "sensor_simulator_node active. Publishing accelerations on '%s' at %d Hz",
+    RCLCPP_INFO(this->get_logger(), "sensor_simulator_node active. Publishing on '%s' at %d Hz",
                 topic_.c_str(), rate_hz_);
   }
 
@@ -137,9 +138,7 @@ private:
             int idx = std::stoi(rest.substr(0, dot));
             indices.insert(idx);
           }
-          catch (...)
-          {
-          }
+          catch (...) {}
         }
       }
     }
@@ -190,67 +189,63 @@ private:
     RCLCPP_INFO(this->get_logger(), "Loaded %zu intervals", intervals_.size());
   }
 
-  // Evaluate the derivative (acceleration) of the velocity polynomial at time t
-  double eval_derivative(const Interval& I, double t) const
+  double eval(const Interval& I, double t) const
   {
     if (t < I.t0 || t > I.t1)
       return 0.0;
 
     if (I.poly == Poly::CONST)
-      return 0.0;
+      return I.y0;
 
     if (I.poly == Poly::LIN)
     {
-      return (I.y1 - I.y0) / (I.t1 - I.t0);
+      double a = (t - I.t0) / (I.t1 - I.t0);
+      return I.y0 + a * (I.y1 - I.y0);
     }
 
-    // Quadratic: derivative of Lagrange polynomial
+    // quadratic (3-point Lagrange)
     double t0 = I.t0, tm = I.tm, t1 = I.t1;
     double y0 = I.y0, ym = I.ym, y1 = I.y1;
 
-    double dL0 = ((t - tm) + (t - t1)) / ((t0 - tm) * (t0 - t1));
-    double dLm = ((t - t0) + (t - t1)) / ((tm - t0) * (tm - t1));
-    double dL1 = ((t - t0) + (t - tm)) / ((t1 - t0) * (t1 - tm));
+    double L0 = ((t - tm) * (t - t1)) / ((t0 - tm) * (t0 - t1));
+    double Lm = ((t - t0) * (t - t1)) / ((tm - t0) * (tm - t1));
+    double L1 = ((t - t0) * (t - tm)) / ((t1 - t0) * (t1 - tm));
 
-    return y0 * dL0 + ym * dLm + y1 * dL1;
+    return y0 * L0 + ym * Lm + y1 * L1;
   }
 
   void on_timer()
   {
     double t = (this->now() - start_time_).seconds();
 
-    double x = 0.0, y = 0.0, z = 0.0, yaw_z = 0.0;
+    double lx = 0.0, ly = 0.0, lz = 0.0, az = 0.0;
 
     for (const auto& I : intervals_)
     {
-      double a = eval_derivative(I, t);
+      double v = eval(I, t);
       switch (I.axis)
       {
         case Axis::LX:
-          x += a;
+          lx += v;
           break;
         case Axis::LY:
-          y += a;
+          ly += v;
           break;
         case Axis::LZ:
-          z += a;
+          lz += v;
           break;
         case Axis::AZ:
-          yaw_z += a;
+          az += v;
           break;
       }
     }
 
-    g425_assign4_interfaces_pkg::msg::ImuSim msg;
-    msg.stamp = this->now();
-    msg.x = x;
-    msg.y = y;
-    msg.z = z;
-    msg.yaw_z = yaw_z;
+    std_msgs::msg::Float64MultiArray msg;
+    msg.data = {lx, ly, lz, az};
     pub_->publish(msg);
   }
 
-  rclcpp::Publisher<g425_assign4_interfaces_pkg::msg::ImuSim>::SharedPtr pub_;
+  rclcpp::Publisher<std_msgs::msg::Float64MultiArray>::SharedPtr pub_;
   rclcpp::TimerBase::SharedPtr timer_;
   rclcpp::Time start_time_;
 

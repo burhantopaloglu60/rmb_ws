@@ -69,3 +69,10 @@ wheel_velocity_simulator_node:
         t1: 4.0
         y0: 0.0
         y1: 2.0
+position_approximator_mecanum_node:
+  ros__parameters:
+    wheel_radius: 0.05  # meters
+    robot_length: 0.3   # meters
+    robot_width: 0.2    # meters
+    topic_sub: "mecanum_velocity"
+    topic_pub: "mecanum_pos"

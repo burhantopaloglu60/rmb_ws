@@ -29,19 +29,19 @@ public:
 
         mecanum_sub_velocity_ = this->create_subscription<Mecanum>(
         "mecanum_velocity", 10,
-        std::bind(&DatabasePublisher::publish_mecanum_pos, this, _1));
+        std::bind(&DatabasePublisher::publish_mecanum_velocity, this, _1));
 
         imu_sim_sub_pos_ = this->create_subscription<PositionData>(
         "imu_sim_pos", 10,
-        std::bind(&DatabasePublisher::publish_mecanum_pos, this, _1));
+        std::bind(&DatabasePublisher::publish_imu_sim_pos, this, _1));
 
         imu_sim_sub_velocity_ = this->create_subscription<ImuSim>(
         "imu_sim_velocity", 10,
-        std::bind(&DatabasePublisher::publish_mecanum_pos, this, _1));
+        std::bind(&DatabasePublisher::publish_imu_sim_velocity, this, _1));
 
         imu_sim_sub_acceleration_ = this->create_subscription<ImuSim>(
         "imu_sim_acceleration", 10,
-        std::bind(&DatabasePublisher::publish_mecanum_pos, this, _1));
+        std::bind(&DatabasePublisher::publish_imu_sim_acceleration, this, _1));
         RCLCPP_INFO(this->get_logger(), "DatabasePublisher_node active.");
     }
 private:
@@ -73,6 +73,49 @@ private:
                     msg.x, msg.y, msg.yaw_z);
         
     }
+        void publish_mecanum_velocity(const Mecanum &msg)
+    {
+        DBT_Mecanum measurements;
+        measurements.wfl = msg.wfl;
+        measurements.wfr = msg.wfr;
+        measurements.wrl = msg.wrl;
+        measurements.wrr = msg.wrr;
+        db.addvelocitymecanum(measurements);
+
+        RCLCPP_INFO(this->get_logger(),
+                    "Velocity Data Received: wfl=%.2f, wfr=%.2f, wrl=%.2f, wrr=%.2f",
+                    msg.wfl, msg.wfr, msg.wrl, msg.wrr);
+        
+    }
+        void publish_imu_sim_velocity(const ImuSim &msg)
+    {
+        DBT_Measurement measurements;
+        measurements.linear_accel_x = msg.x;
+        measurements.linear_accel_y = msg.y;
+        measurements.linear_accel_z = 0.0;
+        measurements.angular_velocity_z = msg.yaw_z;
+        db.addvelocityImuSim(measurements);
+
+        RCLCPP_INFO(this->get_logger(),
+                    "Velocity Data Received: x=%.2f m, y=%.2f m, yaw_z=%.2f rad",
+                    msg.x, msg.y, msg.yaw_z);
+        
+    }
+        void publish_imu_sim_acceleration(const ImuSim &msg)
+    {
+        DBT_Measurement measurements;
+        measurements.linear_accel_x = msg.x;
+        measurements.linear_accel_y = msg.y;
+        measurements.linear_accel_z = 0.0;
+        measurements.angular_velocity_z = msg.yaw_z;
+        db.addaccelerationImuSim(measurements);
+
+        RCLCPP_INFO(this->get_logger(),
+                    "Acceleration Data Received: x=%.2f m, y=%.2f m, yaw_z=%.2f rad",
+                    msg.x, msg.y, msg.yaw_z);
+        
+    }
+
     rclcpp::Subscription<PositionData>::SharedPtr mecanum_sub_pos_;
     rclcpp::Subscription<Mecanum>::SharedPtr mecanum_sub_velocity_;
     rclcpp::Subscription<PositionData>::SharedPtr imu_sim_sub_pos_;

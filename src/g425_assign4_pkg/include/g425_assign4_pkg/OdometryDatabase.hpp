@@ -36,7 +36,15 @@ struct DBT_Positions
   double z;
   double yaw_z;
 };
-
+struct DBT_Mecanum
+{
+  long id;
+  std::chrono::system_clock::time_point timestamp; //steady clock?
+  double wfl;
+  double wfr;
+  double wrl;
+  double wrr;
+};
 /**
  * @brief
  * Grade Generator Database
@@ -56,7 +64,7 @@ public:
   DBT_Measurement getMeasurementById(int id);
   bool addPositionmecanum(const DBT_Positions& measurement);
   bool addPositionImuSim(const DBT_Positions& measurement);
-  bool addvelocitymecanum(const DBT_Measurement& measurement);
+  bool addvelocitymecanum(const DBT_Mecanum measurement);
   bool addvelocityImuSim(const DBT_Measurement& measurement);
   bool addaccelerationImuSim(const DBT_Measurement& measurement);
 

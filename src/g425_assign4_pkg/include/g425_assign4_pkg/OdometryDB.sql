@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Nov 25, 2025 at 02:32 PM
+-- Generation Time: Nov 25, 2025 at 03:27 PM
 -- Server version: 10.11.13-MariaDB-0ubuntu0.24.04.1
 -- PHP Version: 8.3.6
 
@@ -84,10 +84,10 @@ CREATE TABLE `Mecanum_pos` (
 --
 
 CREATE TABLE `Mecanum_velocity` (
-  `x` float NOT NULL,
-  `y` float NOT NULL,
-  `z` float NOT NULL,
-  `yaw_z` float NOT NULL,
+  `wfl` float NOT NULL,
+  `wfr` float NOT NULL,
+  `wrl` float NOT NULL,
+  `wrr` float NOT NULL,
   `Timestamp` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 

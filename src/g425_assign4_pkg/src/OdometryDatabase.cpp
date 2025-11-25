@@ -212,13 +212,13 @@ bool OdometryDatabase::addaccelerationImuSim(const DBT_Measurement& measurement)
   return executeInsert(ss.str());
 }
 
-bool OdometryDatabase::addvelocitymecanum(const DBT_Measurement& measurement)
+bool OdometryDatabase::addvelocitymecanum(const DBT_Mecanum measurement)
 {
   std::stringstream ss;
 
-  ss << "INSERT INTO Mecanum_velocity (x, y, z, yaw_z) "
+  ss << "INSERT INTO Mecanum_velocity (wfl, wfr, wrl, wrr) "
         "VALUES ("
-     << measurement.linear_accel_x << "," << measurement.linear_accel_y << ","
-     << measurement.linear_accel_z << "," << measurement.angular_velocity_z << ");";
+     << measurement.wfl << "," << measurement.wfr << ","
+     << measurement.wrl << "," << measurement.wrr << ");";
   return executeInsert(ss.str());
 }

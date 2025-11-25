@@ -27,7 +27,15 @@ struct DBT_Measurement
   double linear_accel_z;
   double angular_velocity_z;
 };
-
+struct DBT_Positions
+{
+  long id;
+  std::chrono::system_clock::time_point timestamp; //steady clock?
+  double x;
+  double y;
+  double z;
+  double yaw_z;
+};
 
 /**
  * @brief
@@ -46,8 +54,11 @@ public:
 
   std::tuple<bool, MYSQL*> setupConnection();
   DBT_Measurement getMeasurementById(int id);
-  bool addMeasurementMecanum(const DBT_Measurement& measurement);
-  bool addMeasurementImuSim(const DBT_Measurement& measurement);
+  bool addPositionmecanum(const DBT_Positions& measurement);
+  bool addPositionImuSim(const DBT_Positions& measurement);
+  bool addvelocitymecanum(const DBT_Measurement& measurement);
+  bool addvelocityImuSim(const DBT_Measurement& measurement);
+  bool addaccelerationImuSim(const DBT_Measurement& measurement);
 
 private:
   std::tuple<bool, MYSQL_RES*> execSQLQuery_(MYSQL* connection, std::string query);

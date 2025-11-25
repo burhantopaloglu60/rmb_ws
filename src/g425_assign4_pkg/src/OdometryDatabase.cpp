@@ -169,22 +169,54 @@ DBT_Measurement OdometryDatabase::getMeasurementById(int id)
   return measurement;
 }
 
-bool OdometryDatabase::addMeasurementMecanum(const DBT_Measurement& measurement)
+bool OdometryDatabase::addPositionmecanum(const DBT_Positions& measurement)
 {
   std::stringstream ss;
 
-  ss << "INSERT INTO Mecanum_data (x, y, z, rotation_z) "
+  ss << "INSERT INTO Mecanum_pos (x, y, z, yaw_z) "
+        "VALUES ("
+     << measurement.x << "," << measurement.y << ","
+     << measurement.z << "," << measurement.yaw_z << ");";
+  return executeInsert(ss.str());
+}
+
+bool OdometryDatabase::addPositionImuSim(const DBT_Positions& measurement)
+{
+  std::stringstream ss;
+
+  ss << "INSERT INTO IMU_sim_pos (x, y, z, yaw_z) "
+        "VALUES ("
+     << measurement.x << "," << measurement.y << ","
+     << measurement.z << "," << measurement.yaw_z << ");";
+  return executeInsert(ss.str());
+}
+
+bool OdometryDatabase::addvelocityImuSim(const DBT_Measurement& measurement)
+{
+  std::stringstream ss;
+
+  ss << "INSERT INTO IMU_sim_velocity (x, y, z, yaw_z) "
+        "VALUES ("
+     << measurement.linear_accel_x << "," << measurement.linear_accel_y << ","
+     << measurement.linear_accel_z << "," << measurement.angular_velocity_z << ");";
+  return executeInsert(ss.str());
+}
+bool OdometryDatabase::addaccelerationImuSim(const DBT_Measurement& measurement)
+{
+  std::stringstream ss;
+
+  ss << "INSERT INTO IMU_sim_acceleration (x, y, z, yaw_z) "
         "VALUES ("
      << measurement.linear_accel_x << "," << measurement.linear_accel_y << ","
      << measurement.linear_accel_z << "," << measurement.angular_velocity_z << ");";
   return executeInsert(ss.str());
 }
 
-bool OdometryDatabase::addMeasurementImuSim(const DBT_Measurement& measurement)
+bool OdometryDatabase::addvelocitymecanum(const DBT_Measurement& measurement)
 {
   std::stringstream ss;
 
-  ss << "INSERT INTO IMU_sim_data (x, y, z, rotation_z) "
+  ss << "INSERT INTO Mecanum_velocity (x, y, z, yaw_z) "
         "VALUES ("
      << measurement.linear_accel_x << "," << measurement.linear_accel_y << ","
      << measurement.linear_accel_z << "," << measurement.angular_velocity_z << ");";

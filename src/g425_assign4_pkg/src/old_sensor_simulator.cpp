@@ -4,7 +4,7 @@ this one uses velocity so I changed to acceleration in the new one
 Node description:
 This node simulates linear and angular velocity sensor data for testing odometry
 or motion-related nodes. It publishes std_msgs::msg::Float64MultiArray messages
-containing four values: linear velocities (x, y, z) and angular velocity (z). 
+containing four values: linear velocities (x, y, z) and angular velocity (z).
 
 The velocity values are defined over time intervals loaded from ROS2 parameters.
 Each interval can be modeled as a constant, linear, or quadratic polynomial.
@@ -26,7 +26,6 @@ Software changes:
 (1) 18.11.2025 created by Burhan Topaloglu (based on assignment specification)
 (2) 25.11.2025 modified by Burhan (improved integration with other nodes using GPT)
 */
-
 
 #include <rclcpp/rclcpp.hpp>
 #include <std_msgs/msg/float64_multi_array.hpp>
@@ -105,8 +104,7 @@ public:
 
     if (intervals_.size() < 4)
     {
-      RCLCPP_WARN(this->get_logger(),
-                  "Only %zu intervals found. Assignment requires at least 4 intervals.",
+      RCLCPP_WARN(this->get_logger(), "Only %zu intervals found. Assignment requires at least 4 intervals.",
                   intervals_.size());
     }
 
@@ -115,8 +113,8 @@ public:
     auto period = std::chrono::milliseconds(1000 / std::max(1, rate_hz_));
     timer_ = this->create_wall_timer(period, std::bind(&SensorSimulator::on_timer, this));
 
-    RCLCPP_INFO(this->get_logger(), "sensor_simulator_node active. Publishing on '%s' at %d Hz",
-                topic_.c_str(), rate_hz_);
+    RCLCPP_INFO(this->get_logger(), "sensor_simulator_node active. Publishing on '%s' at %d Hz", topic_.c_str(),
+                rate_hz_);
   }
 
 private:
@@ -138,7 +136,9 @@ private:
             int idx = std::stoi(rest.substr(0, dot));
             indices.insert(idx);
           }
-          catch (...) {}
+          catch (...)
+          {
+          }
         }
       }
     }
@@ -241,7 +241,7 @@ private:
     }
 
     std_msgs::msg::Float64MultiArray msg;
-    msg.data = {lx, ly, lz, az};
+    msg.data = { lx, ly, lz, az };
     pub_->publish(msg);
   }
 

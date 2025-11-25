@@ -21,7 +21,7 @@ Header file for OdometryDatabase.cpp - Rik van Velzen
 struct DBT_Measurement
 {
   long id;
-  std::chrono::system_clock::time_point timestamp; //steady clock?
+  std::chrono::system_clock::time_point timestamp;  // steady clock?
   double linear_accel_x;
   double linear_accel_y;
   double linear_accel_z;
@@ -30,7 +30,7 @@ struct DBT_Measurement
 struct DBT_Positions
 {
   long id;
-  std::chrono::system_clock::time_point timestamp; //steady clock?
+  std::chrono::system_clock::time_point timestamp;  // steady clock?
   double x;
   double y;
   double z;
@@ -39,7 +39,7 @@ struct DBT_Positions
 struct DBT_Mecanum
 {
   long id;
-  std::chrono::system_clock::time_point timestamp; //steady clock?
+  std::chrono::system_clock::time_point timestamp;  // steady clock?
   double wfl;
   double wfr;
   double wrl;
@@ -57,7 +57,7 @@ class OdometryDatabase
 {
 public:
   OdometryDatabase(const std::string& server = "localhost", const std::string& user = "john_odometry",
-             const std::string& password = "1234", const std::string& database = "OdometryDB");
+                   const std::string& password = "1234", const std::string& database = "OdometryDB");
   ~OdometryDatabase();
 
   std::tuple<bool, MYSQL*> setupConnection();

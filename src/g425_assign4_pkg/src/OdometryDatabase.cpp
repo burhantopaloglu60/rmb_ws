@@ -16,7 +16,7 @@ Software changes:
 #include <chrono> */
 
 OdometryDatabase::OdometryDatabase(const std::string& server, const std::string& user,  //
-                         const std::string& password, const std::string& database)
+                                   const std::string& password, const std::string& database)
   : server_(server), user_(user), password_(password), database_(database)
 {
   bool conn_success;
@@ -175,8 +175,7 @@ bool OdometryDatabase::addPositionmecanum(const DBT_Positions& measurement)
 
   ss << "INSERT INTO Mecanum_pos (x, y, z, yaw_z) "
         "VALUES ("
-     << measurement.x << "," << measurement.y << ","
-     << measurement.z << "," << measurement.yaw_z << ");";
+     << measurement.x << "," << measurement.y << "," << measurement.z << "," << measurement.yaw_z << ");";
   return executeInsert(ss.str());
 }
 
@@ -186,8 +185,7 @@ bool OdometryDatabase::addPositionImuSim(const DBT_Positions& measurement)
 
   ss << "INSERT INTO IMU_sim_pos (x, y, z, yaw_z) "
         "VALUES ("
-     << measurement.x << "," << measurement.y << ","
-     << measurement.z << "," << measurement.yaw_z << ");";
+     << measurement.x << "," << measurement.y << "," << measurement.z << "," << measurement.yaw_z << ");";
   return executeInsert(ss.str());
 }
 
@@ -197,8 +195,8 @@ bool OdometryDatabase::addvelocityImuSim(const DBT_Measurement& measurement)
 
   ss << "INSERT INTO IMU_sim_velocity (x, y, z, yaw_z) "
         "VALUES ("
-     << measurement.linear_accel_x << "," << measurement.linear_accel_y << ","
-     << measurement.linear_accel_z << "," << measurement.angular_velocity_z << ");";
+     << measurement.linear_accel_x << "," << measurement.linear_accel_y << "," << measurement.linear_accel_z << ","
+     << measurement.angular_velocity_z << ");";
   return executeInsert(ss.str());
 }
 bool OdometryDatabase::addaccelerationImuSim(const DBT_Measurement& measurement)
@@ -207,8 +205,8 @@ bool OdometryDatabase::addaccelerationImuSim(const DBT_Measurement& measurement)
 
   ss << "INSERT INTO IMU_sim_acceleration (x, y, z, yaw_z) "
         "VALUES ("
-     << measurement.linear_accel_x << "," << measurement.linear_accel_y << ","
-     << measurement.linear_accel_z << "," << measurement.angular_velocity_z << ");";
+     << measurement.linear_accel_x << "," << measurement.linear_accel_y << "," << measurement.linear_accel_z << ","
+     << measurement.angular_velocity_z << ");";
   return executeInsert(ss.str());
 }
 
@@ -218,7 +216,6 @@ bool OdometryDatabase::addvelocitymecanum(const DBT_Mecanum measurement)
 
   ss << "INSERT INTO Mecanum_velocity (wfl, wfr, wrl, wrr) "
         "VALUES ("
-     << measurement.wfl << "," << measurement.wfr << ","
-     << measurement.wrl << "," << measurement.wrr << ");";
+     << measurement.wfl << "," << measurement.wfr << "," << measurement.wrl << "," << measurement.wrr << ");";
   return executeInsert(ss.str());
 }

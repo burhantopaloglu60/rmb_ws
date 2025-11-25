@@ -93,7 +93,7 @@ class WheelVelocitySimulator : public rclcpp::Node
 public:
   WheelVelocitySimulator() : Node("wheel_velocity_simulator_node")
   {
-    this->declare_parameter<int>("rate_hz", 50);
+    this->declare_parameter<int>("rate_hz", 1);
     this->declare_parameter<std::string>("topic", "mecanum_velocity");
 
     rate_hz_ = this->get_parameter("rate_hz").as_int();

@@ -2,8 +2,8 @@
 
 sensor_simulator_node:
   ros__parameters:
-    rate_hz: 50
-    topic: "sensor_sim"
+    rate_hz: 1
+    topic: "imu_sim_acceleration"
     intervals:
       0:
         axis: "linear_x"
@@ -37,8 +37,8 @@ sensor_simulator_node:
 
 wheel_velocity_simulator_node:
   ros__parameters:
-    rate_hz: 50
-    topic: "mecanum_sim"
+    rate_hz: 1
+    topic: "mecanum_velocity"
     intervals:
       0:
         wheel: "wfl"

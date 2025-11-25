@@ -1,4 +1,4 @@
 builtin_interfaces/Time stamp
-float32 x           # x position in meters
-float32 y           # y position in meters
-float32 theta       # orientation in radians
+float64 x           # x position in meters
+float64 y           # y position in meters
+float64 theta       # orientation in radians

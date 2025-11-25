@@ -1,0 +1,71 @@
+# params_assign4.yaml
+
+sensor_simulator_node:
+  ros__parameters:
+    rate_hz: 50
+    topic: "sensor_sim"
+    intervals:
+      0:
+        axis: "linear_x"
+        poly: "constant"
+        t0: 0.0
+        t1: 5.0
+        y0: 1.0
+      1:
+        axis: "linear_y"
+        poly: "linear"
+        t0: 2.0
+        t1: 7.0
+        y0: 0.0
+        y1: 2.0
+      2:
+        axis: "linear_z"
+        poly: "quadratic"
+        t0: 1.0
+        t1: 4.0
+        y0: 0.0
+        y1: 1.0
+        tm: 2.5
+        ym: 2.0
+      3:
+        axis: "angular_z"
+        poly: "linear"
+        t0: 0.0
+        t1: 6.0
+        y0: 0.0
+        y1: 0.5
+
+wheel_velocity_simulator_node:
+  ros__parameters:
+    rate_hz: 50
+    topic: "mecanum_sim"
+    intervals:
+      0:
+        wheel: "wfl"
+        poly: "constant"
+        t0: 0.0
+        t1: 5.0
+        y0: 2.0
+      1:
+        wheel: "wfr"
+        poly: "linear"
+        t0: 1.0
+        t1: 6.0
+        y0: 1.0
+        y1: 3.0
+      2:
+        wheel: "wrl"
+        poly: "quadratic"
+        t0: 2.0
+        t1: 7.0
+        y0: 0.0
+        y1: 1.5
+        tm: 4.5
+        ym: 2.0
+      3:
+        wheel: "wrr"
+        poly: "linear"
+        t0: 0.0
+        t1: 4.0
+        y0: 0.0
+        y1: 2.0

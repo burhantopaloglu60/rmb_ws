@@ -1,0 +1,12 @@
+<launch>
+    <!-- Sensor Simulator Node -->
+    <node pkg="g425_assign4_pkg" exec="Sensor_Simulator_Node" name="sensor_simulator_node" output="screen">
+        <param from="$(find-pkg-share g425_assign4_pkg)/config/params_assign4.yaml" />
+    </node>
+
+    <!-- Wheel Velocity Simulator Node -->
+    <node pkg="g425_assign4_pkg" exec="WheelVelocitySimulator" name="wheel_velocity_simulator_node"
+        output="screen">
+        <param from="$(find-pkg-share g425_assign4_pkg)/config/params_assign4.yaml" />
+    </node>
+</launch>

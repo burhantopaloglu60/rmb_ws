@@ -26,7 +26,8 @@ include_directories(include)
 # executables
 # add_library(ImuDatabase src/ImuDatabase.cpp)
 add_executable(position_approximator_mecanum src/position_approximator_mecanum.cpp)
-add_executable(WheelVelocitySimulator src/sim_test.cpp)
+add_executable(WheelVelocitySimulator src/wheel_velocity_simulator.cpp)
+add_executable(Sensor_Simulator_Node src/sensor_simulator.cpp)
 # add_executable(LifecycleNodeSubscriber src/Subscriber.cpp )
 # add_executable(ImuLifecycleNode src/ImuLifecycleNode.cpp)
 # add_executable(LifecycleManager src/LifecycleManager.cpp)
@@ -34,6 +35,7 @@ add_executable(WheelVelocitySimulator src/sim_test.cpp)
 # dependencies
 ament_target_dependencies(position_approximator_mecanum rclcpp g425_assign4_interfaces_pkg)
 ament_target_dependencies(WheelVelocitySimulator rclcpp g425_assign4_interfaces_pkg)
+ament_target_dependencies(Sensor_Simulator_Node rclcpp g425_assign4_interfaces_pkg std_msgs)
 # ament_target_dependencies(udp_imu_bridge rclcpp sensor_msgs std_msgs )
 # ament_target_dependencies(LifecycleNodeSubscriber rclcpp g425_assign3_interfaces_pkg sensor_msgs)
 # ament_target_dependencies(ImuLifecycleNode rclcpp rclcpp_lifecycle sensor_msgs lifecycle_msgs)
@@ -55,6 +57,7 @@ install(DIRECTORY
 install (TARGETS
     position_approximator_mecanum
     WheelVelocitySimulator
+    Sensor_Simulator_Node
           DESTINATION lib/${PROJECT_NAME}
           )
 

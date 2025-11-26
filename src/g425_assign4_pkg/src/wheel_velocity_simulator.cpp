@@ -30,7 +30,6 @@ Software changes:
 (2) 25.11.2025 modified by Burhan (improved integration with other nodes using GPT)
 */
 
-
 #include <rclcpp/rclcpp.hpp>
 #include "g425_assign4_interfaces_pkg/msg/mecanum.hpp"
 #include <set>
@@ -96,17 +95,29 @@ public:
     this->declare_parameter<int>("rate_hz", 1);
     this->declare_parameter<std::string>("topic", "mecanum_velocity");
 
+    // Declare interval parameters so they can be loaded
+    for (int i = 0; i < 10; i++)
+    {
+      std::string base = "intervals." + std::to_string(i);
+      this->declare_parameter<std::string>(base + ".wheel", "wfl");
+      this->declare_parameter<std::string>(base + ".poly", "constant");
+      this->declare_parameter<double>(base + ".t0", 0.0);
+      this->declare_parameter<double>(base + ".t1", 1.0);
+      this->declare_parameter<double>(base + ".y0", 0.0);
+      this->declare_parameter<double>(base + ".y1", 0.0);
+      this->declare_parameter<double>(base + ".tm", 0.5);
+      this->declare_parameter<double>(base + ".ym", 0.0);
+    }
+
     rate_hz_ = this->get_parameter("rate_hz").as_int();
     topic_ = this->get_parameter("topic").as_string();
-
     start_time_ = this->now();
 
     load_intervals();
 
     pub_ = this->create_publisher<mecanum>(topic_, 10);
-
-    timer_ = this->create_wall_timer(std::chrono::milliseconds(1000 / std::max(1, rate_hz_)),
-                                     std::bind(&WheelVelocitySimulator::on_timer, this));
+    auto period = std::chrono::milliseconds(1000 / std::max(1, rate_hz_));
+    timer_ = this->create_wall_timer(period, std::bind(&WheelVelocitySimulator::on_timer, this));
 
     RCLCPP_INFO(this->get_logger(), "wheel_velocity_simulator_node active. Publishing on '%s' at %d Hz", topic_.c_str(),
                 rate_hz_);

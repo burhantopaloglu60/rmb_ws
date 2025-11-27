@@ -19,4 +19,8 @@
     <node pkg="g425_assign4_pkg" exec="position_approximator_mecanum" name="position_approximator_mecanum_node" output="screen">
         <param from="$(find-pkg-share g425_assign4_pkg)/config/params_assign4.yaml" />
     </node>
+    <node pkg="g425_assign4_pkg" exec="MapToBaseLinkBroadcaster" name="MapToBaseLinkBroadcaster" output="screen">
+        <param from="$(find-pkg-share g425_assign4_pkg)/config/params_assign4.yaml" />
+    </node>
+    <node pkg="rviz2" exec="rviz2" name="rviz2" output="screen"/>
 </launch>

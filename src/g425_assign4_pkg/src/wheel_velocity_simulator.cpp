@@ -247,6 +247,8 @@ private:
     }
 
     msg.stamp = this->now();
+    RCLCPP_INFO(this->get_logger(), "t=%.3f s | wfl=%.4f wfr=%.4f wrl=%.4f wrr=%.4f", t, msg.wfl, msg.wfr, msg.wrl,
+                msg.wrr);
     pub_->publish(msg);
   }
 

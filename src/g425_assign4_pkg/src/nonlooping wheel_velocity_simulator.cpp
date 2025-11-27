@@ -36,7 +36,6 @@ Software changes:
 #include <string>
 #include <vector>
 #include <algorithm>
-#include <cmath> // added for fmod
 
 using namespace std::chrono_literals;
 using mecanum = g425_assign4_interfaces_pkg::msg::Mecanum;
@@ -193,34 +192,6 @@ private:
       }
     }
 
-    // compute loop window (min t0, max t1) and period
-    if (!intervals_.empty())
-    {
-      double tmin = intervals_[0].t0;
-      double tmax = intervals_[0].t1;
-      for (const auto &I : intervals_)
-      {
-        if (I.t0 < tmin) tmin = I.t0;
-        if (I.t1 > tmax) tmax = I.t1;
-      }
-      loop_t0_ = tmin;
-      loop_t1_ = tmax;
-      loop_period_ = loop_t1_ - loop_t0_;
-      if (loop_period_ <= 0.0)
-      {
-        loop_period_ = 0.0;
-        RCLCPP_WARN(this->get_logger(), "Computed loop period <= 0. Looping disabled.");
-      }
-      else
-      {
-        RCLCPP_INFO(this->get_logger(), "Looping intervals in range [%.3f, %.3f) period=%.3f s", loop_t0_, loop_t1_, loop_period_);
-      }
-    }
-    else
-    {
-      loop_period_ = 0.0;
-    }
-
     RCLCPP_INFO(this->get_logger(), "Loaded %zu wheel intervals", intervals_.size());
   }
 
@@ -248,18 +219,7 @@ private:
 
   void on_timer()
   {
-    double t_orig = (this->now() - start_time_).seconds();
-    double t = t_orig;
-
-    // wrap time into loop window if loop_period_ set
-    if (loop_period_ > 0.0)
-    {
-      double offs = t_orig - loop_t0_;
-      offs = std::fmod(offs, loop_period_);
-      if (offs < 0.0) offs += loop_period_;
-      t = loop_t0_ + offs;
-    }
-
+    double t = (this->now() - start_time_).seconds();
     mecanum msg;
     msg.wfl = 0.0;
     msg.wfr = 0.0;
@@ -298,11 +258,6 @@ private:
   int rate_hz_;
   std::string topic_;
   std::vector<Interval> intervals_;
-
-  // loop window computed from intervals: [loop_t0_, loop_t1_), period = loop_period_
-  double loop_t0_ = 0.0;
-  double loop_t1_ = 0.0;
-  double loop_period_ = 0.0;
 };
 
 int main(int argc, char** argv)

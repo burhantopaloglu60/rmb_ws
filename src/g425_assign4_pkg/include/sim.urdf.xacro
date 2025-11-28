@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<robot name="moving_cube" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- Root frame -->
+  <link name="map"/>
+
+  <!-- Cube -->
+  <link name="base_footprint">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.3 0.3 0.1"/>
+      </geometry>
+      <material name="blue">
+        <color rgba="0 0 1 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0.5" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.3 0.3 0.1"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="1.0"/>
+      <inertia
+        ixx="0.1" ixy="0" ixz="0"
+        iyy="0.1" iyz="0"
+        izz="0.1"/>
+    </inertial>
+  </link>
+
+  <!-- Fixed joint from map → cube -->
+  <joint name="map_to_base" type="fixed">
+    <parent link="map"/>
+    <child link="base_footprint"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+
+</robot>

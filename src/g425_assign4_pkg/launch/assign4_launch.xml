@@ -24,6 +24,9 @@
     <node pkg="g425_assign4_pkg" exec="MapToBaseLinkBroadcaster" name="MapToBaseLinkBroadcaster" output="screen">
         <param from="$(find-pkg-share g425_assign4_pkg)/config/params_assign4.yaml" />
     </node>
+    <node pkg="g425_assign4_pkg" exec="position_velocity_approximator" name="position_velocity_approximator_node" output="screen">
+        <param from="$(find-pkg-share g425_assign4_pkg)/config/params_assign4.yaml" />
+    </node>
     <node pkg="robot_state_publisher" exec="robot_state_publisher" name="robot_state_publisher" output="screen">
         <param name="robot_description" value="$(command 'xacro $(var urdf_path)')"/>
     </node>

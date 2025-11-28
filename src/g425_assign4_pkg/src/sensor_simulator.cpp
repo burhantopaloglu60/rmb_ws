@@ -26,6 +26,7 @@ Software changes:
 (1) 18.11.2025 created by Burhan Topaloglu (based on assignment specification)
 (2) 25.11.2025 modified by Burhan (improved integration with other nodes using GPT)
 (3) 25-11-2025 modified by Burhan (changed message type to ImuSim and published accelerations instead of velocities, new file)
+(4) 28-11-2025 modified by Melissa (added code to declare interval parameters so they can be loaded from YAML)
 */
 
 #include <rclcpp/rclcpp.hpp>
@@ -94,6 +95,24 @@ public:
     // Declare parameters
     this->declare_parameter<int>("rate_hz", 1);
     this->declare_parameter<std::string>("topic", "imu_sim_acceleration");
+
+    // Declare interval parameters so they can be loaded from YAML
+    for (int i = 0; i < 10; i++)
+    {
+      std::string base = "intervals." + std::to_string(i);
+
+      this->declare_parameter<std::string>(base + ".axis", "linear_x");
+      this->declare_parameter<std::string>(base + ".poly", "constant");
+
+      this->declare_parameter<double>(base + ".t0", 0.0);
+      this->declare_parameter<double>(base + ".t1", 1.0);
+
+      this->declare_parameter<double>(base + ".y0", 0.0);
+      this->declare_parameter<double>(base + ".y1", 0.0);
+
+      this->declare_parameter<double>(base + ".tm", 0.5);  
+      this->declare_parameter<double>(base + ".ym", 0.0);
+    }
 
     rate_hz_ = this->get_parameter("rate_hz").as_int();
     topic_ = this->get_parameter("topic").as_string();
@@ -248,6 +267,8 @@ private:
     msg.z = z;
     msg.yaw_z = yaw_z;
     pub_->publish(msg);
+    
+    RCLCPP_INFO(this->get_logger(), "Simulated IMU sensor data published → x=%.3f y=%.3f z=%.3f yaw_z=%.3f", x, y, z, yaw_z);
   }
 
   rclcpp::Publisher<g425_assign4_interfaces_pkg::msg::ImuSim>::SharedPtr pub_;

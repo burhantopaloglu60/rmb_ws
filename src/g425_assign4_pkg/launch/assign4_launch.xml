@@ -23,4 +23,10 @@
         <param from="$(find-pkg-share g425_assign4_pkg)/config/params_assign4.yaml" />
     </node>
     <node pkg="rviz2" exec="rviz2" name="rviz2" output="screen"/>
+
+    <!-- Position and Velocity Aproximator node -->
+    <node pkg="g425_assign4_pkg" exec="position_velocity_approximator" name="position_velocity_approximator_node" output="screen">
+        <param from="$(find-pkg-share g425_assign4_pkg)/config/params_assign4.yaml" />
+    </node>
+
 </launch>

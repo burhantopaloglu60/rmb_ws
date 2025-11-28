@@ -18,15 +18,15 @@ Notes:
 /*
 Software changes:
 (1) 28.11.2025 created by Melissa van Leeuwen
+(2) 28.11.2025 modified by Melissa van Leeuwen (added functionality to update starting position)
 */
 
 #include <rclcpp/rclcpp.hpp>
+#include <geometry_msgs/msg/pose_stamped.hpp>
+#include <mutex>
 
 #include "g425_assign4_interfaces_pkg/msg/imu_sim.hpp"
 #include "g425_assign4_interfaces_pkg/msg/position_data.hpp"
-
-#include <mutex>
-#include <cmath>
 
 class PositionVelocityApproximator : public rclcpp::Node
 {
@@ -37,7 +37,12 @@ public:
     // Subscriber
     imu_sim_sub_ = this->create_subscription<g425_assign4_interfaces_pkg::msg::ImuSim>(
       "imu_sim_acceleration", 10,
-      std::bind(&PositionVelocityApproximator::imu_callback, this, std::placeholders::_1));
+      std::bind(&PositionVelocityApproximator::position_velocity_callback, this, std::placeholders::_1));
+    
+    // Will subscribe to the position determinator node (future assignment) to update the robot's starting position
+    reset_sub_ = this->create_subscription<geometry_msgs::msg::PoseStamped>(
+    "position_determinator", 10,
+    std::bind(&PositionVelocityApproximator::reset_callback, this, std::placeholders::_1));
 
     // Publishers
     pos_pub_ = this->create_publisher<g425_assign4_interfaces_pkg::msg::PositionData>("imu_sim_pos", 10);
@@ -59,8 +64,8 @@ public:
   }
 
 private:
-  // IMU callback → integrate acceleration → velocity → position
-  void imu_callback(const g425_assign4_interfaces_pkg::msg::ImuSim::SharedPtr msg)
+  // callback: integrate acceleration → velocity → position
+  void position_velocity_callback(const g425_assign4_interfaces_pkg::msg::ImuSim::SharedPtr msg)
   {
     std::scoped_lock lock(mtx_);
 
@@ -117,7 +122,6 @@ private:
     publish_velocity(stamp);
   }
 
-  // ────────────────────────────────────────────────────────────────
   void publish_position(const rclcpp::Time & stamp)
   {
     g425_assign4_interfaces_pkg::msg::PositionData msg;
@@ -146,6 +150,33 @@ private:
     velocity_pub_->publish(msg);
   }
 
+  void reset_callback(const geometry_msgs::msg::PoseStamped::SharedPtr msg)
+  {
+      std::scoped_lock lock(mtx_);
+
+      // Set position
+      pos_x_ = msg->pose.position.x;
+      pos_y_ = msg->pose.position.y;
+
+      // Extract yaw from quaternion 
+      double qx = msg->pose.orientation.x;
+      double qy = msg->pose.orientation.y;
+      double qz = msg->pose.orientation.z;
+      double qw = msg->pose.orientation.w;
+
+      // yaw formula for 2D rotation
+      yaw_ = std::atan2(2.0*(qw*qz + qx*qy), 1.0 - 2.0*(qy*qy + qz*qz));
+
+      // Reset velocities
+      vx_ = vy_ = vz_ = 0.0;
+      omega_z_ = 0.0;
+      prev_ax_ = prev_ay_ = prev_alpha_ = 0.0;
+
+      last_stamp_ = this->now();
+
+      RCLCPP_INFO(this->get_logger(), "Reset pose → x=%.3f  y=%.3f  yaw=%.3f", pos_x_, pos_y_, yaw_);
+  }
+
   std::mutex mtx_;
 
   // positions
@@ -162,6 +193,7 @@ private:
   rclcpp::Subscription<g425_assign4_interfaces_pkg::msg::ImuSim>::SharedPtr imu_sim_sub_;
   rclcpp::Publisher<g425_assign4_interfaces_pkg::msg::PositionData>::SharedPtr pos_pub_;
   rclcpp::Publisher<g425_assign4_interfaces_pkg::msg::ImuSim>::SharedPtr velocity_pub_;
+  rclcpp::Subscription<geometry_msgs::msg::PoseStamped>::SharedPtr reset_sub_;
 };
 
 int main(int argc, char ** argv)

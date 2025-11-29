@@ -18,9 +18,6 @@ find_package(std_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(tf2_ros REQUIRED)
-# find_package(sensor_msgs REQUIRED)
-# find_package(lifecycle_msgs REQUIRED)
-# find_package(rclcpp_lifecycle REQUIRED)
 
 find_package(g425_assign4_interfaces_pkg REQUIRED)
 
@@ -34,9 +31,6 @@ add_executable(Sensor_Simulator_Node src/sensor_simulator.cpp)
 add_executable(DatabasePublisher src/DatabasePublisher.cpp)
 add_executable(MapToBaseLinkBroadcaster src/broadcaster.cpp)
 add_executable(position_velocity_approximator src/position_velocity_approximator.cpp)
-# add_executable(LifecycleNodeSubscriber src/Subscriber.cpp )
-# add_executable(ImuLifecycleNode src/ImuLifecycleNode.cpp)
-# add_executable(LifecycleManager src/LifecycleManager.cpp)
 
 # dependencies
 # ament_target_dependencies(DatabasePublisher rclcpp g425_assign4_interfaces_pkg)
@@ -45,11 +39,7 @@ ament_target_dependencies(WheelVelocitySimulator rclcpp g425_assign4_interfaces_
 ament_target_dependencies(Sensor_Simulator_Node rclcpp g425_assign4_interfaces_pkg std_msgs)
 ament_target_dependencies(DatabasePublisher rclcpp g425_assign4_interfaces_pkg std_msgs)
 ament_target_dependencies(MapToBaseLinkBroadcaster rclcpp g425_assign4_interfaces_pkg geometry_msgs tf2 tf2_ros)
-ament_target_dependencies(position_velocity_approximator rclcpp tf2 g425_assign4_interfaces_pkg)
-# ament_target_dependencies(udp_imu_bridge rclcpp sensor_msgs std_msgs )
-# ament_target_dependencies(LifecycleNodeSubscriber rclcpp g425_assign3_interfaces_pkg sensor_msgs)
-# ament_target_dependencies(ImuLifecycleNode rclcpp rclcpp_lifecycle sensor_msgs lifecycle_msgs)
-# ament_target_dependencies(LifecycleManager rclcpp lifecycle_msgs sensor_msgs)
+ament_target_dependencies(position_velocity_approximator rclcpp geometry_msgs g425_assign4_interfaces_pkg)
 
 # libraries
 target_compile_options(OdometryDatabase PRIVATE ${MYSQL_CFLAGS})
@@ -74,25 +64,25 @@ install (TARGETS
           DESTINATION lib/${PROJECT_NAME}
           )
 
-# if(BUILD_TESTING)
-#   find_package(ament_cmake_gtest REQUIRED)
+if(BUILD_TESTING)
+  find_package(ament_cmake_gtest REQUIRED)
 
-#   # test files
-#   ament_add_gtest(utest_imu_lifecycle_node test/unit/utest_imu_lifecycle.cpp)
-#   ament_add_gtest(utest_lifecycle_manager test/unit/utest_lifecycle_manager.cpp)
-#   ament_add_gtest(utest_subscriber test/unit/utest_subscriber.cpp)
+  # test files
+  ament_add_gtest(utest_position_velocity_approximator test/unit/utest_position_velocity_approximator.cpp)
+  # ament_add_gtest(utest_lifecycle_manager test/unit/utest_lifecycle_manager.cpp)
+  # ament_add_gtest(utest_subscriber test/unit/utest_subscriber.cpp)
   
-#   target_compile_definitions(utest_imu_lifecycle_node PRIVATE TESTING_EXCLUDE_MAIN)
-#   target_compile_definitions(utest_lifecycle_manager PRIVATE TESTING_EXCLUDE_MAIN)
-#   target_compile_definitions(utest_subscriber PRIVATE TESTING_EXCLUDE_MAIN)
+  target_compile_definitions(utest_position_velocity_approximator PRIVATE TESTING_EXCLUDE_MAIN)
+  # target_compile_definitions(utest_lifecycle_manager PRIVATE TESTING_EXCLUDE_MAIN)
+  # target_compile_definitions(utest_subscriber PRIVATE TESTING_EXCLUDE_MAIN)
   
-#   # dependencies
-#   ament_target_dependencies(utest_imu_lifecycle_node rclcpp rclcpp_lifecycle sensor_msgs lifecycle_msgs)
-#   ament_target_dependencies(utest_lifecycle_manager rclcpp lifecycle_msgs sensor_msgs)
-#   ament_target_dependencies(utest_subscriber rclcpp g425_assign3_interfaces_pkg sensor_msgs)
+  # dependencies
+  ament_target_dependencies(utest_position_velocity_approximator rclcpp geometry_msgs g425_assign4_interfaces_pkg)
+  # ament_target_dependencies(utest_lifecycle_manager rclcpp lifecycle_msgs sensor_msgs)
+  # ament_target_dependencies(utest_subscriber rclcpp g425_assign3_interfaces_pkg sensor_msgs)
   
-#   target_link_libraries(utest_subscriber ImuDatabase ${MYSQL_LIBS})
+  # target_link_libraries(utest_subscriber ImuDatabase ${MYSQL_LIBS})
 
-# endif()
+endif()
 
 ament_package()

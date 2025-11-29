@@ -5,10 +5,6 @@ This ROS2 node subscribes to simulated IMU acceleration data (linear x, y, and a
 and integrates these measurements over time to approximate the robot's 2D position 
 (x, y) and orientation (yaw), as well as its linear velocities (vx, vy) and angular velocity (omega_z).
 
-The node publishes:
-  - Approximate position: g425_assign4_interfaces_pkg/msg/PositionData
-  - Approximate velocity: g425_assign4_interfaces_pkg/msg/VelocityData
-
 Notes:
   - Only planar motion (x-y plane) and yaw rotation are considered. Vertical motion (z) 
     and pitch/roll are ignored.
@@ -63,7 +59,9 @@ public:
     RCLCPP_INFO(this->get_logger(), "PositionVelocityApproximator started.");
   }
 
+#ifndef TESTING_EXCLUDE_MAIN
 private:
+#endif
   // callback: integrate acceleration → velocity → position
   void position_velocity_callback(const g425_assign4_interfaces_pkg::msg::ImuSim::SharedPtr msg)
   {
@@ -196,6 +194,7 @@ private:
   rclcpp::Subscription<geometry_msgs::msg::PoseStamped>::SharedPtr reset_sub_;
 };
 
+#ifndef TESTING_EXCLUDE_MAIN
 int main(int argc, char ** argv)
 {
   rclcpp::init(argc, argv);
@@ -203,3 +202,4 @@ int main(int argc, char ** argv)
   rclcpp::shutdown();
   return 0;
 }
+#endif

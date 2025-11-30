@@ -241,20 +241,6 @@ private:
   {
     double t = (this->now() - start_time_).seconds();
 
-    // Find the maximum end time across all intervals
-    double max_time = 0.0;
-    for (const auto& I : intervals_)
-    {
-      if (I.t1 > max_time)
-        max_time = I.t1;
-    }
-
-    // Loop the time if intervals exist
-    if (max_time > 0.0)
-    {
-      t = std::fmod(t, max_time);
-    }
-
     double x = 0.0, y = 0.0, z = 0.0, yaw_z = 0.0;
 
     for (const auto& I : intervals_)

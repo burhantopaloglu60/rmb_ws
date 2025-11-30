@@ -1,31 +1,34 @@
 <launch>
+    <arg name="params_file" default="$(find-pkg-share g425_assign4_pkg)/config/params_assign4_squaredemo.yaml"/>
+    
     <let name="rviz_config_path" value="$(find-pkg-share g425_assign4_pkg)/config/simulator.rviz"/>
     <let name="urdf_path" value="$(find-pkg-share g425_assign4_pkg)/include/sim.urdf.xacro"/>
+    
     <!-- Sensor Simulator Node -->
     <node pkg="g425_assign4_pkg" exec="Sensor_Simulator_Node" name="sensor_simulator_node" output="screen">
-        <param from="$(find-pkg-share g425_assign4_pkg)/config/params_assign4.yaml" />
+        <param from="$(var params_file)" />
     </node>
 
     <!-- Wheel Velocity Simulator Node -->
     <node pkg="g425_assign4_pkg" exec="WheelVelocitySimulator" name="wheel_velocity_simulator_node"
         output="screen">
-        <param from="$(find-pkg-share g425_assign4_pkg)/config/params_assign4.yaml" />
+        <param from="$(var params_file)" />
     </node>
     
     <!-- Database Publisher Node -->
     <node pkg="g425_assign4_pkg" exec="DatabasePublisher" name="DatabasePublisher_node" output="screen">
-        <param from="$(find-pkg-share g425_assign4_pkg)/config/params_assign4.yaml" />
+        <param from="$(var params_file)" />
     </node>
 
     <!-- Position Aproximator mecanum node -->
     <node pkg="g425_assign4_pkg" exec="position_approximator_mecanum" name="position_approximator_mecanum_node" output="screen">
-        <param from="$(find-pkg-share g425_assign4_pkg)/config/params_assign4.yaml" />
+        <param from="$(var params_file)" />
     </node>
     <node pkg="g425_assign4_pkg" exec="MapToBaseLinkBroadcaster" name="MapToBaseLinkBroadcaster" output="screen">
-        <param from="$(find-pkg-share g425_assign4_pkg)/config/params_assign4.yaml" />
+        <param from="$(var params_file)" />
     </node>
     <node pkg="g425_assign4_pkg" exec="position_velocity_approximator" name="position_velocity_approximator_node" output="screen">
-        <param from="$(find-pkg-share g425_assign4_pkg)/config/params_assign4.yaml" />
+        <param from="$(var params_file)" />
     </node>
     <node pkg="robot_state_publisher" exec="robot_state_publisher" name="robot_state_publisher" output="screen">
         <param name="robot_description" value="$(command 'xacro $(var urdf_path)')"/>

@@ -35,6 +35,11 @@ sensor_simulator_node:
         y0: 0.0
         y1: 0.5
 
+# MECANUM WHEEL PRIMAL DIRECTIONS
+#                 FL  FR  RL  RR
+# FORWARD     =   1,  1,  1,  1
+# RIGHT       =   1, -1, -1,  1
+# ROTATE CW   =   1, -1,  1, -1
 wheel_velocity_simulator_node:
   ros__parameters:
     rate_hz: 1

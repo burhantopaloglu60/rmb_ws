@@ -124,7 +124,10 @@ public:
                 rate_hz_);
   }
 
+#ifndef TESTING_EXCLUDE_MAIN
 private:
+#endif
+
   void load_intervals()
   {
     auto listed = this->list_parameters({ "intervals" }, 10);
@@ -305,6 +308,7 @@ private:
   double loop_period_ = 0.0;
 };
 
+#ifndef TESTING_EXCLUDE_MAIN
 int main(int argc, char** argv)
 {
   rclcpp::init(argc, argv);
@@ -313,3 +317,4 @@ int main(int argc, char** argv)
   rclcpp::shutdown();
   return 0;
 }
+#endif

@@ -69,15 +69,21 @@ if(BUILD_TESTING)
 
   # test files
   ament_add_gtest(utest_position_velocity_approximator test/unit/utest_position_velocity_approximator.cpp)
-  # ament_add_gtest(utest_lifecycle_manager test/unit/utest_lifecycle_manager.cpp)
+  ament_add_gtest(utest_sensor_simulator test/unit/utest_sensor_simulator.cpp)
+  ament_add_gtest(utest_wheel_velocity_simulator test/unit/utest_wheel_velocity_simulator.cpp)
+
   # ament_add_gtest(utest_subscriber test/unit/utest_subscriber.cpp)
   
   target_compile_definitions(utest_position_velocity_approximator PRIVATE TESTING_EXCLUDE_MAIN)
+  target_compile_definitions(utest_sensor_simulator PRIVATE TESTING_EXCLUDE_MAIN)
+  target_compile_definitions(utest_wheel_velocity_simulator PRIVATE TESTING_EXCLUDE_MAIN)
   # target_compile_definitions(utest_lifecycle_manager PRIVATE TESTING_EXCLUDE_MAIN)
   # target_compile_definitions(utest_subscriber PRIVATE TESTING_EXCLUDE_MAIN)
   
   # dependencies
   ament_target_dependencies(utest_position_velocity_approximator rclcpp geometry_msgs g425_assign4_interfaces_pkg)
+  ament_target_dependencies(utest_sensor_simulator rclcpp std_msgs g425_assign4_interfaces_pkg)
+  ament_target_dependencies(utest_wheel_velocity_simulator rclcpp g425_assign4_interfaces_pkg)
   # ament_target_dependencies(utest_lifecycle_manager rclcpp lifecycle_msgs sensor_msgs)
   # ament_target_dependencies(utest_subscriber rclcpp g425_assign3_interfaces_pkg sensor_msgs)
   

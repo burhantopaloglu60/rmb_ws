@@ -9,25 +9,38 @@
 using namespace std::placeholders;
 using PositionData = g425_assign4_interfaces_pkg::msg::PositionData;
 
-class MapToBaseLinkBroadcaster : public rclcpp::Node
+class SimBroadcaster : public rclcpp::Node
 {
 public:
-    MapToBaseLinkBroadcaster()
-        : Node("map_to_base_link_broadcaster")
+    SimBroadcaster()
+        : Node("sim_broadcaster")
     {
-        tf_broadcaster_ = std::make_shared<tf2_ros::TransformBroadcaster>(this);
+        declare_parameters();
+        mecanum_broadcaster_ = std::make_shared<tf2_ros::TransformBroadcaster>(this);
         mecanum_sub_pos_ = this->create_subscription<PositionData>(
-            "mecanum_pos", 10, std::bind(&MapToBaseLinkBroadcaster::broadcast_transform, this, _1));
+            mecanum_topic_position_, 10, std::bind(&SimBroadcaster::broadcast_mecanum, this, _1));
+
+        imu_broadcaster_ = std::make_shared<tf2_ros::TransformBroadcaster>(this);
+        imu_sub_pos_ = this->create_subscription<PositionData>(
+            imu_topic_position_, 10, std::bind(&SimBroadcaster::broadcast_imu, this, _1));
     }
 
 private:
-    void broadcast_transform(const PositionData &msg)
+    void declare_parameters()
+    {
+        this->declare_parameter<std::string>("mecanum_topic_position", "mecanum_position");
+        this->declare_parameter<std::string>("imu_topic_position", "imu_sim_position");
+
+        mecanum_topic_position_ = this->get_parameter("mecanum_topic_position").as_string();
+        imu_topic_position_ = this->get_parameter("imu_topic_position").as_string();
+    }
+    void broadcast_mecanum(const PositionData &msg)
     {
         geometry_msgs::msg::TransformStamped transformStamped;
 
         transformStamped.header.stamp = this->get_clock()->now();
         transformStamped.header.frame_id = "map";
-        transformStamped.child_frame_id = "base_footprint";
+        transformStamped.child_frame_id = "mecanum_base_link";
 
         // Use actual position data from the message
         transformStamped.transform.translation.x = msg.x;
@@ -41,17 +54,41 @@ private:
         transformStamped.transform.rotation.z = std::sin(half_yaw);
         transformStamped.transform.rotation.w = std::cos(half_yaw);
 
-        tf_broadcaster_->sendTransform(transformStamped);
+        mecanum_broadcaster_->sendTransform(transformStamped);
     }
+    void broadcast_imu(const PositionData &msg)
+    {
+        geometry_msgs::msg::TransformStamped transformStamped;
 
-    std::shared_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_;
+        transformStamped.header.stamp = this->get_clock()->now();
+        transformStamped.header.frame_id = "map";
+        transformStamped.child_frame_id = "imu_base_link";
+
+        // Use actual position data from the message
+        transformStamped.transform.translation.x = msg.x;
+        transformStamped.transform.translation.y = msg.y;
+        transformStamped.transform.translation.z = msg.z;
+
+        // Convert yaw to quaternion (assuming msg.yaw in radians)
+        double half_yaw = msg.yaw_z / 2.0;
+        transformStamped.transform.rotation.x = 0.0;
+        transformStamped.transform.rotation.y = 0.0;
+        transformStamped.transform.rotation.z = std::sin(half_yaw);
+        transformStamped.transform.rotation.w = std::cos(half_yaw);
+
+        imu_broadcaster_->sendTransform(transformStamped);
+    }
+    std::string mecanum_topic_position_, imu_topic_position_;
+    std::shared_ptr<tf2_ros::TransformBroadcaster> imu_broadcaster_;
+    std::shared_ptr<tf2_ros::TransformBroadcaster> mecanum_broadcaster_;
     rclcpp::Subscription<PositionData>::SharedPtr mecanum_sub_pos_;
+    rclcpp::Subscription<PositionData>::SharedPtr imu_sub_pos_;
 };
 
 int main(int argc, char *argv[])
 {
     rclcpp::init(argc, argv);
-    rclcpp::spin(std::make_shared<MapToBaseLinkBroadcaster>());
+    rclcpp::spin(std::make_shared<SimBroadcaster>());
     rclcpp::shutdown();
     return 0;
 }

@@ -30,9 +30,10 @@ public:
   PositionVelocityApproximator()
   : Node("position_velocity_approximator")
   {
+    declare_parameters();
     // Subscriber
     imu_sim_sub_ = this->create_subscription<g425_assign4_interfaces_pkg::msg::ImuSim>(
-      "imu_sim_acceleration", 10,
+      imu_topic_acceleration_, 10,
       std::bind(&PositionVelocityApproximator::position_velocity_callback, this, std::placeholders::_1));
     
     // Will subscribe to the position determinator node (future assignment) to update the robot's starting position
@@ -41,8 +42,8 @@ public:
     std::bind(&PositionVelocityApproximator::reset_callback, this, std::placeholders::_1));
 
     // Publishers
-    pos_pub_ = this->create_publisher<g425_assign4_interfaces_pkg::msg::PositionData>("imu_sim_pos", 10);
-    velocity_pub_ = this->create_publisher<g425_assign4_interfaces_pkg::msg::ImuSim>("imu_sim_velocity", 10);
+    pos_pub_ = this->create_publisher<g425_assign4_interfaces_pkg::msg::PositionData>(imu_topic_position_, 10);
+    velocity_pub_ = this->create_publisher<g425_assign4_interfaces_pkg::msg::ImuSim>(imu_topic_velocity_, 10);
 
     // Initial state
     last_stamp_ = this->now();
@@ -62,6 +63,22 @@ public:
 #ifndef TESTING_EXCLUDE_MAIN
 private:
 #endif
+  void declare_parameters()
+  {
+    this->declare_parameter<std::string>("imu_topic_acceleration", "imu_sim_acceleration");
+    this->declare_parameter<std::string>("imu_topic_velocity", "imu_sim_velocity");
+    this->declare_parameter<std::string>("imu_topic_position", "imu_sim_position");
+    this->declare_parameter<double>("start_x", 0.0);
+    this->declare_parameter<double>("start_y", 0.0);
+    this->declare_parameter<double>("start_yaw", 0.0);
+
+    imu_topic_acceleration_ = this->get_parameter("imu_topic_acceleration").as_string();
+    imu_topic_velocity_ = this->get_parameter("imu_topic_velocity").as_string();
+    imu_topic_position_ = this->get_parameter("imu_topic_position").as_string();
+    start_x_ = this->get_parameter("start_x").as_double();
+    start_y_ = this->get_parameter("start_y").as_double();
+    start_yaw_ = this->get_parameter("start_yaw").as_double();
+  }
   // callback: integrate acceleration → velocity → position
   void position_velocity_callback(const g425_assign4_interfaces_pkg::msg::ImuSim::SharedPtr msg)
   {
@@ -187,7 +204,8 @@ private:
   double prev_ax_, prev_ay_, prev_alpha_;
 
   rclcpp::Time last_stamp_;
-
+  std::string imu_topic_acceleration_, imu_topic_velocity_, imu_topic_position_;
+  double start_x_, start_y_, start_yaw_;
   rclcpp::Subscription<g425_assign4_interfaces_pkg::msg::ImuSim>::SharedPtr imu_sim_sub_;
   rclcpp::Publisher<g425_assign4_interfaces_pkg::msg::PositionData>::SharedPtr pos_pub_;
   rclcpp::Publisher<g425_assign4_interfaces_pkg::msg::ImuSim>::SharedPtr velocity_pub_;

@@ -25,8 +25,8 @@ accelerations based on the active intervals.
 Software changes:
 (1) 18.11.2025 created by Burhan Topaloglu (based on assignment specification)
 (2) 25.11.2025 modified by Burhan (improved integration with other nodes using GPT)
-(3) 25-11-2025 modified by Burhan (changed message type to ImuSim and published accelerations instead of velocities, new
-file) (4) 28-11-2025 modified by Melissa (added code to declare interval parameters so they can be loaded from YAML)
+(3) 25-11-2025 modified by Burhan (changed message type to ImuSim and published accelerations instead of velocities,
+(4) 28-11-2025 modified by Melissa (added code to declare interval parameters so they can be loaded from YAML)
 */
 
 #include <rclcpp/rclcpp.hpp>
@@ -94,7 +94,7 @@ public:
   {
     // Declare parameters
     this->declare_parameter<int>("rate_hz", 1);
-    this->declare_parameter<std::string>("topic", "imu_sim_acceleration");
+    this->declare_parameter<std::string>("imu_topic_acceleration", "imu_sim_acceleration");
 
     // Declare interval parameters so they can be loaded from YAML
     for (int i = 0; i < 10; i++)
@@ -115,7 +115,7 @@ public:
     }
 
     rate_hz_ = this->get_parameter("rate_hz").as_int();
-    topic_ = this->get_parameter("topic").as_string();
+    topic_ = this->get_parameter("imu_topic_acceleration").as_string();
 
     start_time_ = this->now();
 

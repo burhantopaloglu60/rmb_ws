@@ -23,16 +23,45 @@ class position_approximator_mecanum : public rclcpp::Node
 public:
   position_approximator_mecanum() : Node("position_approximator_mecanum_node")
   {
+    declare_parameters();
+    px_ = start_x_;
+    py_ = start_y_;
+    yaw_z = start_yaw_;
     mecanum_sub_ = this->create_subscription<mecanum>(
-        "mecanum_velocity", 10, std::bind(&position_approximator_mecanum::calculate_mecanum, this, _1));
+        topic_sub_, 10, std::bind(&position_approximator_mecanum::calculate_mecanum, this, _1));
 
-    mecanum_pub_ = this->create_publisher<PositionData>("mecanum_pos", 10);
+    mecanum_pub_ = this->create_publisher<PositionData>(topic_pub_, 10);
 
     RCLCPP_INFO(this->get_logger(), "position_approximator_mecanum_node active.");
   }
 
 private:
-  void calculate_mecanum(const mecanum& msg)
+  void declare_parameters()
+  {
+    this->declare_parameter<double>("wheel_radius", 0.05);
+    this->declare_parameter<double>("robot_length", 0.3);
+    this->declare_parameter<double>("robot_width", 0.2);
+
+    this->declare_parameter<double>("start_x", 0.0);
+    this->declare_parameter<double>("start_y", 0.0);
+    this->declare_parameter<double>("start_yaw", 0.0);
+
+    this->declare_parameter<std::string>("mecanum_topic_velocity", "mecanum_velocity");
+    this->declare_parameter<std::string>("mecanum_topic_position", "mecanum_pos");
+
+    wheel_radius_ = this->get_parameter("wheel_radius").as_double();
+    robot_length_ = this->get_parameter("robot_length").as_double();
+    robot_width_ = this->get_parameter("robot_width").as_double();
+
+    start_x_ = this->get_parameter("start_x").as_double();
+    start_y_ = this->get_parameter("start_y").as_double();
+    start_yaw_ = this->get_parameter("start_yaw").as_double();
+
+    topic_sub_ = this->get_parameter("mecanum_topic_velocity").as_string();
+    topic_pub_ = this->get_parameter("mecanum_topic_position").as_string();
+  }
+
+  void calculate_mecanum(const mecanum &msg)
   {
     // Convert builtin_interfaces::Time → rclcpp::Time
     rclcpp::Time current_stamp(msg.stamp);
@@ -57,9 +86,9 @@ private:
     double wrr = msg.wrr;
 
     // Mecanum kinematics parameters
-    double r = 0.05;  // wheel radius (m)
-    double L = 0.3;   // robot length
-    double W = 0.2;   // robot width
+    double r = wheel_radius_; // wheel radius (m)
+    double L = robot_length_; // robot length
+    double W = robot_width_;  // robot width
 
     // Compute robot velocities
     double vx = (r / 4.0) * (wfl + wfr + wrl + wrr);
@@ -67,6 +96,7 @@ private:
     double yaw_vz = (r / (4.0 * (L + W))) * (-wfl + wfr - wrl + wrr);
 
     // Integrate to update pose
+
     px_ += vx * t;
     py_ += vy * t;
     yaw_z += yaw_vz * t;
@@ -95,13 +125,15 @@ private:
   bool first_msg_ = true;
 
   rclcpp::Time last_stamp_;
+  double wheel_radius_, robot_length_, robot_width_, start_x_, start_y_, start_z_, start_yaw_;
+  std::string topic_sub_, topic_pub_;
 
   // ROS interfaces
   rclcpp::Subscription<mecanum>::SharedPtr mecanum_sub_;
   rclcpp::Publisher<PositionData>::SharedPtr mecanum_pub_;
 };
 
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
   rclcpp::init(argc, argv);
   auto node = std::make_shared<position_approximator_mecanum>();

@@ -29,7 +29,7 @@ add_executable(position_approximator_mecanum src/position_approximator_mecanum.c
 add_executable(WheelVelocitySimulator src/wheel_velocity_simulator.cpp)
 add_executable(Sensor_Simulator_Node src/sensor_simulator.cpp)
 add_executable(DatabasePublisher src/DatabasePublisher.cpp)
-add_executable(MapToBaseLinkBroadcaster src/broadcaster.cpp)
+add_executable(SimBroadcaster src/broadcaster.cpp)
 add_executable(position_velocity_approximator src/position_velocity_approximator.cpp)
 
 # dependencies
@@ -38,7 +38,7 @@ ament_target_dependencies(position_approximator_mecanum rclcpp g425_assign4_inte
 ament_target_dependencies(WheelVelocitySimulator rclcpp g425_assign4_interfaces_pkg)
 ament_target_dependencies(Sensor_Simulator_Node rclcpp g425_assign4_interfaces_pkg std_msgs)
 ament_target_dependencies(DatabasePublisher rclcpp g425_assign4_interfaces_pkg std_msgs)
-ament_target_dependencies(MapToBaseLinkBroadcaster rclcpp g425_assign4_interfaces_pkg geometry_msgs tf2 tf2_ros)
+ament_target_dependencies(SimBroadcaster rclcpp g425_assign4_interfaces_pkg geometry_msgs tf2 tf2_ros)
 ament_target_dependencies(position_velocity_approximator rclcpp geometry_msgs g425_assign4_interfaces_pkg)
 
 # libraries
@@ -59,7 +59,7 @@ install (TARGETS
     WheelVelocitySimulator
     Sensor_Simulator_Node
     DatabasePublisher
-    MapToBaseLinkBroadcaster
+    SimBroadcaster
     position_velocity_approximator
           DESTINATION lib/${PROJECT_NAME}
           )

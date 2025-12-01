@@ -94,7 +94,7 @@ public:
   WheelVelocitySimulator() : Node("wheel_velocity_simulator_node")
   {
     this->declare_parameter<int>("rate_hz", 1);
-    this->declare_parameter<std::string>("topic", "mecanum_velocity");
+    this->declare_parameter<std::string>("mecanum_topic_velocity", "mecanum_velocity");
 
     // Declare interval parameters so they can be loaded
     for (int i = 0; i < 10; i++)
@@ -111,7 +111,7 @@ public:
     }
 
     rate_hz_ = this->get_parameter("rate_hz").as_int();
-    topic_ = this->get_parameter("topic").as_string();
+    topic_ = this->get_parameter("mecanum_topic_velocity").as_string();
     start_time_ = this->now();
 
     load_intervals();

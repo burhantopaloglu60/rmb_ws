@@ -1,8 +1,14 @@
 # params_assign4.yaml
+/**:
+  ros__parameters:
+    mecanum_topic_velocity: "mecanum_velocity"
+    mecanum_topic_position: "mecanum_pos"
+    imu_topic_acceleration: "imu_sim_acceleration"
+    imu_topic_velocity: "imu_sim_velocity"
+    imu_topic_position: "imu_sim_position"
 sensor_simulator_node:
   ros__parameters:
     rate_hz: 100
-    topic: "imu_sim_acceleration"
     intervals:
       0:
         axis: "linear_x"
@@ -64,7 +70,6 @@ sensor_simulator_node:
 wheel_velocity_simulator_node:
   ros__parameters:
     rate_hz: 100
-    topic: "mecanum_velocity"
     intervals:
       0:
         wheel: "wfl"
@@ -170,7 +175,4 @@ position_approximator_mecanum_node:
     robot_width: 0.2
     start_x: 0.0
     start_y: 0.0
-    start_z: 0.0
     start_yaw: 0.0
-    topic_sub: "mecanum_velocity"
-    topic_pub: "mecanum_pos"

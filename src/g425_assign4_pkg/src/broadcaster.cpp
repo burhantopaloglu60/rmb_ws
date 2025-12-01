@@ -1,3 +1,24 @@
+/*
+SimBroadcaster node subscribes to position data from both the Mecanum wheel odometry
+and simulated IMU, then broadcasts their transforms using tf2 for visualization
+and integration in the ROS2 ecosystem.
+
+Functionality:
+1. Receives real-time position data from Mecanum and IMU simulation nodes.
+2. Converts the position data into `geometry_msgs::msg::TransformStamped` messages.
+3. Broadcasts the transforms over tf2 to make the robot and IMU frames visible in RViz or usable for other nodes.
+4. Supports configuration via ROS2 parameters for topic names, allowing flexible topic remapping.
+
+Subscriptions:
+- Mecanum wheel positions (topic: mecanum_topic_position)
+- IMU simulated positions (topic: imu_topic_position)
+
+*/
+
+/*
+Software changes (one line by change):
+(1) 28.11.2025 created by Rik van Velzen
+*/
 #include <chrono>
 #include <memory>
 #include <cmath>

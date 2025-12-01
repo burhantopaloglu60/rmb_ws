@@ -1,5 +1,19 @@
 /*
-Node description: what is the node doing , what are the node objects used
+DatabasePublisher_node subscribes to both Mecanum wheel data and simulated IMU data,
+processes the incoming messages, and stores them in a database.
+
+Functionality:
+1. Receives real-time data from wheel odometry and IMU simulation nodes.
+2. Converts incoming ROS messages into internal database structures.
+3. Logs received data to console for monitoring.
+4. Supports configuration via ROS2 parameters for topic names, allowing flexible integration with multiple nodes.
+
+Subscriptions:
+- Mecanum wheel velocities (topic: mecanum_topic_velocity)
+- Mecanum wheel positions (topic: mecanum_topic_position)
+- IMU simulated acceleration (topic: imu_topic_acceleration)
+- IMU simulated velocity (topic: imu_topic_velocity)
+- IMU simulated position (topic: imu_topic_position)
 
 */
 

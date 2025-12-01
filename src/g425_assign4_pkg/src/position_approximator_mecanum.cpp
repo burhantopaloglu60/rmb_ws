@@ -8,6 +8,7 @@ It publishes the resulting PositionData message containing the pose estimate.
 /*
 Software changes (one line by change):
 (1) 18.11.2025 created by Rik van Velzen
+(2) 31.11.2025 modified by Rik van Velzen (added parameter declarations for wheel radius, robot dimensions, start pose, and topics)
 */
 
 #include <rclcpp/rclcpp.hpp>

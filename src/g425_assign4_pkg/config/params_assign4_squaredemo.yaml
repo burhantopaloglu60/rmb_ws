@@ -2,7 +2,7 @@
 /**:
   ros__parameters:
     mecanum_topic_velocity: "mecanum_velocity"
-    mecanum_topic_position: "mecanum_pos"
+    mecanum_topic_position: "mecanum_position"
     imu_topic_acceleration: "imu_sim_acceleration"
     imu_topic_velocity: "imu_sim_velocity"
     imu_topic_position: "imu_sim_position"

@@ -29,6 +29,7 @@ Software changes (one line by change):
 
 using namespace std::placeholders;
 using PositionData = g425_assign4_interfaces_pkg::msg::PositionData;
+using Broadcaster = tf2_ros::TransformBroadcaster;
 
 class SimBroadcaster : public rclcpp::Node
 {
@@ -37,11 +38,11 @@ public:
         : Node("sim_broadcaster")
     {
         declare_parameters();
-        mecanum_broadcaster_ = std::make_shared<tf2_ros::TransformBroadcaster>(this);
+        mecanum_broadcaster_ = std::make_shared<Broadcaster>(this);
         mecanum_sub_pos_ = this->create_subscription<PositionData>(
             mecanum_topic_position_, 10, std::bind(&SimBroadcaster::broadcast_mecanum, this, _1));
 
-        imu_broadcaster_ = std::make_shared<tf2_ros::TransformBroadcaster>(this);
+        imu_broadcaster_ = std::make_shared<Broadcaster>(this);
         imu_sub_pos_ = this->create_subscription<PositionData>(
             imu_topic_position_, 10, std::bind(&SimBroadcaster::broadcast_imu, this, _1));
     }
@@ -100,8 +101,8 @@ private:
         imu_broadcaster_->sendTransform(transformStamped);
     }
     std::string mecanum_topic_position_, imu_topic_position_;
-    std::shared_ptr<tf2_ros::TransformBroadcaster> imu_broadcaster_;
-    std::shared_ptr<tf2_ros::TransformBroadcaster> mecanum_broadcaster_;
+    std::shared_ptr<Broadcaster> imu_broadcaster_;
+    std::shared_ptr<Broadcaster> mecanum_broadcaster_;
     rclcpp::Subscription<PositionData>::SharedPtr mecanum_sub_pos_;
     rclcpp::Subscription<PositionData>::SharedPtr imu_sub_pos_;
 };

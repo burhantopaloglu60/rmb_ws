@@ -56,8 +56,10 @@ public:
         imu_topic_acceleration_, 10, std::bind(&DatabasePublisher::publish_imu_sim_acceleration, this, _1));
     RCLCPP_INFO(this->get_logger(), "DatabasePublisher_node active.");
   }
-
+#ifndef TESTING_EXCLUDE_MAIN
 private:
+#endif
+
   void declare_parameters()
   {
     this->declare_parameter<std::string>("mecanum_topic_velocity", "mecanum_velocity");
@@ -72,18 +74,7 @@ private:
     imu_topic_velocity_ = this->get_parameter("imu_topic_velocity").as_string();
     imu_topic_position_ = this->get_parameter("imu_topic_position").as_string();
   }
-  void publish_imu_sim_pos(const PositionData &msg)
-  {
-    DBT_Positions positions;
-    positions.x = msg.x;
-    positions.y = msg.y;
-    positions.z = 0.0;
-    positions.yaw_z = msg.yaw_z;
-    db.addPositionImuSim(positions);
-
-    RCLCPP_INFO(this->get_logger(), "Position Data Received: x=%.2f m, y=%.2f m, yaw_z=%.2f rad", msg.x, msg.y,
-                msg.yaw_z);
-  }
+  
   void publish_mecanum_pos(const PositionData &msg)
   {
     DBT_Positions positions;
@@ -107,6 +98,18 @@ private:
 
     RCLCPP_INFO(this->get_logger(), "Velocity Data Received: wfl=%.2f, wfr=%.2f, wrl=%.2f, wrr=%.2f", msg.wfl, msg.wfr,
                 msg.wrl, msg.wrr);
+  }
+  void publish_imu_sim_pos(const PositionData &msg)
+  {
+    DBT_Positions positions;
+    positions.x = msg.x;
+    positions.y = msg.y;
+    positions.z = 0.0;
+    positions.yaw_z = msg.yaw_z;
+    db.addPositionImuSim(positions);
+
+    RCLCPP_INFO(this->get_logger(), "Position Data Received: x=%.2f m, y=%.2f m, yaw_z=%.2f rad", msg.x, msg.y,
+                msg.yaw_z);
   }
   void publish_imu_sim_velocity(const ImuSim &msg)
   {
@@ -140,6 +143,7 @@ private:
   rclcpp::Subscription<ImuSim>::SharedPtr imu_sim_sub_acceleration_;
   OdometryDatabase db;
 };
+#ifndef TESTING_EXCLUDE_MAIN
 int main(int argc, char **argv)
 {
   rclcpp::init(argc, argv);
@@ -148,3 +152,4 @@ int main(int argc, char **argv)
   rclcpp::shutdown();
   return 0;
 }
+#endif

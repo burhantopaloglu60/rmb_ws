@@ -36,7 +36,9 @@ public:
     RCLCPP_INFO(this->get_logger(), "position_approximator_mecanum_node active.");
   }
 
+#ifndef TESTING_EXCLUDE_MAIN
 private:
+#endif
   void declare_parameters()
   {
     this->declare_parameter<double>("wheel_radius", 0.05);
@@ -105,7 +107,7 @@ private:
     // Print debug info
     RCLCPP_INFO(this->get_logger(), "Velocities: vx=%.2f m/s, vy=%.2f m/s, yaw_vz=%.2f rad/s", vx, vy, yaw_vz);
 
-    RCLCPP_INFO(this->get_logger(), "Pose: x=%.2f m, y=%.2f m, theta=%.2f rad (dt=%.3f s)", px_, py_, yaw_z, t);
+    RCLCPP_INFO(this->get_logger(), "Pose: x=%.2f m, y=%.2f m, yaw_z=%.2f rad (dt=%.3f s)", px_, py_, yaw_z, t);
 
     // Publish position
     PositionData data;
@@ -134,6 +136,7 @@ private:
   rclcpp::Publisher<PositionData>::SharedPtr mecanum_pub_;
 };
 
+#ifndef TESTING_EXCLUDE_MAIN
 int main(int argc, char **argv)
 {
   rclcpp::init(argc, argv);
@@ -142,3 +145,4 @@ int main(int argc, char **argv)
   rclcpp::shutdown();
   return 0;
 }
+#endif

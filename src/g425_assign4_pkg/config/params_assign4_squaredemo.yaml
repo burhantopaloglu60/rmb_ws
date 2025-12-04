@@ -25,28 +25,28 @@ wheel_velocity_simulator_node:
   ros__parameters:
     intervals:
             # wfl
-      0:  { wheel: "wfl", poly: "constant", t0: 0.0,  t1: 4.0,  y0: 1.0 }
-      1:  { wheel: "wfl", poly: "constant", t0: 4.0,  t1: 8.0,  y0: -1.0 }
-      2:  { wheel: "wfl", poly: "constant", t0: 8.0,  t1: 12.0, y0: -1.0 }
-      3:  { wheel: "wfl", poly: "constant", t0: 12.0, t1: 16.0, y0: 1.0 }
+      0:  { wheel: "wfl", poly: "constant", t0: 0.0,  t1: 4.0,  y1: 1.0 }
+      1:  { wheel: "wfl", poly: "constant", t0: 4.0,  t1: 8.0,  y1: -1.0 }
+      2:  { wheel: "wfl", poly: "constant", t0: 8.0,  t1: 12.0, y1: -1.0 }
+      3:  { wheel: "wfl", poly: "constant", t0: 12.0, t1: 16.0, y1: 1.0 }
 
       # wfr
-      4:  { wheel: "wfr", poly: "constant", t0: 0.0,  t1: 4.0,  y0: 1.0 }
-      5:  { wheel: "wfr", poly: "constant", t0: 4.0,  t1: 8.0,  y0: 1.0 }
-      6:  { wheel: "wfr", poly: "constant", t0: 8.0,  t1: 12.0, y0: -1.0 }
-      7:  { wheel: "wfr", poly: "constant", t0: 12.0, t1: 16.0, y0: -1.0 }
+      4:  { wheel: "wfr", poly: "constant", t0: 0.0,  t1: 4.0,  y1: 1.0 }
+      5:  { wheel: "wfr", poly: "constant", t0: 4.0,  t1: 8.0,  y1: 1.0 }
+      6:  { wheel: "wfr", poly: "constant", t0: 8.0,  t1: 12.0, y1: -1.0 }
+      7:  { wheel: "wfr", poly: "constant", t0: 12.0, t1: 16.0, y1: -1.0 }
 
       # wrl
-      8:  { wheel: "wrl", poly: "constant", t0: 0.0,  t1: 4.0,  y0: 1.0 }
-      9:  { wheel: "wrl", poly: "constant", t0: 4.0,  t1: 8.0,  y0: -1.0 }
-      10: { wheel: "wrl", poly: "constant", t0: 8.0,  t1: 12.0, y0: -1.0 }
-      11: { wheel: "wrl", poly: "constant", t0: 12.0, t1: 16.0, y0: 1.0 }
+      8:  { wheel: "wrl", poly: "constant", t0: 0.0,  t1: 4.0,  y1: 1.0 }
+      9:  { wheel: "wrl", poly: "constant", t0: 4.0,  t1: 8.0,  y1: -1.0 }
+      10: { wheel: "wrl", poly: "constant", t0: 8.0,  t1: 12.0, y1: -1.0 }
+      11: { wheel: "wrl", poly: "constant", t0: 12.0, t1: 16.0, y1: 1.0 }
 
       # wrr
-      12: { wheel: "wrr", poly: "constant", t0: 0.0,  t1: 4.0,  y0: 1.0 }
-      13: { wheel: "wrr", poly: "constant", t0: 4.0,  t1: 8.0,  y0: 1.0 }
-      14: { wheel: "wrr", poly: "constant", t0: 8.0,  t1: 12.0, y0: -1.0 }
-      15: { wheel: "wrr", poly: "constant", t0: 12.0, t1: 16.0, y0: -1.0 }
+      12: { wheel: "wrr", poly: "constant", t0: 0.0,  t1: 4.0,  y1: 1.0 }
+      13: { wheel: "wrr", poly: "constant", t0: 4.0,  t1: 8.0,  y1: 1.0 }
+      14: { wheel: "wrr", poly: "constant", t0: 8.0,  t1: 12.0, y1: -1.0 }
+      15: { wheel: "wrr", poly: "constant", t0: 12.0, t1: 16.0, y1: -1.0 }
 
 position_approximator_mecanum_node:
   ros__parameters:

@@ -37,7 +37,7 @@ Software changes:
 #include <string>
 #include <vector>
 #include <algorithm>
-#include <cmath> // added for fmod
+#include <cmath>  // added for fmod
 
 using namespace std::chrono_literals;
 using mecanum = g425_assign4_interfaces_pkg::msg::Mecanum;
@@ -202,10 +202,12 @@ private:
     {
       double tmin = intervals_[0].t0;
       double tmax = intervals_[0].t1;
-      for (const auto &I : intervals_)
+      for (const auto& I : intervals_)
       {
-        if (I.t0 < tmin) tmin = I.t0;
-        if (I.t1 > tmax) tmax = I.t1;
+        if (I.t0 < tmin)
+          tmin = I.t0;
+        if (I.t1 > tmax)
+          tmax = I.t1;
       }
       loop_t0_ = tmin;
       loop_t1_ = tmax;
@@ -217,7 +219,8 @@ private:
       }
       else
       {
-        RCLCPP_INFO(this->get_logger(), "Looping intervals in range [%.3f, %.3f) period=%.3f s", loop_t0_, loop_t1_, loop_period_);
+        RCLCPP_INFO(this->get_logger(), "Looping intervals in range [%.3f, %.3f) period=%.3f s", loop_t0_, loop_t1_,
+                    loop_period_);
       }
     }
     else
@@ -234,7 +237,7 @@ private:
       return 0.0;
 
     if (I.poly == Poly::CONST)
-      return I.y0;
+      return I.y1;
     if (I.poly == Poly::LIN)
     {
       double alpha = (t - I.t0) / (I.t1 - I.t0);
@@ -260,7 +263,8 @@ private:
     {
       double offs = t_orig - loop_t0_;
       offs = std::fmod(offs, loop_period_);
-      if (offs < 0.0) offs += loop_period_;
+      if (offs < 0.0)
+        offs += loop_period_;
       t = loop_t0_ + offs;
     }
 

@@ -16,7 +16,7 @@ sensor_simulator_node:
         poly: "constant"
         t0: 0.0
         t1: 5.0
-        y0: 1.0
+        y1: 1.0
       1:
         axis: "linear_y"
         poly: "linear"
@@ -54,7 +54,7 @@ wheel_velocity_simulator_node:
         poly: "constant"
         t0: 0.0
         t1: 5.0
-        y0: 2.0
+        y1: 2.0
       1:
         wheel: "wfr"
         poly: "linear"

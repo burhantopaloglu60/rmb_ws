@@ -50,7 +50,7 @@ private:
     this->declare_parameter<double>("start_yaw", 0.0);
 
     this->declare_parameter<std::string>("mecanum_topic_velocity", "mecanum_velocity");
-    this->declare_parameter<std::string>("mecanum_topic_position", "mecanum_pos");
+    this->declare_parameter<std::string>("mecanum_topic_position", "mecanum_position");
 
     wheel_radius_ = this->get_parameter("wheel_radius").as_double();
     robot_length_ = this->get_parameter("robot_length").as_double();

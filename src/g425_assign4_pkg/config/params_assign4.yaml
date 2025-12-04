@@ -6,10 +6,10 @@
     imu_topic_acceleration: "imu_sim_acceleration"
     imu_topic_velocity: "imu_sim_velocity"
     imu_topic_position: "imu_sim_position"
+    rate_hz: 10
 
 sensor_simulator_node:
   ros__parameters:
-    rate_hz: 1
     intervals:
       0:
         axis: "linear_x"
@@ -48,7 +48,6 @@ sensor_simulator_node:
 # ROTATE CW   =   1, -1,  1, -1
 wheel_velocity_simulator_node:
   ros__parameters:
-    rate_hz: 1
     intervals:
       0:
         wheel: "wfl"

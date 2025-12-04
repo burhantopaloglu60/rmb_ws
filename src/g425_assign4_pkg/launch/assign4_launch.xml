@@ -23,7 +23,7 @@
         <param from="$(var params_file)" />
     </node>
     <!-- Map to Base Link Broadcaster Node -->
-    <node pkg="g425_assign4_pkg" exec="MapToBaseLinkBroadcaster" name="MapToBaseLinkBroadcaster" output="screen">
+    <node pkg="g425_assign4_pkg" exec="SimBroadcaster" name="SimBroadcaster" output="screen">
         <param from="$(var params_file)" />
     </node>
     <!-- Position Velocity Approximator Node -->

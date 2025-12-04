@@ -220,7 +220,7 @@ private:
       return 0.0;
 
     if (I.poly == Poly::CONST)
-      return I.y1;
+      return I.y0;
 
     if (I.poly == Poly::LIN)
     {

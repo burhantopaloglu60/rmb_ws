@@ -7,3 +7,6 @@
 
 ## Hello IMU
 [Documentation for "Hello IMU"](./documentation/assign3/)
+
+## Odometry Simulator
+[Documentation for "Odometry Simulator"](./documentation/assign4/)

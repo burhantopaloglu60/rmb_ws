@@ -67,14 +67,8 @@ Visualization Manager:
         Expand Tree: false
         Link Tree Style: Links in Alphabetic Order
         mecanum_base_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: true
           Value: true
         imu_base_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: true
           Value: true
       Mass Properties:
         Inertia: false
@@ -92,8 +86,10 @@ Visualization Manager:
       Frames:
         All Enabled: true
         mecanum_base_link:
+          Show Trail: true
           Value: true
         imu_base_link:
+          Show Trail: true
           Value: true
       Marker Scale: 1
       Name: TF

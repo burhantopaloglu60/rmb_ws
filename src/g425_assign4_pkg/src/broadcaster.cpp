@@ -28,6 +28,7 @@ Software changes (one line by change):
 #include "tf2_ros/transform_broadcaster.h"
 #include "g425_assign4_interfaces_pkg/msg/position_data.hpp"
 #include "g425_assign4_interfaces_pkg/msg/mecanum.hpp"
+#include "tf2/LinearMath/Quaternion.h"
 
 using namespace std::placeholders;
 using PositionData = g425_assign4_interfaces_pkg::msg::PositionData;
@@ -110,53 +111,68 @@ private:
         imu_broadcaster_->sendTransform(transformStamped);
     }
     void broadcast_wheels(const mecanum &msg)
-    {   
-        theta_fl_ = theta_fr_ = theta_rl_ = theta_rr_ = 0.0;
-        auto now = this->get_clock()->now();
+    {
+        // Front-left wheel
+        broadcast_wheel("wheel_fl", "mecanum_base_link",
+                        0.13, 0.16, -0.05,     // URDF xyz
+                        1.570796327, 0.0, 0.0, // URDF rpy
+                        msg.wfl);              // wheel rotation
 
-        // compute dt
-        double dt = 0.0;
-        if (last_time_.nanoseconds() != 0)
-        {
-            dt = (now - last_time_).seconds();
-        }
-        last_time_ = now;
+        // Front-right wheel
+        broadcast_wheel("wheel_fr", "mecanum_base_link",
+                        0.13, -0.16, -0.05,
+                        -1.570796327, 0.0, 0.0,
+                        msg.wfr);
 
-        // integrate wheel angles
-        theta_fl_ += msg.wfl * dt;
-        theta_fr_ += msg.wfr * dt;
-        theta_rl_ += msg.wrl * dt;
-        theta_rr_ += msg.wrr * dt;
+        // Rear-left wheel
+        broadcast_wheel("wheel_rl", "mecanum_base_link",
+                        -0.13, 0.16, -0.05,
+                        1.570796327, 0.0, 0.0,
+                        msg.wrl);
 
-        // helper lambda to broadcast one wheel
-        auto send_wheel_tf = [&](const std::string &child, double theta, double x, double y, double z)
-        {
-            geometry_msgs::msg::TransformStamped t;
-            t.header.stamp = now;
-            t.header.frame_id = "mecanum_base_link";
-            t.child_frame_id = child;
-
-            t.transform.translation.x = x;
-            t.transform.translation.y = y;
-            t.transform.translation.z = z;
-
-            // rotation around wheel axis (Y)
-            t.transform.rotation.x = 0.0;
-            t.transform.rotation.y = std::sin(theta / 2.0);
-            t.transform.rotation.z = 0.0;
-            t.transform.rotation.w = std::cos(theta / 2.0);
-
-            mecanum_broadcaster_->sendTransform(t);
-        };
-
-        // broadcast all 4 wheels
-        send_wheel_tf("wheel_fl", theta_fl_, 0.13, 0.16, -0.05);
-        send_wheel_tf("wheel_fr", theta_fr_, 0.13, -0.16, -0.05);
-        send_wheel_tf("wheel_rl", theta_rl_, -0.13, 0.16, -0.05);
-        send_wheel_tf("wheel_rr", theta_rr_, -0.13, -0.16, -0.05);
+        // Rear-right wheel
+        broadcast_wheel("wheel_rr", "mecanum_base_link",
+                        -0.13, -0.16, -0.05,
+                        -1.570796327, 0.0, 0.0,
+                        msg.wrr);
     }
-    double theta_fl_, theta_fr_, theta_rl_, theta_rr_;
-    rclcpp::Time last_time_;
+
+    void broadcast_wheel(const std::string &child_frame,
+                         const std::string &parent_frame,
+                         double x, double y, double z,
+                         double r, double p, double yaw,
+                         double rotation)
+    {
+        geometry_msgs::msg::TransformStamped transformStamped;
+        transformStamped.header.stamp = this->get_clock()->now();
+        transformStamped.header.frame_id = parent_frame;
+        transformStamped.child_frame_id = child_frame;
+
+        // Static position from URDF
+        transformStamped.transform.translation.x = x;
+        transformStamped.transform.translation.y = y;
+        transformStamped.transform.translation.z = z;
+
+        // Create quaternion from static URDF rotation (roll, pitch, yaw)
+        tf2::Quaternion q_urdf;
+        q_urdf.setRPY(r, p, yaw);
+
+        // Create quaternion for dynamic wheel rotation around local z-axis
+        tf2::Quaternion q_spin;
+        q_spin.setRPY(0, 0, rotation);
+
+        // Combine them: static orientation * wheel spin
+        tf2::Quaternion q_total = q_urdf * q_spin;
+        q_total.normalize();
+
+        transformStamped.transform.rotation.x = q_total.x();
+        transformStamped.transform.rotation.y = q_total.y();
+        transformStamped.transform.rotation.z = q_total.z();
+        transformStamped.transform.rotation.w = q_total.w();
+
+        wheel_broadcaster_->sendTransform(transformStamped);
+    }
+
     std::string mecanum_topic_position_, imu_topic_position_, mecanum_topic_velocity_;
     std::shared_ptr<Broadcaster> imu_broadcaster_;
     std::shared_ptr<Broadcaster> mecanum_broadcaster_;

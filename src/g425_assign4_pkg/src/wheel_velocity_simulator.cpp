@@ -28,6 +28,7 @@ Message format (Mecanum):
 Software changes:
 (1) 21.11.2025 created by Burhan Topaloglu
 (2) 25.11.2025 modified by Burhan (improved integration with other nodes using GPT)
+(3) 01.12.2025 modified by Rik van velzen (added parameter declarations for topics)
 */
 
 #include <rclcpp/rclcpp.hpp>

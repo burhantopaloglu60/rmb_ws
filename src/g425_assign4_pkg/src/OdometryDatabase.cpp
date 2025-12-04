@@ -3,6 +3,7 @@ Yes, I know plaintext passwords are bad but this is for educational purposes -Bu
 
 Software changes:
 25-11-2025 created file by using previous ImuDatabase.cpp as template - Rik van Velzen
+28-11-2025 modified by Rik van Velzen (added functions to add data from mecanum and imu sim to tables)
 */
 
 #include "g425_assign4_pkg/OdometryDatabase.hpp"

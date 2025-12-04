@@ -27,6 +27,7 @@ Software changes:
 (2) 25.11.2025 modified by Burhan (improved integration with other nodes using GPT)
 (3) 25-11-2025 modified by Burhan (changed message type to ImuSim and published accelerations instead of velocities,
 (4) 28-11-2025 modified by Melissa (added code to declare interval parameters so they can be loaded from YAML)
+(5) 01.12.2025 modified by Rik van velzen (added parameter declarations for topics)
 */
 
 #include <rclcpp/rclcpp.hpp>

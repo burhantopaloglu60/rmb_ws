@@ -15,6 +15,7 @@ Notes:
 Software changes:
 (1) 28.11.2025 created by Melissa van Leeuwen
 (2) 28.11.2025 modified by Melissa van Leeuwen (added functionality to update starting position)
+(3) 01.12.2025 modified by Rik van velzen (added parameter declarations for topics)
 */
 
 #include <rclcpp/rclcpp.hpp>

@@ -18,6 +18,7 @@ Subscriptions:
 /*
 Software changes (one line by change):
 (1) 28.11.2025 created by Rik van Velzen
+(2) 01.12.2025 modified by Rik van velzen (added parameter declarations for topics)
 */
 #include <chrono>
 #include <memory>

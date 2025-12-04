@@ -1,6 +1,6 @@
 <launch>
-    <arg name="params_file" default="$(find-pkg-share g425_assign4_pkg)/config/params_assign4_squaredemo.yaml"/>
-    <!-- <arg name="params_file" default="$(find-pkg-share g425_assign4_pkg)/config/params_assign4.yaml"/> -->
+    <!-- <arg name="params_file" default="$(find-pkg-share g425_assign4_pkg)/config/params_assign4_squaredemo.yaml"/> -->
+    <arg name="params_file" default="$(find-pkg-share g425_assign4_pkg)/config/params_assign4.yaml"/>
     
     <let name="rviz_config_path" value="$(find-pkg-share g425_assign4_pkg)/config/simulator.rviz"/>
     <let name="urdf_path" value="$(find-pkg-share g425_assign4_pkg)/include/sim.urdf.xacro"/>
@@ -34,6 +34,8 @@
     <node pkg="robot_state_publisher" exec="robot_state_publisher" name="robot_state_publisher" output="screen">
         <param name="robot_description" value="$(command 'xacro $(var urdf_path)')"/>
     </node>
+    <!-- <node pkg="joint_state_publisher_gui" exec="joint_state_publisher_gui"/> -->
+
     <!-- RViz2 Node -->
     <node pkg="rviz2" exec="rviz2" output="screen" args="-d $(var rviz_config_path)"/>
 </launch>

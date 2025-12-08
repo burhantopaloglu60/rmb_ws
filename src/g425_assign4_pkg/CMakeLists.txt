@@ -18,6 +18,7 @@ find_package(std_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(tf2_ros REQUIRED)
+find_package(visualization_msgs REQUIRED)
 
 find_package(g425_assign4_interfaces_pkg REQUIRED)
 
@@ -38,7 +39,7 @@ ament_target_dependencies(position_approximator_mecanum rclcpp g425_assign4_inte
 ament_target_dependencies(WheelVelocitySimulator rclcpp g425_assign4_interfaces_pkg)
 ament_target_dependencies(Sensor_Simulator_Node rclcpp g425_assign4_interfaces_pkg std_msgs)
 ament_target_dependencies(DatabasePublisher rclcpp g425_assign4_interfaces_pkg std_msgs)
-ament_target_dependencies(SimBroadcaster rclcpp g425_assign4_interfaces_pkg geometry_msgs tf2 tf2_ros)
+ament_target_dependencies(SimBroadcaster rclcpp g425_assign4_interfaces_pkg geometry_msgs tf2 tf2_ros visualization_msgs)
 ament_target_dependencies(position_velocity_approximator rclcpp geometry_msgs g425_assign4_interfaces_pkg)
 
 # libraries

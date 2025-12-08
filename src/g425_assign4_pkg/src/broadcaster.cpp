@@ -19,6 +19,7 @@ Subscriptions:
 Software changes (one line by change):
 (1) 28.11.2025 created by Rik van Velzen
 (2) 01.12.2025 modified by Rik van velzen (added parameter declarations for topics)
+(3) 08.12.2025 modified by Melissa van Leeuwen (added markers)
 */
 #include <chrono>
 #include <memory>
@@ -29,6 +30,7 @@ Software changes (one line by change):
 #include "g425_assign4_interfaces_pkg/msg/position_data.hpp"
 #include "g425_assign4_interfaces_pkg/msg/mecanum.hpp"
 #include "tf2/LinearMath/Quaternion.h"
+#include "visualization_msgs/msg/marker.hpp"
 
 using namespace std::placeholders;
 using PositionData = g425_assign4_interfaces_pkg::msg::PositionData;
@@ -53,6 +55,13 @@ public:
         wheel_broadcaster_ = std::make_shared<Broadcaster>(this);
         mecanum_sub_ = this->create_subscription<mecanum>(
             mecanum_topic_velocity_, 10, std::bind(&SimBroadcaster::broadcast_wheels, this, _1));
+
+        fixed_markers_pub_ = this->create_publisher<visualization_msgs::msg::Marker>("fixed_markers", 10);
+
+        marker_timer_ = this->create_wall_timer(
+            std::chrono::seconds(1),
+            std::bind(&SimBroadcaster::publish_fixed_markers, this));
+
     }
 
 private:
@@ -173,6 +182,52 @@ private:
         wheel_broadcaster_->sendTransform(transformStamped);
     }
 
+    void publish_fixed_markers()
+    {
+        const std::vector<std::pair<double, double>> points = {
+            {0.0, 0.0},
+            {0.0, 2.5},
+            {2.5, 0.0},
+            {0.0, 5.0},
+            {5.0, 0.0},
+            {10.0, 0.0},
+            {0.0, 10.0}
+        };
+
+        int id = 0;
+        for (const auto &[x, y] : points)
+        {
+            visualization_msgs::msg::Marker marker;
+            marker.header.frame_id = "map";
+            marker.header.stamp = this->now();
+
+            marker.ns = "fixed_markers";
+            marker.id = id++;   // unique ID per column
+            marker.type = visualization_msgs::msg::Marker::CYLINDER;
+            marker.action = visualization_msgs::msg::Marker::ADD;
+
+            // Position (half-height offset so it stands on the ground)
+            marker.pose.position.x = x;
+            marker.pose.position.y = y;
+            marker.pose.position.z = 0.2;
+
+            marker.pose.orientation.w = 1.0;
+
+            // Column size
+            marker.scale.x = 0.1;  // diameter
+            marker.scale.y = 0.1;  // diameter
+            marker.scale.z = 0.4;  // height
+
+            // Color (blue markers)
+            marker.color.r = 0.0f;
+            marker.color.g = 0.0f;
+            marker.color.b = 1.0f;
+            marker.color.a = 1.0f;
+
+            fixed_markers_pub_->publish(marker);
+        }
+    }
+
     std::string mecanum_topic_position_, imu_topic_position_, mecanum_topic_velocity_;
     std::shared_ptr<Broadcaster> imu_broadcaster_;
     std::shared_ptr<Broadcaster> mecanum_broadcaster_;
@@ -180,6 +235,8 @@ private:
     rclcpp::Subscription<mecanum>::SharedPtr mecanum_sub_;
     rclcpp::Subscription<PositionData>::SharedPtr mecanum_sub_pos_;
     rclcpp::Subscription<PositionData>::SharedPtr imu_sub_pos_;
+    rclcpp::Publisher<visualization_msgs::msg::Marker>::SharedPtr fixed_markers_pub_;
+    rclcpp::TimerBase::SharedPtr marker_timer_;
 };
 
 int main(int argc, char *argv[])

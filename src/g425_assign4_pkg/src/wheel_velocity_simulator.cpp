@@ -95,6 +95,7 @@ public:
   WheelVelocitySimulator() : Node("wheel_velocity_simulator_node")
   {
     this->declare_parameter<int>("rate_hz", 1);
+    this->declare_parameter<bool>("isLooping", true);
     this->declare_parameter<std::string>("mecanum_topic_velocity", "mecanum_velocity");
 
     // Declare interval parameters so they can be loaded
@@ -112,6 +113,7 @@ public:
     }
 
     rate_hz_ = this->get_parameter("rate_hz").as_int();
+    isLooping_ = this->get_parameter("isLooping").as_bool();
     topic_ = this->get_parameter("mecanum_topic_velocity").as_string();
     start_time_ = this->now();
 
@@ -259,8 +261,8 @@ private:
     double t_orig = (this->now() - start_time_).seconds();
     double t = t_orig;
 
-    // wrap time into loop window if loop_period_ set
-    if (loop_period_ > 0.0)
+    // wrap time into loop window if isLooping_ is true and loop_period_ is set
+    if (isLooping_ && loop_period_ > 0.0)
     {
       double offs = t_orig - loop_t0_;
       offs = std::fmod(offs, loop_period_);
@@ -305,6 +307,7 @@ private:
   rclcpp::TimerBase::SharedPtr timer_;
   rclcpp::Time start_time_;
   int rate_hz_;
+  bool isLooping_;
   std::string topic_;
   std::vector<Interval> intervals_;
 

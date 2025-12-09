@@ -7,6 +7,7 @@
     imu_topic_velocity: "imu_sim_velocity"
     imu_topic_position: "imu_sim_position"
     rate_hz: 10
+    isLooping: true
     
 sensor_simulator_node:
   ros__parameters:
@@ -62,3 +63,10 @@ position_velocity_approximator:
     start_x: 0.0       # meters
     start_y: 0.0       # meters
     start_yaw: 0.0     # radians
+    
+SimBroadcaster:
+  ros__parameters:
+    trail_z_height: 0.05
+    trail_width: 0.01
+    trail_color_imu: [0.0, 1.0, 1.0]
+    trail_color_mecanum: [1.0, 0.0, 1.0]

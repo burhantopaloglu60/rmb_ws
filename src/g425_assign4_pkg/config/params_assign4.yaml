@@ -7,6 +7,7 @@
     imu_topic_velocity: "imu_sim_velocity"
     imu_topic_position: "imu_sim_position"
     rate_hz: 10
+    isLooping: true
 
 sensor_simulator_node:
   ros__parameters:

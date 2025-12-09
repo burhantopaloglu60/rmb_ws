@@ -95,6 +95,7 @@ public:
   {
     // Declare parameters
     this->declare_parameter<int>("rate_hz", 1);
+    this->declare_parameter<bool>("isLooping", true);
     this->declare_parameter<std::string>("imu_topic_acceleration", "imu_sim_acceleration");
 
     // Declare interval parameters so they can be loaded from YAML
@@ -116,6 +117,7 @@ public:
     }
 
     rate_hz_ = this->get_parameter("rate_hz").as_int();
+    isLooping_ = this->get_parameter("isLooping").as_bool();
     topic_ = this->get_parameter("imu_topic_acceleration").as_string();
 
     start_time_ = this->now();
@@ -250,8 +252,8 @@ private:
         max_time = I.t1;
     }
 
-    // Loop the time if intervals exist
-    if (max_time > 0.0)
+    // Loop the time if intervals exist and looping is enabled
+    if (isLooping_ && max_time > 0.0)
     {
       t = std::fmod(t, max_time);
     }
@@ -295,6 +297,7 @@ private:
   rclcpp::Time start_time_;
 
   int rate_hz_;
+  bool isLooping_;
   std::string topic_;
   std::vector<Interval> intervals_;
 };

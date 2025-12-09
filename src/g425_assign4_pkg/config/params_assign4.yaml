@@ -97,5 +97,5 @@ SimBroadcaster:
   ros__parameters:
     trail_z_height: 0.05
     trail_width: 0.01
-    trail_color_imu: [0.0, 1.0, 0.0]
-    trail_color_mecanum: [0.0, 0.0, 1.0]
+    trail_color_imu: [0.0, 1.0, 1.0]
+    trail_color_mecanum: [1.0, 0.0, 1.0]

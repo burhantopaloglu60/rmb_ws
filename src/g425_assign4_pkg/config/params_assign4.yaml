@@ -7,41 +7,122 @@
     imu_topic_velocity: "imu_sim_velocity"
     imu_topic_position: "imu_sim_position"
     rate_hz: 10
-    isLooping: true
+    isLooping: false
 
+# input guide:
+# notate intervals, "intervalnumber:" then indent the following lines
+# axis: "linear_x" or "linear_y" or "angular_z", linear_z read but unused by approximator
+# poly: "linear" or "quadratic" or "constant"
+# t0: start time of interval in seconds
+# t1: end time of interval in seconds
+# y0: value at time t0
+# y1: value at time t1
+# for quadratic only:
+# tm: time at which the maximum or minimum occurs
+# ym: value at time tm
+# example//
+# intervals:
+#       0:
+#         axis: "linear_x"
+#         poly: "linear"
+#         t0: 0.0
+#         t1: 2.0
+#         y0: 0.0
+#         y1: 0.0
 sensor_simulator_node:
   ros__parameters:
     intervals:
       0:
         axis: "linear_x"
-        poly: "constant"
+        poly: "linear"
         t0: 0.0
-        t1: 5.0
-        y0: 0.1
+        t1: 2.0
+        y0: 0.0
+        y1: 0.0
       1:
+        axis: "linear_x"
+        poly: "linear"
+        t0: 2.0
+        t1: 4.0
+        y0: 0.0
+        y1: 2.0
+      2:
+        axis: "linear_x"
+        poly: "linear"
+        t0: 4.0
+        t1: 6.0
+        y0: 0.0
+        y1: -2.0
+      3:
+        axis: "linear_x"
+        poly: "linear"
+        t0: 6.0
+        t1: 8.0
+        y0: 0.0
+        y1: 0.0
+      4:
+        axis: "linear_y"
+        poly: "linear"
+        t0: 0.0
+        t1: 2.0
+        y0: 0.0
+        y1: 0.0
+      5:
         axis: "linear_y"
         poly: "linear"
         t0: 2.0
-        t1: 7.0
-        y0: 0.0
-        y1: 0.2
-      2:
-        axis: "linear_z"
-        poly: "quadratic"
-        t0: 1.0
         t1: 4.0
         y0: 0.0
-        y1: 1.0
-        tm: 2.5
-        ym: 0.2
-      3:
+        y1: 2.0
+      6:
         axis: "angular_z"
         poly: "linear"
-        t0: 0.0
+        t0: 8.0
+        t1: 10.0
+        y0: 0.0
+        y1: 1.0
+      7:
+        axis: "angular_z"
+        poly: "linear"
+        t0: 10.0
+        t1: 12.0
+        y0: 0.0
+        y1: -1.0
+      8:
+        axis: "linear_y"
+        poly: "linear"
+        t0: 4.0
         t1: 6.0
         y0: 0.0
-        y1: 0.5
+        y1: -2.0
+      9:
+        axis: "linear_y"
+        poly: "linear"
+        t0: 6.0
+        t1: 8.0
+        y0: 0.0
+        y1: 0.0
 
+# input guide:
+# notate intervals, "intervalnumber:" then indent the following lines
+# wheel: "wfl" or "wfr" or "wrl" or "wrr"
+# poly: "linear" or "quadratic" or "constant"
+# t0: start time of interval in seconds
+# t1: end time of interval in seconds
+# y0: value at time t0
+# y1: value at time t1
+# for quadratic only:
+# tm: time at which the maximum or minimum occurs
+# ym: value at time tm
+# example//
+# intervals:
+#       0:
+#         wheel: "wfl"
+#         poly: "constant"
+#         t0: 0.0
+#         t1: 5.0
+#         y0: 2.0
+#---------------------------
 # MECANUM WHEEL PRIMAL DIRECTIONS
 #                 FL  FR  RL  RR
 # FORWARD     =   1,  1,  1,  1

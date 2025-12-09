@@ -61,11 +61,12 @@ public:
 
         marker_timer_ = this->create_wall_timer(
             std::chrono::milliseconds(200),
-            [this]() {
+            [this]()
+            {
                 publish_fixed_markers();
 
-                publish_trail(mecanum_trail_, "mecanum_trail", 0, 1.0f, 0.0f, 0.0f); // red
-                publish_trail(imu_trail_, "imu_trail", 1, 0.0f, 1.0f, 0.0f);        // green
+                publish_trail(mecanum_trail_, "mecanum_trail", 0, trail_color_mecanum_); // red
+                publish_trail(imu_trail_, "imu_trail", 1, trail_color_imu_);         // green
             });
     }
 
@@ -75,10 +76,27 @@ private:
         this->declare_parameter<std::string>("mecanum_topic_position", "mecanum_position");
         this->declare_parameter<std::string>("mecanum_topic_velocity", "mecanum_velocity");
         this->declare_parameter<std::string>("imu_topic_position", "imu_sim_position");
+        this->declare_parameter<double>("trail_z_height", 0.05);
+        this->declare_parameter<double>("trail_width", 0.01);
+
+        this->declare_parameter<std::vector<double>>(
+            "trail_color_imu", std::vector<double>{1.0, 0.0, 0.0});
+
+        this->declare_parameter<std::vector<double>>(
+            "trail_color_mecanum", std::vector<double>{0.0, 0.0, 1.0});
 
         mecanum_topic_velocity_ = this->get_parameter("mecanum_topic_velocity").as_string();
         mecanum_topic_position_ = this->get_parameter("mecanum_topic_position").as_string();
         imu_topic_position_ = this->get_parameter("imu_topic_position").as_string();
+
+        trail_z_height_ = this->get_parameter("trail_z_height").as_double();
+        trail_width_ = this->get_parameter("trail_width").as_double();
+
+        trail_color_imu_ =
+            this->get_parameter("trail_color_imu").as_double_array();
+
+        trail_color_mecanum_ =
+            this->get_parameter("trail_color_mecanum").as_double_array();
     }
     void broadcast_mecanum(const PositionData &msg)
     {
@@ -106,7 +124,7 @@ private:
         geometry_msgs::msg::Point p;
         p.x = msg.x;
         p.y = msg.y;
-        p.z = 0.05;
+        p.z = trail_z_height_;
         mecanum_trail_.push_back(p);
     }
     void broadcast_imu(const PositionData &msg)
@@ -135,34 +153,54 @@ private:
         geometry_msgs::msg::Point p;
         p.x = msg.x;
         p.y = msg.y;
-        p.z = 0.05;
+        p.z = trail_z_height_;
         imu_trail_.push_back(p);
     }
     void broadcast_wheels(const mecanum &msg)
     {
+        rclcpp::Time now = this->now();
+
+        // First message → initialize timestamp
+        if (first_msg_)
+        {
+            last_stamp_ = now;
+            first_msg_ = false;
+            return;
+        }
+
+        rclcpp::Duration dt = now - last_stamp_;
+        double t = dt.seconds();
+        last_stamp_ = now;
+
+        // Integrate angular velocity (rad/s)
+        theta_fl_ += msg.wfl * t;
+        theta_fr_ += msg.wfr * t;
+        theta_rl_ += msg.wrl * t;
+        theta_rr_ += msg.wrr * t;
+
         // Front-left wheel
         broadcast_wheel("wheel_fl", "mecanum_base_link",
                         0.13, 0.16, -0.05,     // URDF xyz
                         1.570796327, 0.0, 0.0, // URDF rpy
-                        msg.wfl);              // wheel rotation
+                        -theta_fl_);           // wheel rotation
 
         // Front-right wheel
         broadcast_wheel("wheel_fr", "mecanum_base_link",
                         0.13, -0.16, -0.05,
                         -1.570796327, 0.0, 0.0,
-                        msg.wfr);
+                        theta_fr_);
 
         // Rear-left wheel
         broadcast_wheel("wheel_rl", "mecanum_base_link",
                         -0.13, 0.16, -0.05,
                         1.570796327, 0.0, 0.0,
-                        msg.wrl);
+                        -theta_rl_);
 
         // Rear-right wheel
         broadcast_wheel("wheel_rr", "mecanum_base_link",
                         -0.13, -0.16, -0.05,
                         -1.570796327, 0.0, 0.0,
-                        msg.wrr);
+                        theta_rr_);
     }
 
     void broadcast_wheel(const std::string &child_frame,
@@ -210,8 +248,7 @@ private:
             {0.0, 5.0},
             {5.0, 0.0},
             {10.0, 0.0},
-            {0.0, 10.0}
-        };
+            {0.0, 10.0}};
 
         int id = 0;
         for (const auto &[x, y] : points)
@@ -221,7 +258,7 @@ private:
             marker.header.stamp = this->now();
 
             marker.ns = "fixed_markers";
-            marker.id = id++;   // unique ID per column
+            marker.id = id++; // unique ID per column
             marker.type = visualization_msgs::msg::Marker::CYLINDER;
             marker.action = visualization_msgs::msg::Marker::ADD;
 
@@ -233,9 +270,9 @@ private:
             marker.pose.orientation.w = 1.0;
 
             // Column size
-            marker.scale.x = 0.1;  // diameter
-            marker.scale.y = 0.1;  // diameter
-            marker.scale.z = 0.4;  // height
+            marker.scale.x = 0.1; // diameter
+            marker.scale.y = 0.1; // diameter
+            marker.scale.z = 0.4; // height
 
             // Color (blue markers)
             marker.color.r = 0.0f;
@@ -251,7 +288,7 @@ private:
         const std::vector<geometry_msgs::msg::Point> &points,
         const std::string &ns,
         int id,
-        float r, float g, float b)
+        const std::vector<double> &color)
     {
         if (points.empty())
             return;
@@ -267,19 +304,26 @@ private:
 
         trail.pose.orientation.w = 1.0;
 
-        trail.scale.x = 0.01;
+        trail.scale.x = trail_width_;
 
-        trail.color.r = r;
-        trail.color.g = g;
-        trail.color.b = b;
+        trail.color.r = color[0];
+        trail.color.g = color[1];
+        trail.color.b = color[2];
         trail.color.a = 1.0f;
 
         trail.points = points;
 
         fixed_markers_pub_->publish(trail);
     }
-
+    double theta_fl_ = 0.0;
+    double theta_fr_ = 0.0;
+    double theta_rl_ = 0.0;
+    double theta_rr_ = 0.0;
+    bool first_msg_ = true;
+    rclcpp::Time last_stamp_;
     std::string mecanum_topic_position_, imu_topic_position_, mecanum_topic_velocity_;
+    double trail_z_height_, trail_width_;
+    std::vector<double> trail_color_imu_, trail_color_mecanum_;
     std::shared_ptr<Broadcaster> imu_broadcaster_;
     std::shared_ptr<Broadcaster> mecanum_broadcaster_;
     std::shared_ptr<Broadcaster> wheel_broadcaster_;

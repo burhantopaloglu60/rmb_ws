@@ -20,6 +20,7 @@ Software changes (one line by change):
 (1) 28.11.2025 created by Rik van Velzen
 (2) 01.12.2025 modified by Rik van velzen (added parameter declarations for topics)
 (3) 08.12.2025 modified by Melissa van Leeuwen (added markers)
+(4) 09.12.2025 modified by Melissa van Leeuwen (added trail)
 */
 #include <chrono>
 #include <memory>
@@ -59,9 +60,13 @@ public:
         fixed_markers_pub_ = this->create_publisher<visualization_msgs::msg::Marker>("fixed_markers", 10);
 
         marker_timer_ = this->create_wall_timer(
-            std::chrono::seconds(1),
-            std::bind(&SimBroadcaster::publish_fixed_markers, this));
+            std::chrono::milliseconds(200),
+            [this]() {
+                publish_fixed_markers();
 
+                publish_trail(mecanum_trail_, "mecanum_trail", 0, 1.0f, 0.0f, 0.0f); // red
+                publish_trail(imu_trail_, "imu_trail", 1, 0.0f, 1.0f, 0.0f);        // green
+            });
     }
 
 private:
@@ -96,6 +101,13 @@ private:
         transformStamped.transform.rotation.w = std::cos(half_yaw);
 
         mecanum_broadcaster_->sendTransform(transformStamped);
+
+        // store points for the trail
+        geometry_msgs::msg::Point p;
+        p.x = msg.x;
+        p.y = msg.y;
+        p.z = 0.05;
+        mecanum_trail_.push_back(p);
     }
     void broadcast_imu(const PositionData &msg)
     {
@@ -118,6 +130,13 @@ private:
         transformStamped.transform.rotation.w = std::cos(half_yaw);
 
         imu_broadcaster_->sendTransform(transformStamped);
+
+        // store points for the trail
+        geometry_msgs::msg::Point p;
+        p.x = msg.x;
+        p.y = msg.y;
+        p.z = 0.05;
+        imu_trail_.push_back(p);
     }
     void broadcast_wheels(const mecanum &msg)
     {
@@ -228,6 +247,38 @@ private:
         }
     }
 
+    void publish_trail(
+        const std::vector<geometry_msgs::msg::Point> &points,
+        const std::string &ns,
+        int id,
+        float r, float g, float b)
+    {
+        if (points.empty())
+            return;
+
+        visualization_msgs::msg::Marker trail;
+        trail.header.frame_id = "map";
+        trail.header.stamp = this->now();
+
+        trail.ns = ns;
+        trail.id = id;
+        trail.type = visualization_msgs::msg::Marker::LINE_STRIP;
+        trail.action = visualization_msgs::msg::Marker::ADD;
+
+        trail.pose.orientation.w = 1.0;
+
+        trail.scale.x = 0.01;
+
+        trail.color.r = r;
+        trail.color.g = g;
+        trail.color.b = b;
+        trail.color.a = 1.0f;
+
+        trail.points = points;
+
+        fixed_markers_pub_->publish(trail);
+    }
+
     std::string mecanum_topic_position_, imu_topic_position_, mecanum_topic_velocity_;
     std::shared_ptr<Broadcaster> imu_broadcaster_;
     std::shared_ptr<Broadcaster> mecanum_broadcaster_;
@@ -237,6 +288,8 @@ private:
     rclcpp::Subscription<PositionData>::SharedPtr imu_sub_pos_;
     rclcpp::Publisher<visualization_msgs::msg::Marker>::SharedPtr fixed_markers_pub_;
     rclcpp::TimerBase::SharedPtr marker_timer_;
+    std::vector<geometry_msgs::msg::Point> mecanum_trail_;
+    std::vector<geometry_msgs::msg::Point> imu_trail_;
 };
 
 int main(int argc, char *argv[])

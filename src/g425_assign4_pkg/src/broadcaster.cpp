@@ -32,6 +32,8 @@ Software changes (one line by change):
 #include "g425_assign4_interfaces_pkg/msg/mecanum.hpp"
 #include "tf2/LinearMath/Quaternion.h"
 #include "visualization_msgs/msg/marker.hpp"
+#include <sstream>
+#include <iomanip>
 
 using namespace std::placeholders;
 using PositionData = g425_assign4_interfaces_pkg::msg::PositionData;
@@ -251,36 +253,65 @@ private:
             {0.0, 10.0}};
 
         int id = 0;
+
         for (const auto &[x, y] : points)
         {
-            visualization_msgs::msg::Marker marker;
-            marker.header.frame_id = "map";
-            marker.header.stamp = this->now();
+            // Markers
+            visualization_msgs::msg::Marker column;
+            column.header.frame_id = "map";
+            column.header.stamp = this->now();
 
-            marker.ns = "fixed_markers";
-            marker.id = id++; // unique ID per column
-            marker.type = visualization_msgs::msg::Marker::CYLINDER;
-            marker.action = visualization_msgs::msg::Marker::ADD;
+            column.ns = "fixed_markers";
+            column.id = id;
+            column.type = visualization_msgs::msg::Marker::CYLINDER;
+            column.action = visualization_msgs::msg::Marker::ADD;
 
-            // Position (half-height offset so it stands on the ground)
-            marker.pose.position.x = x;
-            marker.pose.position.y = y;
-            marker.pose.position.z = 0.2;
+            column.pose.position.x = x;
+            column.pose.position.y = y;
+            column.pose.position.z = 0.2;  // half height
+            column.pose.orientation.w = 1.0;
 
-            marker.pose.orientation.w = 1.0;
+            column.scale.x = 0.1;
+            column.scale.y = 0.1;
+            column.scale.z = 0.4;
 
-            // Column size
-            marker.scale.x = 0.1; // diameter
-            marker.scale.y = 0.1; // diameter
-            marker.scale.z = 0.4; // height
+            column.color.r = 0.0f;
+            column.color.g = 0.0f;
+            column.color.b = 1.0f;
+            column.color.a = 1.0f;
 
-            // Color (blue markers)
-            marker.color.r = 0.0f;
-            marker.color.g = 0.0f;
-            marker.color.b = 1.0f;
-            marker.color.a = 1.0f;
+            fixed_markers_pub_->publish(column);
 
-            fixed_markers_pub_->publish(marker);
+            // Text markers
+            visualization_msgs::msg::Marker text;
+            text.header.frame_id = "map";
+            text.header.stamp = this->now();
+
+            text.ns = "fixed_marker_labels";
+            text.id = id + 100;  // different ID space
+            text.type = visualization_msgs::msg::Marker::TEXT_VIEW_FACING;
+            text.action = visualization_msgs::msg::Marker::ADD;
+
+            text.pose.position.x = x;
+            text.pose.position.y = y;
+            text.pose.position.z = 0.6;  // above the column
+            text.pose.orientation.w = 1.0;
+
+            text.scale.z = 0.12;  // text height
+
+            text.color.r = 1.0f;
+            text.color.g = 1.0f;
+            text.color.b = 1.0f;
+            text.color.a = 1.0f;
+
+            std::ostringstream ss;
+            ss << "(" << std::fixed << std::setprecision(1)
+            << x << "," << y << ")";
+            text.text = ss.str();
+
+            fixed_markers_pub_->publish(text);
+
+            ++id;
         }
     }
 

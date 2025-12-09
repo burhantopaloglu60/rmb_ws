@@ -1,6 +1,6 @@
 <launch>
-    <!-- <arg name="params_file" default="$(find-pkg-share g425_assign4_pkg)/config/params_assign4_squaredemo.yaml"/> -->
-    <arg name="params_file" default="$(find-pkg-share g425_assign4_pkg)/config/params_assign4.yaml"/>
+    <arg name="params_file" default="$(find-pkg-share g425_assign4_pkg)/config/params_assign4_squaredemo.yaml"/>
+    <!-- <arg name="params_file" default="$(find-pkg-share g425_assign4_pkg)/config/params_assign4.yaml"/> -->
     
     <let name="rviz_config_path" value="$(find-pkg-share g425_assign4_pkg)/config/simulator.rviz"/>
     <let name="urdf_path" value="$(find-pkg-share g425_assign4_pkg)/include/sim.urdf.xacro"/>

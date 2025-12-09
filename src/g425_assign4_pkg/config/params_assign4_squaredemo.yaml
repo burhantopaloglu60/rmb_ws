@@ -7,7 +7,7 @@
     imu_topic_velocity: "imu_sim_velocity"
     imu_topic_position: "imu_sim_position"
     rate_hz: 10
-    isLooping: true
+    isLooping: false
     
 # input guide:
 # notate intervals, "intervalnumber:" then indent the following lines
@@ -23,14 +23,27 @@
 sensor_simulator_node:
   ros__parameters:
     intervals:
-      0: { axis: "linear_x", poly: "linear", t0: 0.0, t1: 4.0,  y0: 1.0,  y1: 1.0 }
-      1: { axis: "linear_x", poly: "linear", t0: 4.0, t1: 8.0,  y0: 0.0,  y1: 0.0 }
-      2: { axis: "linear_x", poly: "linear", t0: 8.0, t1: 12.0, y0: -1.0, y1: -1.0 }
-      3: { axis: "linear_x", poly: "linear", t0: 12.0, t1: 16.0, y0: 0.0,  y1: 0.0 }
-      4: { axis: "linear_y", poly: "linear", t0: 0.0, t1: 4.0,  y0: 1.0,  y1: 1.0 }
-      5: { axis: "linear_y", poly: "linear", t0: 4.0, t1: 8.0,  y0: 1.0,  y1: 1.0 } 
-      6: { axis: "linear_y", poly: "linear", t0: 8.0, t1: 12.0, y0: -1.0, y1: -1.0 }
-      7: { axis: "linear_y", poly: "linear", t0: 12.0, t1: 16.0, y0: -1.0, y1: -1.0 }
+      0: { axis: "linear_x", poly: "linear", t0: 0.0, t1: 2.0, y0: 0.0,  y1: 0.0 }
+      1: { axis: "linear_y", poly: "linear", t0: 0.0, t1: 2.0, y0: 0.0,  y1: 0.0 }
+
+      2: { axis: "linear_x", poly: "linear", t0: 2.0, t1: 4.0, y0: 0.0,  y1: 1.0 } 
+      3: { axis: "linear_y", poly: "linear", t0: 2.0, t1: 4.0, y0: 0.0,  y1: 1.0 }
+
+      4: { axis: "linear_x", poly: "linear", t0: 4.0, t1: 6.0, y0: 0.0,  y1: -1.0} 
+      5: { axis: "linear_y", poly: "linear", t0: 4.0, t1: 6.0, y0: 0.0,  y1: -1.0}
+
+      6: { axis: "linear_x", poly: "linear", t0: 6.0, t1: 8.0, y0: 0.0,  y1: -1.0 }
+      7: { axis: "linear_y", poly: "linear", t0: 6.0, t1: 8.0, y0: 0.0,  y1: 1.0 }
+
+      8: { axis: "linear_x", poly: "linear", t0: 8.0, t1: 10.0, y0: 0.0,  y1: 1.0 }
+      9: { axis: "linear_y", poly: "linear", t0: 8.0, t1: 10.0, y0: 0.0,  y1: -1.0 }
+
+      10: { axis: "linear_x", poly: "linear", t0: 10.0, t1: 12.0, y0: 0.0,  y1: 0.0 }
+      11: { axis: "linear_y", poly: "linear", t0: 10.0, t1: 14.0, y0: 0.0,  y1: 0.0 }
+
+      12: { axis: "linear_y", poly: "linear", t0: 12.0, t1: 14.0, y0: 0.0,  y1: -2.0 }
+      13: { axis: "linear_y", poly: "linear", t0: 14.0, t1: 16.0, y0: 0.0,  y1: 2.0 }
+      14: { axis: "linear_y", poly: "linear", t0: 16.0, t1: 20.0, y0: 0.0,  y1: 0.0 }
 
 
 # input guide: # notate intervals, "intervalnumber:" then indent the following lines
@@ -52,45 +65,46 @@ sensor_simulator_node:
 wheel_velocity_simulator_node:
   ros__parameters:
     intervals:
-            # wfl
-      0:  { wheel: "wfl", poly: "constant", t0: 0.0,  t1: 4.0,  y0: 1.0 }
-      1:  { wheel: "wfl", poly: "constant", t0: 4.0,  t1: 8.0,  y0: -1.0 }
-      2:  { wheel: "wfl", poly: "constant", t0: 8.0,  t1: 12.0, y0: -1.0 }
-      3:  { wheel: "wfl", poly: "constant", t0: 12.0, t1: 16.0, y0: 1.0 }
+      # wfl
+      0:  { wheel: "wfl", poly: "constant", t0: 0.0,  t1: 2.0,  y0: 10.0 }
+      1:  { wheel: "wfl", poly: "constant", t0: 2.0,  t1: 4.0,  y0: -10.0 }
+      2:  { wheel: "wfl", poly: "constant", t0: 4.0,  t1: 6.0,  y0: -10.0 }
+      3:  { wheel: "wfl", poly: "constant", t0: 6.0,  t1: 8.0,  y0: 10.0 }
 
       # wfr
-      4:  { wheel: "wfr", poly: "constant", t0: 0.0,  t1: 4.0,  y0: 1.0 }
-      5:  { wheel: "wfr", poly: "constant", t0: 4.0,  t1: 8.0,  y0: 1.0 }
-      6:  { wheel: "wfr", poly: "constant", t0: 8.0,  t1: 12.0, y0: -1.0 }
-      7:  { wheel: "wfr", poly: "constant", t0: 12.0, t1: 16.0, y0: -1.0 }
+      4:  { wheel: "wfr", poly: "constant", t0: 0.0,  t1: 2.0,  y0: 10.0 }
+      5:  { wheel: "wfr", poly: "constant", t0: 2.0,  t1: 4.0,  y0: 10.0 }
+      6:  { wheel: "wfr", poly: "constant", t0: 4.0,  t1: 6.0,  y0: -10.0 }
+      7:  { wheel: "wfr", poly: "constant", t0: 6.0,  t1: 8.0,  y0: -10.0 }
 
       # wrl
-      8:  { wheel: "wrl", poly: "constant", t0: 0.0,  t1: 4.0,  y0: 1.0 }
-      9:  { wheel: "wrl", poly: "constant", t0: 4.0,  t1: 8.0,  y0: -1.0 }
-      10: { wheel: "wrl", poly: "constant", t0: 8.0,  t1: 12.0, y0: -1.0 }
-      11: { wheel: "wrl", poly: "constant", t0: 12.0, t1: 16.0, y0: 1.0 }
+      8:  { wheel: "wrl", poly: "constant", t0: 0.0,  t1: 2.0,  y0: 10.0 }
+      9:  { wheel: "wrl", poly: "constant", t0: 2.0,  t1: 4.0,  y0: 10.0 }
+      10:  { wheel: "wrl", poly: "constant", t0: 4.0,  t1: 6.0,  y0: -10.0 }
+      11:  { wheel: "wrl", poly: "constant", t0: 6.0,  t1: 8.0,  y0: -10.0 }
 
       # wrr
-      12: { wheel: "wrr", poly: "constant", t0: 0.0,  t1: 4.0,  y0: 1.0 }
-      13: { wheel: "wrr", poly: "constant", t0: 4.0,  t1: 8.0,  y0: 1.0 }
-      14: { wheel: "wrr", poly: "constant", t0: 8.0,  t1: 12.0, y0: -1.0 }
-      15: { wheel: "wrr", poly: "constant", t0: 12.0, t1: 16.0, y0: -1.0 }
+      12:  { wheel: "wrr", poly: "constant", t0: 0.0,  t1: 2.0,  y0: 10.0 }
+      13:  { wheel: "wrr", poly: "constant", t0: 2.0,  t1: 4.0,  y0: -10.0 }
+      14:  { wheel: "wrr", poly: "constant", t0: 4.0,  t1: 6.0,  y0: -10.0 }
+      15:  { wheel: "wrr", poly: "constant", t0: 6.0,  t1: 8.0,  y0: 10.0 }
 
 position_approximator_mecanum_node:
   ros__parameters:
-    wheel_radius: 0.05
-    robot_length: 0.3
-    robot_width: 0.2
-    start_x: 0.0
-    start_y: 0.0
-    start_yaw: 0.0
+    wheel_names: ["wfl", "wfr", "wrl", "wrr"]
+    wheel_radius: 0.05  # meters
+    robot_length: 0.3   # meters
+    robot_width: 0.2    # meters
+    start_x: 0.0       # meters
+    start_y: 0.0       # meters
+    start_yaw: 0.0     # radians
 
 position_velocity_approximator:
   ros__parameters:
     start_x: 0.0       # meters
     start_y: 0.0       # meters
     start_yaw: 0.0     # radians
-    
+
 SimBroadcaster:
   ros__parameters:
     trail_z_height: 0.05

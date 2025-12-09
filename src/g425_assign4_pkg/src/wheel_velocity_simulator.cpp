@@ -99,7 +99,7 @@ public:
     this->declare_parameter<std::string>("mecanum_topic_velocity", "mecanum_velocity");
 
     // Declare interval parameters so they can be loaded
-    for (int i = 0; i < 10; i++)
+    for (int i = 0; i < 20; i++)
     {
       std::string base = "intervals." + std::to_string(i);
       this->declare_parameter<std::string>(base + ".wheel", "wfl");

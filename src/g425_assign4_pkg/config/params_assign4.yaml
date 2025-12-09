@@ -169,6 +169,7 @@ position_approximator_mecanum_node:
     start_x: 1.0       # meters
     start_y: 1.0       # meters
     start_yaw: 0.0     # radians
+    
 position_velocity_approximator:
   ros__parameters:
     start_x: 0.0       # meters

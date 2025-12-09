@@ -99,7 +99,7 @@ public:
     this->declare_parameter<std::string>("imu_topic_acceleration", "imu_sim_acceleration");
 
     // Declare interval parameters so they can be loaded from YAML
-    for (int i = 0; i < 10; i++)
+    for (int i = 0; i < 20; i++)
     {
       std::string base = "intervals." + std::to_string(i);
 

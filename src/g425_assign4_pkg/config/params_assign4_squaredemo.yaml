@@ -9,6 +9,17 @@
     rate_hz: 10
     isLooping: true
     
+# input guide:
+# notate intervals, "intervalnumber:" then indent the following lines
+# axis: "linear_x" or "linear_y" or "angular_z", linear_z read but unused by approximator
+# poly: "linear" or "quadratic" or "constant"
+# t0: start time of interval in seconds
+# t1: end time of interval in seconds
+# y0: value at time t0
+# y1: value at time t1
+# for quadratic only:
+# tm: time at which the maximum or minimum occurs
+# ym: value at time tm
 sensor_simulator_node:
   ros__parameters:
     intervals:
@@ -22,6 +33,22 @@ sensor_simulator_node:
       7: { axis: "linear_y", poly: "linear", t0: 12.0, t1: 16.0, y0: -1.0, y1: -1.0 }
 
 
+# input guide: # notate intervals, "intervalnumber:" then indent the following lines
+# wheel: "wfl" or "wfr" or "wrl" or "wrr"
+# poly: "linear" or "quadratic" or "constant"
+# t0: start time of interval in seconds
+# t1: end time of interval in seconds
+# y0: value at time t0
+# y1: value at time t1
+# for quadratic only:
+# tm: time at which the maximum or minimum occurs
+# ym: value at time tm
+#---------------------------
+# MECANUM WHEEL PRIMAL DIRECTIONS
+#                 FL  FR  RL  RR
+# FORWARD     =   1,  1,  1,  1
+# RIGHT       =   1, -1, -1,  1
+# ROTATE CW   =   1, -1,  1, -1
 wheel_velocity_simulator_node:
   ros__parameters:
     intervals:

@@ -111,7 +111,7 @@ Visualization Manager:
       Namespaces:
         fixed_markers: true
       Topic:
-        Depth: 7
+        Depth: 9
         Durability Policy: Volatile
         Filter size: 10
         History Policy: Keep Last

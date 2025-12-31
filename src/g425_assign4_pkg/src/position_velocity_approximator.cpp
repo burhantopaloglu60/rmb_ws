@@ -123,8 +123,12 @@ private:
     vy_ += ay_avg * dt;
 
     // Integrate velocity → position
-    pos_x_ += vx_ * dt + 0.5 * ax_avg * dt * dt;
-    pos_y_ += vy_ * dt + 0.5 * ay_avg * dt * dt;
+    // Rotate current velocity into map frame so rotation affects displacement even if ax/ay == 0
+    double v_map_x = c * vx_ - s * vy_;
+    double v_map_y = s * vx_ + c * vy_;
+
+    pos_x_ += v_map_x * dt + 0.5 * ax_avg * dt * dt;
+    pos_y_ += v_map_y * dt + 0.5 * ay_avg * dt * dt;
 
     // Store previous values
     prev_ax_ = ax;

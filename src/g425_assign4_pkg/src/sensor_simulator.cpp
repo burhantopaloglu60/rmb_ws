@@ -242,6 +242,8 @@ private:
 
   void on_timer()
   {
+    isLooping_ = this->get_parameter("isLooping").as_bool();
+    load_intervals();
     double t = (this->now() - start_time_).seconds();
 
     // Find the maximum end time across all intervals

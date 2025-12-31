@@ -258,6 +258,8 @@ private:
 
   void on_timer()
   {
+    isLooping_ = this->get_parameter("isLooping").as_bool();
+    load_intervals();
     double t_orig = (this->now() - start_time_).seconds();
     double t = t_orig;
 
